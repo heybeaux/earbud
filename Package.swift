@@ -78,6 +78,7 @@ let package = Package(
         ),
 
         .testTarget(name: "FieldyProtocolTests", dependencies: ["FieldyProtocol"]),
+        .testTarget(name: "FieldyDeviceTests", dependencies: ["FieldyDevice"]),
         .testTarget(
             name: "AudioCodecTests",
             dependencies: ["AudioCodec", .product(name: "Copus", package: "swift-opus")]
