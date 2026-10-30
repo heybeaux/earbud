@@ -1,0 +1,75 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .menubar .r { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+  .menubar .mi .ic.bud { width: 18px; height: 18px; }
+  .menubar .clock { padding: 0 9px 0 8px; }
+  .menu { width: 286px; top: 29px; }
+  .menu .it .ic { width: 15px; height: 15px; color: var(--label-2); }
+  .menu .it.hl .ic { color: #fff; }
+  .mhead { display: grid; grid-template-columns: 34px 1fr; column-gap: 10px; align-items: center; padding: 8px 10px 9px; }
+  .mhead .pod { grid-row: span 2; width: 34px; height: 34px; border-radius: 9px; background: var(--accent-tint); color: var(--accent); display: grid; place-items: center; }
+  .mhead .pod .ic { width: 20px; height: 20px; }
+  .mhead b { font-size: 13.5px; font-weight: 600; }
+  .mhead small { font-size: 12px; color: var(--label-2); display: flex; align-items: center; gap: 5px; }
+  .mstat { padding: 2px 10px 6px; font-size: 12px; color: var(--label-2); display: flex; flex-direction: column; gap: 3px; }
+  .mstat span { display: flex; justify-content: space-between; }
+  .mstat em { font-style: normal; color: var(--label); font-weight: 500; }
+  .legend { position: absolute; left: 40px; bottom: 40px; padding: 14px 18px 15px; border-radius: 14px; background: rgba(255,255,255,0.5); -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px); box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
+  .legend h4 { font-size: 12px; font-weight: 600; color: rgba(40,30,20,0.72); margin-bottom: 10px; }
+  .legend .row3 { display: flex; gap: 22px; }
+  .legend .st { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11.5px; color: rgba(40,30,20,0.66); }
+  .legend .chip { height: 26px; padding: 0 9px; border-radius: 6px; background: rgba(246,238,228,0.7); display: flex; align-items: center; gap: 4px; color: rgba(0,0,0,0.85); position: relative; }
+  .legend .chip .ic { width: 18px; height: 18px; }
+  .legend .chip .rd { width: 6px; height: 6px; border-radius: 50%; background: var(--red); position: absolute; right: 6px; top: 5px; box-shadow: 0 0 0 1.5px rgba(246,238,228,1); }
+</style></head>
+<body><div class="desk">
+  <div class="menubar">
+    <span class="mi"><i class="ic apple" data-i="apple"></i></span>
+    <span class="mi app">Finder</span><span class="mi">File</span><span class="mi">Edit</span><span class="mi">View</span><span class="mi">Go</span><span class="mi">Window</span><span class="mi">Help</span>
+    <span class="r">
+      <span class="mi on" id="bud"><i class="ic bud" data-i="bud"></i></span>
+      <span class="mi"><i class="ic" data-i="wifi"></i></span>
+      <span class="mi"><i class="ic" data-i="search"></i></span>
+      <span class="mi"><i class="ic" data-i="cc"></i></span>
+      <span class="mi clock">Fri 30 Oct&nbsp;&nbsp;2:03 PM</span>
+    </span>
+  </div>
+
+  <div class="menu" id="menu">
+    <div class="mhead">
+      <span class="pod"><i class="ic" data-i="pod"></i></span>
+      <b>Fieldy 3A7C</b>
+      <small><span class="dot"></span>Connected · battery 82%</small>
+    </div>
+    <div class="mstat">
+      <span>Last synced<em>Today at 1:40 PM</em></span>
+      <span>Waiting on your Fieldy<em>2 recordings</em></span>
+    </div>
+    <hr>
+    <div class="it hl"><i class="ic" data-i="sync"></i>Sync now<span class="k">⌘S</span></div>
+    <div class="it"><i class="ic" data-i="rec" style="color:var(--red)"></i>Record from Mac<span class="k">⌘R</span></div>
+    <hr>
+    <div class="it"><i class="ic" data-i="open"></i>Open EarBud<span class="k">⌘O</span></div>
+    <div class="it"><i class="ic" data-i="gear"></i>Settings…<span class="k">⌘,</span></div>
+    <hr>
+    <div class="it"><i class="ic" data-i="power"></i>Quit EarBud<span class="k">⌘Q</span></div>
+  </div>
+
+  <div class="legend">
+    <h4>The menu-bar icon shows what EarBud is doing</h4>
+    <div class="row3">
+      <div class="st"><span class="chip"><i class="ic" data-i="bud"></i></span>Ready</div>
+      <div class="st"><span class="chip"><i class="ic" data-i="budsync"></i></span>Syncing</div>
+      <div class="st"><span class="chip"><i class="ic" data-i="bud"></i><i class="rd"></i></span>Recording</div>
+      <div class="st"><span class="chip" style="opacity:.45"><i class="ic" data-i="bud"></i></span>Fieldy not nearby</div>
+    </div>
+  </div>
+</div>
+<script>
+  window.addEventListener("load", () => {
+    const b = document.getElementById("bud").getBoundingClientRect();
+    document.getElementById("menu").style.left = (b.left - 2) + "px";
+  });
+</script>
+</body></html>
