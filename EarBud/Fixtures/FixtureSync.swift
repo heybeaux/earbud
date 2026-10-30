@@ -24,16 +24,13 @@ actor FixtureSync: SyncProviding {
             return stream
         }
         running = true
-        Task {
-            await self.run(continuation)
-            self.finished()
-        }
+        Task { await self.run(continuation) }
         return stream
     }
 
-    private func finished() { running = false }
-
     private func run(_ continuation: AsyncStream<SyncEvent>.Continuation) async {
+        // Cleared before the actor is released, so a sync started right after this one ends isn't refused.
+        defer { running = false }
         let startedAt = now()
         counter += 1
         let syncID = "fixture-sync-\(counter)"

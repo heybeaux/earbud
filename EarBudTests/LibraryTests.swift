@@ -57,8 +57,12 @@ final class LibraryTests: XCTestCase {
 
     func testSearchMatchesTitles() async throws {
         let fx = Fixtures()
+        // "Groceries" matches by title; "Budget check-in" mentions groceries in its transcript.
         let results = try await fx.store.search("groceries")
-        XCTAssertEqual(results.map(\.recording.title), ["Groceries"])
+        XCTAssertEqual(results.map(\.recording.title), ["Groceries", "Budget check-in"])
+        let titleOnly = try XCTUnwrap(results.first)
+        XCTAssertEqual(titleOnly.matchCount, 1)
+        XCTAssertNotEqual(titleOnly.snippet, "")
     }
 
     func testTrashRestoreRename() async throws {

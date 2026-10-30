@@ -87,7 +87,10 @@ actor FixtureLibrary: LibraryProviding {
     }
 
     func syncHistory() -> [SyncHistoryItem] {
-        history.sorted { $0.startedAt > $1.startedAt }
+        // Newest first; syncs that started at the same moment keep the order they were added.
+        history.enumerated()
+            .sorted { ($0.element.startedAt, $0.offset) > ($1.element.startedAt, $1.offset) }
+            .map(\.element)
     }
 
     func rename(_ recordingID: String, to title: String?) {
@@ -188,14 +191,16 @@ actor FixtureLibrary: LibraryProviding {
             if let failAt, step >= failAt {
                 entries[id]?.failNextAttempt = false
                 entries[id]?.segments = []
+                entries[id]?.item.preview = nil
                 entries[id]?.item.transcript = .failed(message: "EarBud couldn't make a transcript for this recording.")
                 broadcast(.recording(id: id))
                 return
             }
             let heard = duration * progress
-            entries[id]?.segments = entry.script.filter { $0.end <= heard || progress >= 1 }
+            let ready = entry.script.filter { $0.end <= heard || progress >= 1 }
+            entries[id]?.segments = ready
             entries[id]?.item.transcript = .transcribing(progress: progress, secondsLeft: (1 - progress) * duration * 0.4)
-            entries[id]?.item.preview = entries[id]?.segments.first?.text
+            entries[id]?.item.preview = ready.first?.text
             broadcast(.recording(id: id))
             try? await Task.sleep(for: pace)
         }
