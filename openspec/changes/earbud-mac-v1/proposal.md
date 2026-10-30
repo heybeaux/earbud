@@ -21,6 +21,10 @@ non-technical Fieldy owner can install, set up, and use once a day.
   "buzz my Fieldy", and start/stop recording from the Mac.
 - A once-a-day sync reminder, with a menu-bar icon that shows when the device
   was last synced.
+- An optional notch dock: EarBud can live around the MacBook camera notch,
+  showing sync and recording status at a glance and expanding on hover, with a
+  floating capsule for screens without a notch. Inspired by Vorssaint; written
+  from scratch.
 - On-device speech-to-text. Audio and transcripts never leave the Mac. The only
   network use is the one-time speech model download, which the user approves.
 
@@ -44,6 +48,8 @@ service.
 - `device-controls`: device status and the settings the Fieldy exposes
   (recording mode, LED, mute, buzz, record from Mac).
 - `sync-reminder`: menu-bar status and the daily reminder notification.
+- `notch-dock`: the optional notch (or floating capsule) surface with live
+  sync and recording status and an expanded quick panel.
 
 ### Modified Capabilities
 - None. This is a new product.
@@ -58,5 +64,7 @@ service.
   EarBud contains no Field Labs code or assets.
 - Signing and notarization use the existing Developer ID and App Store Connect
   key.
+- Licensing: Vorssaint and Boring Notch are GPL-3.0. EarBud copies no code
+  from them, so EarBud stays MIT.
 - Trademark: the app is named EarBud and says "works with Fieldy 3". It does
   not use Field Labs logos or imply endorsement.

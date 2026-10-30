@@ -56,9 +56,17 @@
 - [ ] 8.2 Menu-bar icon and menu; working state; toggle in Settings
 - [ ] 8.3 Daily reminder notification, interval/time settings, click-to-sync
 
-## 9. Release
+## 9. Notch dock
 
-- [ ] 9.1 DMG build script: sign (Developer ID), hardened runtime, notarize, staple
-- [ ] 9.2 Verify signed DMG on a clean macOS user account
-- [ ] 9.3 Fresh-install walkthrough by someone new to EarBud, Fieldy starting paired to a phone; fix every confusing step
-- [ ] 9.4 GitHub release with notes, link from `fieldy-local` README
+- [ ] 9.1 Notch geometry and panel window (non-activating, click-through outside shape, hides for full screen)
+- [ ] 9.2 Resting indicators, hover/click expansion, quick panel (Sync now, Record, newest transcript)
+- [ ] 9.3 Live activity: sync progress and result, recording timer
+- [ ] 9.4 Floating capsule for non-notch displays, display picker, display-disconnect fallback
+- [ ] 9.5 Onboarding step with preview (notched Macs only) and Settings toggle
+
+## 10. Release
+
+- [ ] 10.1 DMG build script: sign (Developer ID), hardened runtime, notarize, staple
+- [ ] 10.2 Verify signed DMG on a clean macOS user account
+- [ ] 10.3 Fresh-install walkthrough by someone new to EarBud, Fieldy starting paired to a phone; fix every confusing step
+- [ ] 10.4 GitHub release with notes, link from `fieldy-local` README

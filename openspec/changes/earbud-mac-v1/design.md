@@ -84,6 +84,18 @@ device is remembered by its CoreBluetooth peripheral identifier.
 If protected reads return ATT 0x0F or 0x05 for 15 seconds (three attempts)
 while unprotected reads succeed, EarBud reports "Paired with another device".
 
+### Notch dock
+A borderless, non-activating `NSPanel` (status-bar window level, joins all
+Spaces, not shown over full-screen apps) hosts SwiftUI content. Notch
+geometry comes from `NSScreen.safeAreaInsets.top` and
+`auxiliaryTopLeftArea`/`auxiliaryTopRightArea`; a screen with zero top inset
+gets the floating capsule instead. Hover uses a tracking area with a 0.5 s
+delay; expansion animates the panel frame downward. The panel ignores
+mouse events outside its visible shape so menu-bar clicks pass through. It
+observes `SyncEngine` and `FieldyDevice` state, so every sync entry point
+drives the same live activity. Implemented from scratch: Vorssaint and Boring
+Notch are GPL-3.0, so we study their behaviour, not their code.
+
 ### Distribution
 Developer ID signed, hardened runtime, notarized DMG built by a script in the
 repo. Bluetooth usage string in Info.plist. No auto-update in v1; the About
@@ -102,6 +114,8 @@ window links to GitHub releases.
   size up front, app usable without it.
 - [User loses Fieldy phone app access after the reset] → stated before the
   reset, and requires explicit confirmation.
+- [macOS changes notch window behaviour in a future release] → the dock is
+  optional and isolated in its own module; the menu bar is always available.
 - [Trademark] → name EarBud, "works with Fieldy 3" wording only, no Field Labs
   assets.
 
