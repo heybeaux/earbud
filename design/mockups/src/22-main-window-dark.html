@@ -1,0 +1,87 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .dark .playbtn { box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+  .dark .player { box-shadow: 0 0 0 0.5px rgba(255,255,255,0.06); }
+  .dark .search { box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.05); }
+  .dark .rec.sel { background: #2E7E70; }
+  .dark .segm.cur { background: rgba(63,165,146,0.16); }
+  .dark .devcard .pod { color: #6CC9B6; }
+  .dark .dot { background: #32C25A; }
+  .dark .side-i .ic { color: #5DBFAB; }
+</style></head>
+<body><div class="desk dusk">
+  <div class="win dark" style="width:1340px;height:830px">
+    <div class="tl"></div>
+    <div class="split">
+      <aside class="sidebar">
+        <span class="tb-btn"><i class="ic" data-i="sidebar"></i></span>
+        <div class="side-h">Library</div>
+        <div class="side-i sel"><i class="ic" data-i="waveform"></i>Recordings<span class="ct">24</span></div>
+        <div class="side-i"><i class="ic" data-i="history"></i>Sync History</div>
+        <div class="side-i"><i class="ic" data-i="trash"></i>Recently Deleted<span class="ct">2</span></div>
+        <div class="side-h">Device</div>
+        <div class="side-i"><i class="ic" data-i="pod"></i>My Fieldy<span class="ct"><span class="dot"></span></span></div>
+        <div class="devcard">
+          <span class="pod"><i class="ic" data-i="pod"></i></span>
+          <b>Fieldy 3A7C</b>
+          <small><span class="dot"></span>Connected · 82%</small>
+          <div class="last">Last synced today at 1:40 PM</div>
+        </div>
+      </aside>
+      <div class="main">
+        <div class="toolbar">
+          <div class="ttl" style="width:300px"><b>Recordings</b><small>24 recordings</small></div>
+          <span class="sp"></span>
+          <span class="tb-btn text"><i class="ic" data-i="sync"></i>Sync</span>
+          <span class="search"><i class="ic" data-i="search"></i>Search transcripts</span>
+        </div>
+        <div class="cols">
+          <div class="listcol">
+            <div class="day">Today<span>3</span></div>
+            <div class="rec sel"><span class="t">Run club planning</span><span class="m">1:12 PM · 6:42</span><span class="p">Okay, so for Saturday we meet at the seawall by the rowing club at seven, not six-thirty.</span></div>
+            <div class="rec"><span class="t">Groceries</span><span class="m">10:05 AM · 1:18</span><span class="p">Oat milk, two lemons, the good sourdough from the bakery on Main, and something for Sunday dinner.</span></div>
+            <div class="rec"><span class="t untitled">8:47 AM</span><span class="m">0:12</span><span class="p muted">No speech detected</span></div>
+            <div class="day">Yesterday<span>2</span></div>
+            <div class="rec"><span class="t">Call with Dana about the deck</span><span class="m">4:30 PM · 12:05</span><span class="p">So the boards came in, but the stain is back-ordered until the ninth, which pushes the second coat.</span></div>
+            <div class="rec"><span class="t untitled">9:15 AM</span><span class="m">2:40</span><span class="p">Gift idea for Maya: that ceramics class on Granville, the Thursday evening one. Check if it's still open.</span></div>
+            <div class="day">Wednesday 28 October<span>4</span></div>
+            <div class="rec"><span class="t">Podcast notes</span><span class="m">6:02 PM · 3:55</span><span class="p">The bit about sleep and memory, the guest said most of it happens in the first half of the night.</span></div>
+            <div class="rec"><span class="t untitled">7:20 AM</span><span class="m">0:48</span><span class="p">Remember to move the car before eight, street cleaning on our side this week.</span></div>
+          </div>
+          <div class="detail">
+            <div class="dhead">
+              <div>
+                <h1>Run club planning</h1>
+                <div class="sub">Friday 30 October · 1:12 PM · 6 min 42 s</div>
+              </div>
+              <div class="acts">
+                <span class="tb-btn"><i class="ic" data-i="copy"></i></span>
+                <span class="tb-btn"><i class="ic" data-i="share"></i></span>
+                <span class="tb-btn"><i class="ic" data-i="more"></i></span>
+              </div>
+            </div>
+            <div class="player">
+              <i class="ic skip" data-i="back15"></i>
+              <span class="playbtn"><i class="ic" data-i="pause"></i></span>
+              <i class="ic skip" data-i="fwd15"></i>
+              <div class="wave" data-n="96" data-at="0.144" data-seed="3"></div>
+              <span class="ptime">0:58 / 6:42</span>
+              <span class="seg"><span>1×</span><span class="on">1.5×</span><span>2×</span></span>
+            </div>
+            <div class="tx">
+              <div class="tx-h">Transcript<span class="sp"></span><span style="text-transform:none;letter-spacing:0;font-weight:500">Click a line to play from there</span></div>
+              <div class="segm past"><span class="ts">00:00</span><span>Okay, so for Saturday we meet at the seawall by the rowing club at seven, not six-thirty. It's too dark at six-thirty now.</span></div>
+              <div class="segm past"><span class="ts">00:14</span><span>Priya said she can bring the cones and the first-aid kit again, so that's sorted.</span></div>
+              <div class="segm past"><span class="ts">00:31</span><span>The long-run group does eighteen K, out to Prospect Point and back. Easy pace. No heroes.</span></div>
+              <div class="segm cur"><span class="ts">00:52</span><span>The ten-K group loops the lagoon twice. Marcus is pacing that one, and he's promised to actually slow down this time.</span></div>
+              <div class="segm fut"><span class="ts">01:10</span><span>Coffee after at the place on Denman. They can hold the back room for us if we tell them by Thursday.</span></div>
+              <div class="segm fut"><span class="ts">01:34</span><span>Bigger thing: the Powell River trip in November. We need a head count by next Friday for the ferry booking.</span></div>
+              <div class="segm fut"><span class="ts">02:05</span><span>And can someone please remind everyone that the group chat is for running, not for selling couches.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></body></html>
