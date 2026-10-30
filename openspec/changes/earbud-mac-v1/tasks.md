@@ -1,16 +1,17 @@
 ## 1. Project setup
 
 - [ ] 1.1 Create `heybeaux/earbud` repo with Xcode project (macOS 14+, arm64), `EarBudKit` Swift package, MIT license, README
-- [ ] 1.2 Add dependencies: WhisperKit, GRDB, an Opus decoder package (libopus)
-- [ ] 1.3 CI: build and unit tests on every push (GitHub Actions, macOS runner)
+  (repo, license, README and the `EarBudKit` package are done; the Xcode app project waits for UI approval)
+- [x] 1.2 Add dependencies: WhisperKit, GRDB, an Opus decoder package (libopus)
+- [x] 1.3 CI: build and unit tests on every push (GitHub Actions, macOS runner)
 
 ## 2. Protocol (EarBudKit/FieldyProtocol)
 
-- [ ] 2.1 Parse storage status, recording status, reset report, profile status
-- [ ] 2.2 Build commands: sync start, ACK, retry, drop; clock payload
-- [ ] 2.3 Parse sync notifications (v1, v2, v3 packets; end, no files, header, file failed)
-- [ ] 2.4 Parse file header (v1, v2 with CRC check) and trailer
-- [ ] 2.5 Unit tests using byte fixtures captured from the real device (no personal audio)
+- [x] 2.1 Parse storage status, recording status, reset report, profile status
+- [x] 2.2 Build commands: sync start, ACK, retry, drop; clock payload
+- [x] 2.3 Parse sync notifications (v1, v2, v3 packets; end, no files, header, file failed)
+- [x] 2.4 Parse file header (v1, v2 with CRC check) and trailer
+- [x] 2.5 Unit tests using byte fixtures captured from the real device (no personal audio)
 
 ## 3. Device (EarBudKit/FieldyDevice)
 
@@ -22,22 +23,23 @@
 
 ## 4. Sync (EarBudKit/SyncEngine)
 
-- [ ] 4.1 Durable per-packet writes, `.part` to `.bin`, v3 ACK after flush, retry/drop
-- [ ] 4.2 Progress by bytes; sync history records
-- [ ] 4.3 Crash recovery of `.part` files on launch
-- [ ] 4.4 Opus to PCM to M4A; frame-count verification; raw cleanup after 7 days
+- [x] 4.1 Durable per-packet writes, `.part` to `.bin`, v3 ACK after flush, retry/drop
+- [x] 4.2 Progress by bytes; sync history records
+- [x] 4.3 Crash recovery of `.part` files on launch
+- [x] 4.4 Opus to PCM to M4A; frame-count verification; raw cleanup after 7 days
 - [ ] 4.5 Test on device: interrupt mid-file (out of range, quit, sleep); document what the device keeps
 
 ## 5. Transcription (EarBudKit/Transcriber)
 
 - [ ] 5.1 Model download with consent, progress, resume, "Later"
-- [ ] 5.2 Persistent queue, oldest first, resumes after relaunch
-- [ ] 5.3 Segments with timestamps; drop no-speech segments; "No speech detected"
-- [ ] 5.4 Faster / More accurate setting; transcribe again; failure + retry
+  (core done: download with progress, file-level resume, offline tokenizer cache; consent and "Later" are UI)
+- [x] 5.2 Persistent queue, oldest first, resumes after relaunch
+- [x] 5.3 Segments with timestamps; drop no-speech segments; "No speech detected"
+- [x] 5.4 Faster / More accurate setting; transcribe again; failure + retry (core; the Settings control is UI)
 
 ## 6. Library (EarBudKit/Library + app views)
 
-- [ ] 6.1 SQLite schema, FTS5 search
+- [x] 6.1 SQLite schema, FTS5 search
 - [ ] 6.2 Day-grouped list with empty state
 - [ ] 6.3 Detail: player, speed, segment highlight, click-to-seek
 - [ ] 6.4 Copy, export (M4A/WAV, TXT/Markdown), rename, delete with 30-day Recently Deleted, Show in Finder
