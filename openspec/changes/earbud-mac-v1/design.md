@@ -121,5 +121,8 @@ window links to GitHub releases.
 
 ## Open Questions
 
-- App icon and visual style: proposal to follow with mockups before UI build.
-- Should v1 offer a non-English model? (Spec says English only.)
+- App icon and visual style: mockups to be approved by Beaux before the UI
+  build (task 7.1).
+
+Resolved 2026-10-30 (Beaux): spec approved; English only for v1; mockups
+before UI; public repo `heybeaux/earbud` approved.
