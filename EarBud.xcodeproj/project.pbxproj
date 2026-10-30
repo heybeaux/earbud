@@ -7,9 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06A6DA1CA61393E022957574 /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456752A84DC548E572001EBC /* Waveform.swift */; };
 		1FA350624626DA0CA4E5EE0A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 71B519837CDFCCC19108315A /* Assets.xcassets */; };
+		35FDA074B17061DDC08B50FD /* Glyphs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AC7C7FC017F34950EC5A4B /* Glyphs.swift */; };
+		380FFC47A864171614715ED7 /* FieldyArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DDB188A2A12B1E3B884F84A /* FieldyArtwork.swift */; };
 		3AC8E096C22798F187EE38DB /* EarBudApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E960802D35E3A23096088A /* EarBudApp.swift */; };
+		63FD7D414BB458EC8C702066 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67037DD9B40C2A6E2D9851F5 /* Components.swift */; };
+		6CC2DF17EC12EF693145E079 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = B95747EA4B28E49985AF930D /* Typography.swift */; };
+		878E6B3B6C50C1B2CC3FC68B /* Providers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAA3B97A4177CDFC2236047 /* Providers.swift */; };
+		882FA38B5B199031035FD97F /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC613C26B581D1532D5C5B4 /* Palette.swift */; };
 		B1A798821F7ED9AEB72E4394 /* ScaffoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666E4CDCA87C41409C878E35 /* ScaffoldTests.swift */; };
+		B5F92D717AE0DDE8C8AFFBFD /* Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16733AF03B98140A5E6D58 /* Metrics.swift */; };
+		FA2403AA989053E5B94A4DCA /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D223ED10F345DF2DA1A91E9 /* Models.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,13 +32,22 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		05AC7C7FC017F34950EC5A4B /* Glyphs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glyphs.swift; sourceTree = "<group>"; };
+		0D223ED10F345DF2DA1A91E9 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		15E960802D35E3A23096088A /* EarBudApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarBudApp.swift; sourceTree = "<group>"; };
 		19815A70FBCA41C29B2DFEF7 /* EarBud.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EarBud.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DDB188A2A12B1E3B884F84A /* FieldyArtwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldyArtwork.swift; sourceTree = "<group>"; };
 		229B461D0215622300F87893 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2D16733AF03B98140A5E6D58 /* Metrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metrics.swift; sourceTree = "<group>"; };
+		456752A84DC548E572001EBC /* Waveform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Waveform.swift; sourceTree = "<group>"; };
+		5EAA3B97A4177CDFC2236047 /* Providers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Providers.swift; sourceTree = "<group>"; };
 		666E4CDCA87C41409C878E35 /* ScaffoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaffoldTests.swift; sourceTree = "<group>"; };
+		67037DD9B40C2A6E2D9851F5 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		71B519837CDFCCC19108315A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8BC613C26B581D1532D5C5B4 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
 		90D6FC23B5F97DE9923369D8 /* EarBudTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EarBudTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C0E20DFD3BFE6336B42F4F2 /* EarBud.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EarBud.entitlements; sourceTree = "<group>"; };
+		B95747EA4B28E49985AF930D /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -45,6 +63,8 @@
 			isa = PBXGroup;
 			children = (
 				4CBFB7071F97A8D55B209601 /* App */,
+				E0874FE1D39D0F54AB78C316 /* Design */,
+				A0CC5021BDC421A07CA8A979 /* Model */,
 				681A14775490595901508928 /* Resources */,
 			);
 			path = EarBud;
@@ -67,6 +87,29 @@
 				90D6FC23B5F97DE9923369D8 /* EarBudTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A0CC5021BDC421A07CA8A979 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				0D223ED10F345DF2DA1A91E9 /* Models.swift */,
+				5EAA3B97A4177CDFC2236047 /* Providers.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		E0874FE1D39D0F54AB78C316 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				67037DD9B40C2A6E2D9851F5 /* Components.swift */,
+				1DDB188A2A12B1E3B884F84A /* FieldyArtwork.swift */,
+				05AC7C7FC017F34950EC5A4B /* Glyphs.swift */,
+				2D16733AF03B98140A5E6D58 /* Metrics.swift */,
+				8BC613C26B581D1532D5C5B4 /* Palette.swift */,
+				B95747EA4B28E49985AF930D /* Typography.swift */,
+				456752A84DC548E572001EBC /* Waveform.swift */,
+			);
+			path = Design;
 			sourceTree = "<group>";
 		};
 		E5AEB20539AD5951D0B81578 = {
@@ -183,7 +226,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63FD7D414BB458EC8C702066 /* Components.swift in Sources */,
 				3AC8E096C22798F187EE38DB /* EarBudApp.swift in Sources */,
+				380FFC47A864171614715ED7 /* FieldyArtwork.swift in Sources */,
+				35FDA074B17061DDC08B50FD /* Glyphs.swift in Sources */,
+				B5F92D717AE0DDE8C8AFFBFD /* Metrics.swift in Sources */,
+				FA2403AA989053E5B94A4DCA /* Models.swift in Sources */,
+				882FA38B5B199031035FD97F /* Palette.swift in Sources */,
+				878E6B3B6C50C1B2CC3FC68B /* Providers.swift in Sources */,
+				6CC2DF17EC12EF693145E079 /* Typography.swift in Sources */,
+				06A6DA1CA61393E022957574 /* Waveform.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
