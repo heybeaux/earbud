@@ -1,0 +1,135 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .board { display: grid; grid-template-columns: 664px 664px; gap: 30px 34px; }
+  .cell { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .cell .note2 { font-size: 12px; color: rgba(40,30,20,0.62); margin: -4px 0 0 4px; }
+  .scr { width: 664px; height: 316px; position: relative; overflow: hidden; border-radius: 20px 20px 0 0; border: 9px solid #0E0E10; border-bottom: 0;
+    background: radial-gradient(500px 300px at 15% 20%, #F2E2CC, transparent), radial-gradient(500px 360px at 95% 100%, #9CB3A6, transparent), linear-gradient(165deg, #EAD6C0, #D4B49C 55%, #A9B9AE);
+    -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent); mask-image: linear-gradient(to bottom, #000 78%, transparent); }
+  .scr.short { height: 142px; -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent); mask-image: linear-gradient(to bottom, #000 70%, transparent); }
+  .stack { display: flex; flex-direction: column; gap: 14px; }
+  .notch-bar { height: 37px; }
+  .notch-bar .r { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+  .notch-bar .ic { width: 16px; height: 16px; }
+  .notch-bar .ic.bud { width: 18px; height: 18px; }
+  .dock { font-size: 12px; }
+  .dock.rest { width: 300px; padding: 0 16px; }
+  .dock .tiny { font-variant-numeric: tabular-nums; }
+  .tagc { position: absolute; left: 14px; bottom: 16px; z-index: 4; font-size: 11.5px; font-weight: 600; color: rgba(40,30,20,0.7); background: rgba(255,255,255,0.55); padding: 3px 9px; border-radius: 99px; }
+
+  /* expanded quick panel */
+  .dock.exp { width: 432px; height: auto; border-radius: 0 0 24px 24px; padding: 48px 18px 16px; box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
+  .exp .top { position: absolute; top: 0; left: 0; right: 0; height: 37px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+  .exp .r1 { display: grid; grid-template-columns: 30px 1fr auto; column-gap: 10px; align-items: center; }
+  .exp .pod { grid-row: span 2; width: 30px; height: 30px; border-radius: 8px; background: rgba(63,165,146,0.22); color: #6CC9B6; display: grid; place-items: center; }
+  .exp .pod .ic { width: 18px; height: 18px; }
+  .exp .r1 b { font-size: 13px; font-weight: 600; }
+  .exp .r1 small { font-size: 11.5px; color: rgba(255,255,255,0.55); display: flex; align-items: center; gap: 5px; }
+  .exp .r1 .synced { grid-row: span 2; font-size: 11.5px; color: rgba(255,255,255,0.55); text-align: right; line-height: 1.3; }
+  .exp .r1 .synced em { font-style: normal; color: rgba(255,255,255,0.85); display: block; }
+  .exp .btns { display: flex; gap: 8px; margin-top: 13px; }
+  .exp .b { flex: 1; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 12.5px; font-weight: 600; background: rgba(255,255,255,0.12); color: #fff; }
+  .exp .b .ic { width: 14px; height: 14px; }
+  .exp .b.p { background: #3FA592; }
+  .exp .b .rd { width: 9px; height: 9px; border-radius: 50%; background: var(--red); }
+  .exp .tr { margin-top: 10px; padding: 9px 11px; border-radius: 10px; background: rgba(255,255,255,0.07); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08); }
+  .exp .tr .h { display: flex; font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600; margin-bottom: 3px; }
+  .exp .tr .h span { margin-left: auto; color: #6CC9B6; display: flex; align-items: center; gap: 2px; }
+  .exp .tr .h .ic { width: 10px; height: 10px; }
+  .exp .tr p { font-size: 12px; line-height: 1.4; color: rgba(255,255,255,0.86); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .cursor { position: absolute; z-index: 6; width: 17px; height: 25px; }
+
+  /* live activity with a small chin */
+  .dock.chin { width: 318px; height: 62px; border-radius: 0 0 18px 18px; }
+  .chin .top { position: absolute; top: 0; left: 0; right: 0; height: 37px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; }
+  .chin .top .ic { width: 16px; height: 16px; color: #6CC9B6; }
+  .chin .low { position: absolute; left: 16px; right: 16px; top: 39px; display: flex; align-items: center; gap: 9px; font-size: 11.5px; color: rgba(255,255,255,0.7); font-weight: 500; }
+  .chin .low .pb { flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.16); overflow: hidden; }
+  .chin .low .pb i { display: block; height: 100%; width: 68%; border-radius: 2px; background: #3FA592; }
+  .chin .low.done { justify-content: center; color: #fff; font-weight: 600; font-size: 12px; }
+  .chin .low.done .ic { width: 15px; height: 15px; color: #3FC07A; }
+  .dock .rdot { width: 9px; height: 9px; border-radius: 50%; background: #FF453A; box-shadow: 0 0 0 3px rgba(255,69,58,0.25), 0 0 8px rgba(255,69,58,0.8); }
+  .dock .timer { font-size: 12.5px; font-weight: 600; color: #fff; }
+</style></head>
+<body><div class="desk">
+  <div class="board">
+
+    <div class="cell">
+      <span class="cap"><span class="n">1</span>Resting</span>
+      <div class="scr">
+        <div class="notch-bar"><span class="mi">View</span><span class="mi">Go</span><span class="mi">Window</span>
+          <span class="r"><span class="mi"><i class="ic bud" data-i="bud"></i></span><span class="mi"><i class="ic" data-i="wifi"></i></span><span class="mi">2:03 PM</span></span></div>
+        <div class="notch"></div>
+        <div class="dock rest"><span class="dot"></span><span class="tiny">23m</span></div>
+      </div>
+      <span class="note2">A status dot on the left, time since the last sync on the right. Nothing else.</span>
+    </div>
+
+    <div class="cell">
+      <span class="cap"><span class="n">2</span>Hover for half a second (or click)</span>
+      <div class="scr">
+        <div class="notch-bar"><span class="mi">View</span><span class="mi">Go</span><span class="mi">Window</span>
+          <span class="r"><span class="mi"><i class="ic bud" data-i="bud"></i></span><span class="mi"><i class="ic" data-i="wifi"></i></span><span class="mi">2:03 PM</span></span></div>
+        <div class="notch"></div>
+        <div class="dock exp">
+          <div class="top"><span class="dot"></span><span class="tiny">23m</span></div>
+          <div class="r1">
+            <span class="pod"><i class="ic" data-i="pod"></i></span>
+            <b>Fieldy 3A7C</b>
+            <span class="synced">Last synced<em>Today, 1:40 PM</em></span>
+            <small><span class="dot" style="width:7px;height:7px;box-shadow:none"></span>Connected · battery 82%</small>
+          </div>
+          <div class="btns">
+            <span class="b p"><i class="ic" data-i="sync" data-w="2"></i>Sync now</span>
+            <span class="b"><span class="rd"></span>Record from Mac</span>
+          </div>
+          <div class="tr">
+            <div class="h">Newest · Run club planning · 1:12 PM<span>Open<i class="ic" data-i="chevr" data-w="2.4"></i></span></div>
+            <p>Okay, so for Saturday we meet at the seawall by the rowing club at seven, not six-thirty. It's too dark at six-thirty now.</p>
+          </div>
+        </div>
+        <svg class="cursor" style="left:404px;top:118px" viewBox="0 0 17 25"><path d="M1.5 1.5v19.2l4.6-4.4 3 7 3.3-1.4-3-6.9h6.4z" fill="#000" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="note2">Sync now, Record from Mac, and the newest transcript. Moving away collapses it.</span>
+    </div>
+
+    <div class="cell">
+      <span class="cap"><span class="n">3</span>Sync live activity, from any Sync button</span>
+      <div class="stack">
+        <div class="scr short">
+          <div class="notch-bar"><span class="mi">View</span><span class="mi">Go</span><span class="mi">Window</span>
+            <span class="r"><span class="mi"><i class="ic bud" data-i="budsync"></i></span><span class="mi"><i class="ic" data-i="wifi"></i></span><span class="mi">2:03 PM</span></span></div>
+          <div class="notch"></div>
+          <div class="dock chin">
+            <div class="top"><i class="ic" data-i="sync" data-w="2"></i><span class="tiny">2 of 3</span></div>
+            <div class="low"><span class="pb"><i></i></span></div>
+          </div>
+          <span class="tagc">While syncing</span>
+        </div>
+        <div class="scr short">
+          <div class="notch-bar"><span class="mi">View</span><span class="mi">Go</span><span class="mi">Window</span>
+            <span class="r"><span class="mi"><i class="ic bud" data-i="bud"></i></span><span class="mi"><i class="ic" data-i="wifi"></i></span><span class="mi">2:04 PM</span></span></div>
+          <div class="notch"></div>
+          <div class="dock chin">
+            <div class="top"><span class="dot"></span><span class="tiny">now</span></div>
+            <div class="low done"><i class="ic" data-i="checkc"></i>3 new recordings</div>
+          </div>
+          <span class="tagc">Done · shows for 5 seconds</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cell">
+      <span class="cap"><span class="n">4</span>Recording from the Mac</span>
+      <div class="scr">
+        <div class="notch-bar"><span class="mi">View</span><span class="mi">Go</span><span class="mi">Window</span>
+          <span class="r"><span class="mi"><i class="ic bud" data-i="bud"></i></span><span class="mi"><i class="ic" data-i="wifi"></i></span><span class="mi">2:07 PM</span></span></div>
+        <div class="notch"></div>
+        <div class="dock rest" style="width:318px"><span class="rdot"></span><span class="timer">03:42</span></div>
+      </div>
+      <span class="note2">A red dot and a running timer until the recording stops. Hover to get a Stop button.</span>
+    </div>
+
+  </div>
+</div></body></html>
