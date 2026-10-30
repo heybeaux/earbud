@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Concept B — "Voice to words": sound bars that settle into lines of text, on warm paper. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFBF4"/>
+      <stop offset="1" stop-color="#EFE1CD"/>
+    </linearGradient>
+    <linearGradient id="band" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2F8473"/>
+      <stop offset="1" stop-color="#235F54"/>
+    </linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity=".26"/>
+    </filter>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)" filter="url(#sh)"/>
+  <rect x="101.5" y="101.5" width="821" height="821" rx="183.5" fill="none" stroke="#000" stroke-opacity=".06" stroke-width="3"/>
+  <!-- wristband: a soft ring segment framing the content -->
+  <path d="M512 214a298 298 0 1 0 0 596" fill="none" stroke="url(#band)" stroke-width="46" stroke-linecap="round" opacity=".16"/>
+  <!-- sound bars (left) -->
+  <g fill="url(#band)">
+    <rect x="262" y="442" width="42" height="140" rx="21"/>
+    <rect x="332" y="352" width="42" height="320" rx="21"/>
+    <rect x="402" y="402" width="42" height="220" rx="21"/>
+  </g>
+  <!-- turning into words (right) -->
+  <rect x="482" y="412" width="42" height="42" rx="21" fill="#C9603A"/>
+  <g fill="#3E352D">
+    <rect x="552" y="412" width="210" height="42" rx="21"/>
+    <rect x="482" y="491" width="280" height="42" rx="21"/>
+    <rect x="482" y="570" width="170" height="42" rx="21"/>
+  </g>
+</svg>

@@ -4,3 +4,16 @@ DerivedData/
 *.xcuserstate
 xcuserdata/
 .swiftpm/
+
+# agent tooling artifacts
+.claude-flow/
+.swarm/
+.openclaw/
+.receipts/
+ruvector.db
+/AGENTS.md
+/HEARTBEAT.md
+/IDENTITY.md
+/SOUL.md
+/TOOLS.md
+/USER.md

@@ -1,0 +1,85 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .board { flex-direction: column; gap: 0; justify-content: flex-start; padding-top: 58px; }
+  .hd { text-align: center; color: rgba(40,28,18,.82); }
+  .hd h1 { font-size: 26px; font-weight: 700; letter-spacing: -.02em; }
+  .hd p { font-size: 14px; color: rgba(40,28,18,.6); margin-top: 4px; }
+  .concepts { display: flex; gap: 40px; margin-top: 34px; }
+  .card { width: 520px; padding: 26px 30px 26px; border-radius: 22px; background: rgba(255,255,255,.5);
+    -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px); box-shadow: 0 0 0 .5px rgba(0,0,0,.08), 0 12px 40px rgba(60,40,20,.1);
+    display: grid; grid-template-columns: 250px 1fr; gap: 22px; align-items: center; }
+  .card img.big { width: 250px; height: 250px; margin: -10px; width: 270px; height: 270px; }
+  .card h2 { font-size: 18px; font-weight: 700; }
+  .card .tag { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+  .card p { font-size: 13px; color: var(--label-2); margin-top: 6px; line-height: 1.5; }
+  .sizes { display: flex; align-items: flex-end; gap: 14px; margin-top: 16px; }
+  .sizes img { display: block; }
+  .sizes small { display: block; text-align: center; font-size: 10px; color: var(--label-3); margin-top: 3px; }
+  .glyph { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 11.5px; color: var(--label-2); }
+  .glyph .mb { height: 24px; padding: 0 8px; border-radius: 5px; background: rgba(0,0,0,.08); display: inline-flex; align-items: center; gap: 6px; }
+  .glyph .ic { width: 17px; height: 17px; color: rgba(0,0,0,.82); }
+  .dockwrap { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); }
+  .dock2 { display: flex; align-items: flex-end; gap: 6px; padding: 7px 9px; border-radius: 22px;
+    background: rgba(255,255,255,.32); -webkit-backdrop-filter: blur(40px) saturate(1.6); backdrop-filter: blur(40px) saturate(1.6);
+    box-shadow: 0 0 0 .5px rgba(0,0,0,.12), inset 0 0 0 .5px rgba(255,255,255,.4), 0 10px 30px rgba(0,0,0,.12); }
+  .dock2 .app { width: 64px; height: 64px; position: relative; }
+  .dock2 .app img { width: 64px; height: 64px; }
+  .dock2 .ph { width: 52px; height: 52px; margin: 6px; border-radius: 12px; display: grid; place-items: center; color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.15); }
+  .dock2 .ph .ic { width: 26px; height: 26px; }
+  .dock2 .run::after { content: ""; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: rgba(0,0,0,.55); }
+  .dock2 .div { width: .5px; height: 50px; background: rgba(0,0,0,.18); margin: 0 4px 7px; }
+  .dlabel { position: absolute; bottom: 84px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 600; color: rgba(40,28,18,.7); white-space: nowrap; }
+  .tipA, .tipB { position: absolute; top: -30px; font-size: 12px; padding: 3px 9px; border-radius: 6px; background: rgba(240,236,232,.9); box-shadow: 0 0 0 .5px rgba(0,0,0,.15), 0 4px 10px rgba(0,0,0,.1); white-space: nowrap; left: 50%; transform: translateX(-50%); }
+</style></head>
+<body><div class="desk board">
+  <div class="hd"><h1>EarBud app icon — two concepts</h1><p>Works with Fieldy 3. No Field Labs marks; both concepts are original artwork.</p></div>
+  <div class="concepts">
+    <div class="card">
+      <img class="big" src="../icon-a.svg">
+      <div>
+        <div class="tag">Concept A</div>
+        <h2>Bud</h2>
+        <p>A speech bud holding a short waveform. Reads as "voice" at any size and gives the menu-bar glyph its shape. Pine with a single warm clay bar.</p>
+        <div class="sizes">
+          <div><img src="../icon-a.svg" width="64"><small>64</small></div>
+          <div><img src="../icon-a.svg" width="32"><small>32</small></div>
+          <div><img src="../icon-a.svg" width="16"><small>16</small></div>
+        </div>
+        <div class="glyph"><span class="mb"><i class="ic" data-i="bud"></i></span> menu-bar glyph</div>
+      </div>
+    </div>
+    <div class="card">
+      <img class="big" src="../icon-b.svg">
+      <div>
+        <div class="tag">Concept B</div>
+        <h2>Voice to words</h2>
+        <p>Sound bars settle into lines of text inside a soft wristband ring. Says exactly what the app does: your voice, turned into words, on warm paper.</p>
+        <div class="sizes">
+          <div><img src="../icon-b.svg" width="64"><small>64</small></div>
+          <div><img src="../icon-b.svg" width="32"><small>32</small></div>
+          <div><img src="../icon-b.svg" width="16"><small>16</small></div>
+        </div>
+        <div class="glyph"><span class="mb"><i class="ic" data-i="waveform"></i></span> menu-bar glyph</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:40px;margin-top:28px">
+    <div style="width:520px;height:132px;border-radius:22px;background:#1D2124;box-shadow:0 12px 40px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;gap:30px;color:rgba(255,255,255,.5);font-size:12px">
+      <img src="../icon-a.svg" width="104"><img src="../icon-a.svg" width="52"><span>on a dark desktop</span></div>
+    <div style="width:520px;height:132px;border-radius:22px;background:#1D2124;box-shadow:0 12px 40px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;gap:30px;color:rgba(255,255,255,.5);font-size:12px">
+      <img src="../icon-b.svg" width="104"><img src="../icon-b.svg" width="52"><span>on a dark desktop</span></div>
+  </div>
+  <div class="dockwrap">
+    <div class="dock2">
+      <div class="app"><div class="ph" style="background:linear-gradient(#6FA8DC,#3D79C2)"><i class="ic" data-i="folder"></i></div></div>
+      <div class="app"><div class="ph" style="background:linear-gradient(#F3B26B,#E2853A)"><i class="ic" data-i="doc"></i></div></div>
+      <div class="app run"><img src="../icon-a.svg"><span class="tipA">EarBud (A)</span></div>
+      <div class="app"><div class="ph" style="background:linear-gradient(#9FD18B,#5EA84D)"><i class="ic" data-i="bell"></i></div></div>
+      <div class="app run"><img src="../icon-b.svg"><span class="tipB">EarBud (B)</span></div>
+      <div class="app"><div class="ph" style="background:linear-gradient(#B9A3E3,#8467C4)"><i class="ic" data-i="moon"></i></div></div>
+      <div class="div"></div>
+      <div class="app"><div class="ph" style="background:linear-gradient(#E9E6E2,#CFCAC4);color:#6b655e"><i class="ic" data-i="trash"></i></div></div>
+    </div>
+  </div>
+</div></body></html>
