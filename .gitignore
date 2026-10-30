@@ -4,6 +4,8 @@ DerivedData/
 *.xcuserstate
 xcuserdata/
 .swiftpm/
+*.log
+/screenshots/
 
 # agent tooling artifacts
 .claude-flow/

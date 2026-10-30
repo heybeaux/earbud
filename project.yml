@@ -1,0 +1,63 @@
+name: EarBud
+options:
+  bundleIdPrefix: dev.heybeaux
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    ARCHS: arm64
+    ONLY_ACTIVE_ARCH: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    DEAD_CODE_STRIPPING: YES
+    SWIFT_STRICT_CONCURRENCY: complete
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  EarBud:
+    type: application
+    platform: macOS
+    sources:
+      - path: EarBud
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.heybeaux.earbud
+        PRODUCT_NAME: EarBud
+        INFOPLIST_FILE: EarBud/Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_ENTITLEMENTS: EarBud/Resources/EarBud.entitlements
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "-"
+        ENABLE_HARDENED_RUNTIME: YES
+        COMBINE_HIDPI_IMAGES: YES
+  EarBudTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: EarBudTests
+    dependencies:
+      - target: EarBud
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.heybeaux.earbud.tests
+        GENERATE_INFOPLIST_FILE: YES
+        BUNDLE_LOADER: $(TEST_HOST)
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/EarBud.app/Contents/MacOS/EarBud
+        CODE_SIGN_IDENTITY: "-"
+schemes:
+  EarBud:
+    build:
+      targets:
+        EarBud: all
+        EarBudTests: [test]
+    test:
+      targets:
+        - EarBudTests
+      gatherCoverageData: false
+    run:
+      config: Debug
