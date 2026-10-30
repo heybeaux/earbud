@@ -1,0 +1,62 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .menubar .r { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+  .menubar .mi .ic.bud { width: 18px; height: 18px; }
+  .notif { top: 42px; right: 14px; width: 384px; grid-template-columns: 38px 1fr auto; }
+  .notif .when { padding-top: 1px; }
+  .notif .xbtn { position: absolute; left: -7px; top: -7px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; color: rgba(0,0,0,0.6);
+    background: rgba(246,243,240,0.92); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 0 0 0.5px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.12); }
+  .notif .xbtn .ic { width: 9px; height: 9px; }
+  .notif .opt { align-self: center; height: 22px; padding: 0 9px; border-radius: 6px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.06); color: var(--label); }
+  .notif .opt .ic { width: 10px; height: 10px; }
+  .cursor { position: absolute; z-index: 40; width: 17px; height: 25px; }
+  .explain { position: absolute; top: 160px; right: 30px; width: 340px; font-size: 12.5px; line-height: 1.45; color: rgba(40,30,20,0.75); display: flex; flex-direction: column; gap: 8px; }
+  .explain .cap { align-self: flex-start; }
+  .prefcard { position: absolute; left: 40px; bottom: 40px; width: 470px; background: #F6F5F3; border-radius: 12px; padding: 14px 16px 12px; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.25), 0 20px 50px rgba(30,20,10,0.28); }
+  .prefcard h3 { font-size: 13px; font-weight: 700; margin: 0 0 8px 2px; }
+  .prefcard .group { background: var(--content); }
+  .prefcard .row { min-height: 40px; }
+</style></head>
+<body><div class="desk">
+  <div class="menubar">
+    <span class="mi"><i class="ic apple" data-i="apple"></i></span>
+    <span class="mi app">Finder</span><span class="mi">File</span><span class="mi">Edit</span><span class="mi">View</span><span class="mi">Go</span><span class="mi">Window</span><span class="mi">Help</span>
+    <span class="r">
+      <span class="mi"><i class="ic bud" data-i="bud"></i></span>
+      <span class="mi"><i class="ic" data-i="wifi"></i></span>
+      <span class="mi"><i class="ic" data-i="search"></i></span>
+      <span class="mi"><i class="ic" data-i="cc"></i></span>
+      <span class="mi">Sat 31 Oct&nbsp;&nbsp;7:00 PM</span>
+    </span>
+  </div>
+
+  <div class="notif">
+    <span class="xbtn"><i class="ic" data-i="x" data-w="2.6"></i></span>
+    <img src="../icon-a.svg" alt="">
+    <div>
+      <b>Time to sync your Fieldy</b>
+      <p>Your last sync was yesterday at 1:40 PM. Click to sync now.</p>
+    </div>
+    <span class="opt">Options<i class="ic" data-i="chevd" data-w="2.4"></i></span>
+  </div>
+  <svg class="cursor" style="left:1338px;top:106px" viewBox="0 0 17 25"><path d="M1.5 1.5v19.2l4.6-4.4 3 7 3.3-1.4-3-6.9h6.4z" fill="#000" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+
+  <div class="explain" style="top:168px">
+    <span class="cap"><span class="n">1</span>Click the banner</span>
+    <span>EarBud opens and starts syncing right away. The notch dock and menu-bar icon show the progress, the same as any other sync.</span>
+    <span class="cap" style="margin-top:8px"><span class="n">2</span>Options</span>
+    <span><b>Sync now</b> or <b>Open EarBud</b>. Closing the banner just dismisses it; the next reminder comes at the same time tomorrow.</span>
+    <span class="cap" style="margin-top:8px"><span class="n">3</span>Already synced today?</span>
+    <span>Then no reminder is sent.</span>
+  </div>
+
+  <div class="prefcard">
+    <h3>Sync reminder</h3>
+    <div class="group">
+      <div class="row"><span class="ricon"><i class="ic" data-i="bell"></i></span><div class="lbl"><b>Remind me to sync</b><small>Sends a notification. Click it to start a sync.</small></div><span class="toggle on"></span></div>
+      <div class="row sub"><div class="lbl">Remind me when it's been</div><span class="popup">1 day without a sync<span class="chev"><i class="ic" data-i="updown" data-w="2.4"></i></span></span></div>
+      <div class="row sub"><div class="lbl">At</div><span class="popup">7:00 PM<span class="chev"><i class="ic" data-i="updown" data-w="2.4"></i></span></span></div>
+    </div>
+  </div>
+</div></body></html>
