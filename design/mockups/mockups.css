@@ -280,6 +280,19 @@ mark.cur { background: #FFCC1F; box-shadow: 0 0 0 1.5px #F2B600, 0 1px 3px rgba(
 .readback { font-size: 11px; color: var(--label-3); display: inline-flex; align-items: center; gap: 4px; }
 .readback .ic { width: 11px; height: 11px; color: var(--green); }
 
+/* ---------- Settings window ---------- */
+.behind { position: absolute; inset: 0; width: 1440px; height: 900px; border: 0; }
+.prefs { position: absolute; z-index: 2; background: #F6F5F3; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.6), 0 30px 80px rgba(30,20,10,0.38), 0 10px 26px rgba(30,20,10,0.16); }
+.prefs .titlebar { border-bottom: 0.5px solid var(--sep-strong); background: rgba(240,238,235,0.9); }
+.prefs .form { padding: 18px 24px 20px; gap: 16px; }
+.prefs .group { background: var(--content); }
+.prefs .row { min-height: 40px; }
+.size { font-size: 11.5px; color: var(--label-2); white-space: nowrap; }
+.installed { font-size: 11.5px; font-weight: 600; color: #23803C; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.installed .ic { width: 13px; height: 13px; }
+.rec-tag { font-size: 10.5px; font-weight: 600; color: var(--accent); background: var(--accent-tint); border-radius: 4px; padding: 1px 5px; margin-left: 6px; vertical-align: 1px; }
+.row.sub { padding-left: 42px; }
+
 /* ---------- Detail ---------- */
 .dhead { padding: 22px 32px 14px; display: flex; align-items: flex-start; gap: 12px; }
 .dhead h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
