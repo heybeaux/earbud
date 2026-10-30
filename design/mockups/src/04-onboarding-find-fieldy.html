@@ -1,0 +1,64 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .tips { text-align: left; width: 100%; max-width: 470px; margin-top: 18px; }
+  .tips .tt { font-size: 12px; font-weight: 600; color: var(--label-2); margin: 0 0 8px 2px; }
+  .tips .row { min-height: 36px; padding: 7px 12px; font-size: 13px; }
+  .tips .row .ic { width: 16px; height: 16px; color: var(--accent); }
+  .devlist { width: 100%; max-width: 470px; margin-top: 20px; text-align: left; }
+  .devlist .row { min-height: 52px; }
+  .devlist .row.pick { background: var(--accent-tint); border-radius: 9px; box-shadow: 0 0 0 1.5px var(--accent); }
+  .devlist .row .ic.sig { width: 18px; height: 18px; color: var(--label-2); }
+  .devlist .row .pod { width: 30px; height: 30px; border-radius: 8px; background: #2F3033; color: #fff; display: grid; place-items: center; }
+  .devlist .row .pod .ic { width: 18px; height: 18px; }
+  .devlist .woke { font-size: 11.5px; color: var(--accent); font-weight: 600; }
+</style></head>
+<body><div class="desk"><div class="pair">
+  <div>
+    <span class="cap"><span class="n">1</span> Searching, after 30 seconds</span>
+    <div class="win setup">
+      <div class="tl setup"></div><div class="titlebar"></div>
+      <div class="body">
+        <div class="art" style="height:150px;margin-bottom:8px"><div class="fieldy-art" data-w="190" data-radar="1"></div></div><div style="height:14px"></div>
+        <h1>Looking for your Fieldy…</h1>
+        <p class="lead">Keep your Fieldy close to this Mac. This can take a moment.</p>
+        <div class="tips">
+          <div class="tt">Still looking. Try these while EarBud keeps searching:</div>
+          <div class="group">
+            <div class="row"><i class="ic" data-i="hand"></i>Press the button on your Fieldy once to wake it.</div>
+            <div class="row"><i class="ic" data-i="plug"></i>Charge it for a few minutes if the light doesn't come on.</div>
+            <div class="row"><i class="ic" data-i="bt"></i>Turn off Bluetooth on your phone for now.</div>
+            <div class="row"><i class="ic" data-i="laptop"></i>Bring your Fieldy right next to this Mac.</div>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <div class="steps"><i class="done"></i><i class="done"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+        <span class="sp"></span>
+        <span class="waiting" style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--label-2)"><span class="spinner"></span>Searching</span>
+        <span class="btn lg">Back</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <span class="cap"><span class="n">2</span> More than one Fieldy nearby</span>
+    <div class="win setup">
+      <div class="tl setup"></div><div class="titlebar"></div>
+      <div class="body">
+        <div class="art" style="height:150px;margin-bottom:8px"><div class="fieldy-art" data-w="190" data-tap="1" data-led="#F2F2F2"></div></div>
+        <h1>Which Fieldy is yours?</h1>
+        <p class="lead">EarBud found 2 Fieldy devices nearby. Press the button on yours and it will light up here.</p>
+        <div class="devlist group">
+          <div class="row pick"><span class="pod"><i class="ic" data-i="pod"></i></span><div class="lbl"><b>Fieldy 3A7C</b><span class="woke">You just pressed this one</span></div><i class="ic sig" data-i="signal3"></i><span class="val" style="font-size:12px;width:72px">Very close</span></div>
+          <div class="row"><span class="pod" style="background:#8E8B86"><i class="ic" data-i="pod"></i></span><div class="lbl"><b>Fieldy 91E2</b><small>Farther away</small></div><i class="ic sig" data-i="signal1"></i><span class="val" style="font-size:12px;width:72px">Far</span></div>
+        </div>
+      </div>
+      <div class="foot">
+        <div class="steps"><i class="done"></i><i class="done"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+        <span class="sp"></span>
+        <span class="btn lg">Back</span>
+        <span class="btn lg primary">Use Fieldy 3A7C</span>
+      </div>
+    </div>
+  </div>
+</div></div></body></html>

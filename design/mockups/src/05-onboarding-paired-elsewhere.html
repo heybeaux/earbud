@@ -1,0 +1,44 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .link-art { display: flex; align-items: center; gap: 10px; }
+  .phone { width: 64px; height: 118px; border-radius: 16px; background: linear-gradient(#3A3B3F, #222326); position: relative; box-shadow: 0 6px 14px rgba(42,26,10,.25); }
+  .phone::after { content: ""; position: absolute; inset: 5px; border-radius: 12px; background: linear-gradient(160deg, #E9DCCB, #C9B8A5); }
+  .chain { display: flex; align-items: center; gap: 5px; color: var(--orange); }
+  .chain i { width: 7px; height: 7px; border-radius: 50%; background: rgba(232,145,45,.5); }
+  .chain .ic { width: 26px; height: 26px; }
+  .lose { text-align: left; width: 100%; max-width: 480px; margin-top: 18px; }
+  .lose ul { margin: 6px 0 0 16px; }
+  .lose li { margin-top: 3px; }
+  .confirm { display: flex; align-items: center; gap: 9px; margin-top: 16px; font-size: 13px; font-weight: 500; text-align: left; width: 100%; max-width: 480px; padding-left: 2px; }
+</style></head>
+<body><div class="desk">
+  <div class="win setup" style="height:620px">
+    <div class="tl setup"></div><div class="titlebar"></div>
+    <div class="body">
+      <div class="art" style="height:150px;margin-bottom:12px">
+        <div class="link-art">
+          <div class="fieldy-art" data-w="200" data-badge="warn"></div>
+          <div class="chain"><i></i><i></i><i></i></div>
+          <div class="phone"></div>
+        </div>
+      </div>
+      <h1>This Fieldy is paired with another device</h1>
+      <p class="lead">A Fieldy can only pair with one device at a time. Yours is probably still paired with your phone. To use it with this Mac, you'll need to reset it.</p>
+      <div class="callout warn lose"><i class="ic" data-i="warn"></i><div><b>Before you reset</b>
+        <ul>
+          <li>Any recordings still on your Fieldy will be <b>erased</b>.</li>
+          <li>Your Fieldy will <b>disconnect from the Fieldy phone app</b>.</li>
+        </ul>
+        <div style="margin-top:6px;color:var(--label-2)">If you want to keep those recordings, sync them in the phone app first, then come back.</div>
+      </div></div>
+      <label class="confirm"><span class="check on"><i class="ic" data-i="check" data-w="3"></i></span>I understand. Erase and reset my Fieldy.</label>
+    </div>
+    <div class="foot">
+      <div class="steps"><i class="done"></i><i class="done"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+      <span class="sp"></span>
+      <span class="btn lg">Not now</span>
+      <span class="btn lg primary">Show reset steps</span>
+    </div>
+  </div>
+</div></body></html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .seq { display: grid; grid-template-columns: 1fr 26px 1fr 26px 1fr; align-items: start; width: 100%; margin-top: 4px; }
+  .stp { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .stp .n { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: .05em; text-transform: uppercase; margin-top: 4px; }
+  .stp b { font-size: 14px; font-weight: 700; margin-top: 2px; }
+  .stp span { font-size: 12px; color: var(--label-2); line-height: 1.35; margin-top: 2px; }
+  .arrow { color: var(--label-3); padding-top: 52px; display: grid; place-items: center; }
+  .arrow .ic { width: 18px; height: 18px; }
+  .timer { position: relative; }
+  .timer .sec { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); margin-top: 14px; font-size: 13px; font-weight: 800; color: #fff; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-tint); padding: 2px 8px; border-radius: 99px; margin-top: 6px; }
+  .colors { display: flex; gap: 5px; justify-content: center; margin-top: 6px; }
+  .colors i { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 6px currentColor; }
+  .waitrow { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--label-2); margin-top: 22px; }
+  .help h2 { font-size: 17px; font-weight: 700; text-align: left; }
+  .help p { font-size: 13px; line-height: 1.5; color: var(--label); text-align: left; margin-top: 8px; }
+  .help .cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .help .cmp > div { border-radius: 10px; padding: 10px 12px; text-align: left; font-size: 12px; line-height: 1.4; }
+  .help .cmp b { display: block; font-size: 12.5px; margin-bottom: 3px; }
+  .help ul { text-align: left; margin: 8px 0 0 18px; font-size: 12.5px; line-height: 1.6; color: var(--label); }
+</style></head>
+<body><div class="desk"><div class="pair">
+  <div>
+    <span class="cap"><span class="n">1</span> Reset steps</span>
+    <div class="win setup">
+      <div class="tl setup"></div><div class="titlebar"></div>
+      <div class="body" style="padding:0 34px">
+        <h1 style="margin-top:2px">Reset your Fieldy</h1>
+        <p class="lead" style="margin-bottom:20px">Follow these three steps. Keep your Fieldy near this Mac.</p>
+        <div class="seq">
+          <div class="stp">
+            <div class="fieldy-art" data-w="150" data-tap="1"></div>
+            <div class="n">Step 1</div><b>Click once, quickly</b>
+            <span>A short click.<br>Let go in under 1 second.</span>
+            <span class="chip">under 1 s</span>
+          </div>
+          <div class="arrow"><i class="ic" data-i="chevr"></i></div>
+          <div class="stp">
+            <div class="timer"><div class="fieldy-art" data-w="150" data-ring="0.7"></div></div>
+            <div class="n">Step 2</div><b>Then press and hold</b>
+            <span>Straight away. Keep holding for 10 seconds.</span>
+            <span class="chip">hold 10 s</span>
+          </div>
+          <div class="arrow"><i class="ic" data-i="chevr"></i></div>
+          <div class="stp">
+            <div class="fieldy-art" data-w="150" data-led="#4C8DF6"></div>
+            <div class="n">Step 3</div><b>Hold until the light cycles</b>
+            <span>It shows 4 colours in turn. Then let go.</span>
+            <div class="colors"><i style="background:#E5483C;color:#E5483C"></i><i style="background:#2FA84F;color:#2FA84F"></i><i style="background:#4C8DF6;color:#4C8DF6"></i><i style="background:#F2F2F2;color:#bbb;box-shadow:0 0 0 .5px #bbb"></i></div>
+          </div>
+        </div>
+        <div class="waitrow"><span class="spinner"></span>Waiting for your Fieldy to come back…</div>
+      </div>
+      <div class="foot">
+        <div class="steps"><i class="done"></i><i class="done"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+        <span class="sp"></span>
+        <span class="btn lg">It didn't work</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <span class="cap"><span class="n">2</span> "It didn't work" help</span>
+    <div class="win setup">
+      <div class="tl setup"></div><div class="titlebar"></div>
+      <div class="body" style="padding:0 34px;opacity:.35;filter:saturate(.5)">
+        <h1 style="margin-top:2px">Reset your Fieldy</h1>
+        <p class="lead">Follow these three steps. Keep your Fieldy near this Mac.</p>
+      </div>
+      <div class="scrim" style="background:rgba(255,255,255,.35)"></div>
+      <div class="sheet help" style="width:540px;top:40px;border-radius:12px">
+        <h2>No problem, let's try again</h2>
+        <p>If the light came on once and your Fieldy just restarted, the first short click was missed. That's the most common slip.</p>
+        <div class="cmp">
+          <div style="background:rgba(229,72,60,.08);box-shadow:0 0 0 .5px rgba(229,72,60,.25)"><b>Restarted only</b>Light came on once, no colours. The click was too long, or the hold started too late.</div>
+          <div style="background:rgba(47,168,79,.08);box-shadow:0 0 0 .5px rgba(47,168,79,.25)"><b>Reset worked</b>The light cycled through 4 colours. EarBud will find it in a moment.</div>
+        </div>
+        <ul>
+          <li>Click and let go <b>in under 1 second</b>, then press and hold <b>straight away</b>.</li>
+          <li>Keep holding a full <b>10 seconds</b>. Count it out.</li>
+          <li>Nothing at all? Charge your Fieldy for a few minutes and try again.</li>
+        </ul>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px">
+          <span class="btn lg">Show steps again</span>
+          <span class="btn lg primary">Try again</span>
+        </div>
+      </div>
+      <div class="foot" style="margin-top:auto;opacity:.4">
+        <span class="sp"></span><span class="btn lg">It didn't work</span>
+      </div>
+    </div>
+  </div>
+</div></div></body></html>

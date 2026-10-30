@@ -1,0 +1,50 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .prev { display: flex; gap: 16px; }
+  .pv { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 11.5px; color: var(--label-2); font-weight: 500; }
+  .scr { width: 262px; height: 150px; border-radius: 12px 12px 0 0; position: relative; overflow: hidden; border: 5px solid #1A1A1C; border-bottom: 0;
+    background: radial-gradient(260px 160px at 20% 10%, #F2E2CC, transparent), radial-gradient(260px 200px at 90% 90%, #9CB3A6, transparent), linear-gradient(160deg, #EAD6C0, #C8AE98 60%, #9CB3A6); }
+  .scr .mb { position: absolute; top: 0; left: 0; right: 0; height: 18px; background: rgba(246,238,228,.55); font-size: 8px; display: flex; align-items: center; padding: 0 7px; gap: 8px; color: rgba(0,0,0,.75); }
+  .scr .mb .r { margin-left: auto; display: flex; gap: 7px; align-items: center; }
+  .scr .mb .ic { width: 9px; height: 9px; }
+  .scr .nt { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: #000; border-radius: 0 0 7px 7px; height: 18px; }
+  .scr .nt.dockr { width: 104px; display: flex; align-items: center; justify-content: space-between; padding: 0 7px; color: #fff; font-size: 7.5px; font-weight: 700; }
+  .scr .nt.dockr .dot { width: 5px; height: 5px; box-shadow: 0 0 4px rgba(47,168,79,.9); }
+  .scr .cam { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 84px; height: 18px; }
+  .scr .exp { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 190px; height: 112px; background: #000; border-radius: 0 0 14px 14px; color: #fff; padding: 22px 10px 8px; font-size: 7.5px; }
+  .exp .r1 { display: flex; align-items: center; gap: 4px; font-weight: 600; }
+  .exp .r1 .dot { width: 5px; height: 5px; }
+  .exp .r1 span { color: rgba(255,255,255,.55); font-weight: 500; }
+  .exp .bt { display: flex; gap: 4px; margin-top: 6px; }
+  .exp .bt i { flex: 1; height: 14px; border-radius: 4px; background: rgba(255,255,255,.14); display: grid; place-items: center; font-style: normal; font-weight: 600; }
+  .exp .bt i.p { background: var(--accent); }
+  .exp .tr { margin-top: 6px; padding: 5px 6px; border-radius: 5px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); line-height: 1.3; }
+  .tg { width: 100%; max-width: 470px; margin-top: 20px; text-align: left; }
+  .only { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; color: var(--label-2); background: var(--fill); padding: 3px 9px; border-radius: 99px; margin-bottom: 10px; }
+  .only .ic { width: 13px; height: 13px; }
+</style></head>
+<body><div class="desk">
+  <div class="win setup" style="height:620px">
+    <div class="tl setup"></div><div class="titlebar"></div>
+    <div class="body">
+      <div class="art" style="height:190px;margin-bottom:14px"><div class="prev">
+        <div class="pv"><div class="scr"><div class="mb"><b>Finder</b><span>File</span><span class="r"><span>1:48 PM</span></span></div><div class="nt dockr"><span class="dot"></span><span>2h</span></div></div>Resting: a status dot and time since last sync</div>
+        <div class="pv"><div class="scr"><div class="mb"><b>Finder</b><span>File</span><span>Edit</span></div>
+          <div class="exp"><div class="r1"><span class="dot"></span>Fieldy connected · 82% <span style="margin-left:auto">Synced 2h ago</span></div>
+            <div class="bt"><i class="p">Sync now</i><i>Record from Mac</i></div>
+            <div class="tr">"Okay so for Saturday, we meet at the seawall by the rowing club at seven…"</div></div></div>Hover: sync, record, newest transcript</div>
+      </div></div>
+      <span class="only"><i class="ic" data-i="laptop"></i>This MacBook has a camera notch</span>
+      <h1>Show EarBud in the notch?</h1>
+      <p class="lead">EarBud can sit quietly beside the camera notch. Glance up to see your Fieldy's status, or hover to sync.</p>
+      <div class="callout info tg"><i class="ic" data-i="info"></i><div>Off unless you turn it on. You can change it any time in Settings, under <b>Show EarBud in the notch</b>. The menu bar icon stays either way.</div></div>
+    </div>
+    <div class="foot">
+      <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="on"></i><i></i></div>
+      <span class="sp"></span>
+      <span class="btn lg">Not now</span>
+      <span class="btn lg primary">Turn on</span>
+    </div>
+  </div>
+</div></body></html>
