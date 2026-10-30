@@ -1,0 +1,109 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .menubar .r { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+  .menubar .mi .ic.bud { width: 18px; height: 18px; }
+  .caps { background: rgba(18,18,20,0.94); color: #fff; border-radius: 99px; height: 34px; display: inline-flex; align-items: center; gap: 9px; padding: 0 15px 0 13px; font-size: 12px; font-weight: 600;
+    box-shadow: 0 0 0 0.5px rgba(255,255,255,0.12) inset, 0 8px 24px rgba(0,0,0,0.28), 0 1px 3px rgba(0,0,0,0.2); white-space: nowrap; }
+  .caps .dot { width: 8px; height: 8px; box-shadow: 0 0 6px rgba(47,168,79,0.8); }
+  .caps .dim { color: rgba(255,255,255,0.55); font-weight: 500; }
+  .caps .sepv { width: 1px; height: 14px; background: rgba(255,255,255,0.18); }
+  .caps .ic { width: 15px; height: 15px; color: #6CC9B6; }
+  .caps .pb { width: 120px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.16); overflow: hidden; }
+  .caps .pb i { display: block; width: 68%; height: 100%; background: #3FA592; border-radius: 2px; }
+  .caps .rdot { width: 9px; height: 9px; border-radius: 50%; background: #FF453A; box-shadow: 0 0 0 3px rgba(255,69,58,0.25), 0 0 8px rgba(255,69,58,0.8); }
+  .caps .stopb { height: 22px; padding: 0 10px; border-radius: 99px; background: rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; margin-right: -9px; }
+  .caps .stopb .ic { width: 10px; height: 10px; color: #fff; }
+  .caps .ok { color: #3FC07A; }
+  .live { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); z-index: 5; }
+
+  .stage { position: absolute; top: 150px; left: 0; right: 0; display: flex; justify-content: center; gap: 56px; align-items: flex-start; }
+  .colx { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .lbl2 { font-size: 12px; color: rgba(40,30,20,0.62); margin-left: 4px; }
+
+  .panel { width: 432px; background: rgba(18,18,20,0.95); color: #fff; border-radius: 24px; padding: 14px 18px 16px; box-shadow: 0 0 0 0.5px rgba(255,255,255,0.12) inset, 0 20px 50px rgba(0,0,0,0.32); position: relative; }
+  .panel .hd { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.85); margin-bottom: 12px; }
+  .panel .hd .dot { width: 8px; height: 8px; box-shadow: 0 0 6px rgba(47,168,79,0.8); }
+  .r1 { display: grid; grid-template-columns: 30px 1fr auto; column-gap: 10px; align-items: center; }
+  .r1 .pod { grid-row: span 2; width: 30px; height: 30px; border-radius: 8px; background: rgba(63,165,146,0.22); color: #6CC9B6; display: grid; place-items: center; }
+  .r1 .pod .ic { width: 18px; height: 18px; }
+  .r1 b { font-size: 13px; font-weight: 600; }
+  .r1 small { font-size: 11.5px; color: rgba(255,255,255,0.55); display: flex; align-items: center; gap: 5px; }
+  .r1 .synced { grid-row: span 2; font-size: 11.5px; color: rgba(255,255,255,0.55); text-align: right; line-height: 1.3; }
+  .r1 .synced em { font-style: normal; color: rgba(255,255,255,0.85); display: block; }
+  .btns { display: flex; gap: 8px; margin-top: 13px; }
+  .bb { flex: 1; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 12.5px; font-weight: 600; background: rgba(255,255,255,0.12); color: #fff; }
+  .bb .ic { width: 14px; height: 14px; }
+  .bb.p { background: #3FA592; }
+  .bb .rd { width: 9px; height: 9px; border-radius: 50%; background: var(--red); }
+  .tr { margin-top: 10px; padding: 9px 11px; border-radius: 10px; background: rgba(255,255,255,0.07); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08); }
+  .tr .h { display: flex; font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600; margin-bottom: 3px; }
+  .tr .h span { margin-left: auto; color: #6CC9B6; display: flex; align-items: center; gap: 2px; }
+  .tr .h .ic { width: 10px; height: 10px; }
+  .tr p { font-size: 12px; line-height: 1.4; color: rgba(255,255,255,0.86); }
+
+  .prefcard { position: absolute; right: 40px; bottom: 40px; width: 470px; background: #F6F5F3; border-radius: 12px; padding: 14px 16px 12px; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.25), 0 20px 50px rgba(30,20,10,0.28); }
+  .prefcard h3 { font-size: 13px; font-weight: 700; margin: 0 0 8px 2px; }
+  .prefcard .group { background: var(--content); }
+  .prefcard .row { min-height: 40px; }
+  .prefcard .foot { font-size: 11.5px; color: var(--label-2); margin: 7px 2px 0; line-height: 1.4; }
+  .badge { position: absolute; left: 40px; bottom: 40px; }
+</style></head>
+<body><div class="desk">
+  <div class="menubar">
+    <span class="mi"><i class="ic apple" data-i="apple"></i></span>
+    <span class="mi app">Finder</span><span class="mi">File</span><span class="mi">Edit</span><span class="mi">View</span><span class="mi">Go</span><span class="mi">Window</span><span class="mi">Help</span>
+    <span class="r">
+      <span class="mi"><i class="ic bud" data-i="bud"></i></span>
+      <span class="mi"><i class="ic" data-i="wifi"></i></span>
+      <span class="mi"><i class="ic" data-i="search"></i></span>
+      <span class="mi"><i class="ic" data-i="cc"></i></span>
+      <span class="mi">Fri 30 Oct&nbsp;&nbsp;2:03 PM</span>
+    </span>
+  </div>
+
+  <div class="live"><span class="caps"><span class="dot"></span>Fieldy 3A7C<span class="sepv"></span><span class="dim">Synced 23m ago</span></span></div>
+
+  <div class="stage">
+    <div class="colx">
+      <span class="cap"><span class="n">1</span>Hover or click: the capsule opens into the quick panel</span>
+      <div class="panel">
+        <div class="hd"><span class="dot"></span><span>Synced 23m ago</span></div>
+        <div class="r1">
+          <span class="pod"><i class="ic" data-i="pod"></i></span>
+          <b>Fieldy 3A7C</b>
+          <span class="synced">Last synced<em>Today, 1:40 PM</em></span>
+          <small><span class="dot" style="width:7px;height:7px"></span>Connected · battery 82%</small>
+        </div>
+        <div class="btns">
+          <span class="bb p"><i class="ic" data-i="sync" data-w="2"></i>Sync now</span>
+          <span class="bb"><span class="rd"></span>Record from Mac</span>
+        </div>
+        <div class="tr">
+          <div class="h">Newest · Run club planning · 1:12 PM<span>Open<i class="ic" data-i="chevr" data-w="2.4"></i></span></div>
+          <p>Okay, so for Saturday we meet at the seawall by the rowing club at seven, not six-thirty.</p>
+        </div>
+      </div>
+    </div>
+    <div class="colx">
+      <span class="cap"><span class="n">2</span>Live activity, without opening it</span>
+      <span class="lbl2" style="margin-top:6px">While syncing</span>
+      <span class="caps"><i class="ic" data-i="sync" data-w="2"></i>Syncing<span class="pb"><i></i></span><span class="dim">2 of 3</span></span>
+      <span class="lbl2" style="margin-top:6px">When done, for 5 seconds</span>
+      <span class="caps"><i class="ic ok" data-i="checkc"></i>3 new recordings</span>
+      <span class="lbl2" style="margin-top:6px">Recording from the Mac (hovered)</span>
+      <span class="caps"><span class="rdot"></span>Recording<span class="dim" style="color:#fff;font-weight:600">03:42</span><span class="stopb"><i class="ic" data-i="stop"></i>Stop</span></span>
+    </div>
+  </div>
+
+  <span class="cap badge"><i class="ic" data-i="display" style="width:15px;height:15px"></i>External display · no camera notch</span>
+
+  <div class="prefcard">
+    <h3>Notch dock</h3>
+    <div class="group">
+      <div class="row"><span class="ricon"><i class="ic" data-i="laptop"></i></span><div class="lbl"><b>Show EarBud in the notch</b></div><span class="toggle on"></span></div>
+      <div class="row sub"><div class="lbl">Show it on</div><span class="popup">External display · 27-inch<span class="chev"><i class="ic" data-i="updown" data-w="2.4"></i></span></span></div>
+    </div>
+    <p class="foot">On a screen without a notch, EarBud floats a small capsule at the top centre instead. If this display is unplugged, it moves back to your MacBook.</p>
+  </div>
+</div></body></html>
