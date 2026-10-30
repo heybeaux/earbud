@@ -21,67 +21,115 @@ struct TestHostApp: App {
     }
 }
 
+/// The app's scenes. The model is only read inside child views and commands, not in this body,
+/// so a model change doesn't re-run the whole scene graph and rebuild the main menu.
 struct EarBudApp: App {
     static let mainWindowID = "main"
 
-    @State private var model = AppModel.fixture()
+    @State private var model: AppModel
     @AppStorage(SettingsKey.showInMenuBar) private var showInMenuBar = true
-    @AppStorage(SettingsKey.showInNotch) private var showInNotch = true
-    @AppStorage(SettingsKey.notchDisplay) private var notchDisplay = ""
-    @AppStorage(SettingsKey.reminderEnabled) private var reminderEnabled = true
-    @AppStorage(SettingsKey.reminderDays) private var reminderDays = 1
-    @AppStorage(SettingsKey.reminderTime) private var reminderTime = 19 * 60
+
+    init() {
+        let model = AppModel.fixture()
+        _model = State(initialValue: model)
+        #if DEBUG
+        DebugSnapshot.runIfRequested(model: model)
+        #endif
+    }
 
     var body: some Scene {
         Window("EarBud", id: Self.mainWindowID) {
             MainWindow()
+                .modifier(LaterFeaturesHost())
                 .environment(model)
-                .onAppear {
-                    if Onboarding.isNeeded { Onboarding.start() }
-                    updateLaterFeatures()
-                }
-                .onChange(of: showInNotch) { updateLaterFeatures() }
-                .onChange(of: notchDisplay) { updateLaterFeatures() }
-                .onChange(of: reminderEnabled) { updateLaterFeatures() }
-                .onChange(of: reminderDays) { updateLaterFeatures() }
-                .onChange(of: reminderTime) { updateLaterFeatures() }
-                .onChange(of: model.deviceState?.lastSynced) { updateLaterFeatures() }
         }
         .defaultSize(width: Metrics.windowWidth, height: Metrics.windowHeight)
         .windowToolbarStyle(.unified)
-        .commands {
-            CommandGroup(replacing: .newItem) {}
-            CommandMenu("Fieldy") {
-                Button("Sync Now") { model.syncNow() }
-                    .keyboardShortcut("s", modifiers: .command)
-                    .disabled(model.sync.isRunning)
-                Button(model.isRecordingOnDevice ? "Stop Recording" : "Record from Mac") {
-                    Task { await model.toggleRecording() }
-                }
-                .keyboardShortcut("r", modifiers: .command)
-                Divider()
-                Button("Show My Fieldy") { model.sidebar = .device }
-                    .keyboardShortcut("2", modifiers: .command)
-                Button("Show Recordings") { model.sidebar = .recordings }
-                    .keyboardShortcut("1", modifiers: .command)
-            }
-        }
+        .commands { FieldyCommands(model: model) }
 
         Settings {
             SettingsView()
                 .environment(model)
         }
 
-        MenuBarExtra(isInserted: $showInMenuBar) {
+        MenuBarExtra(isInserted: menuBarInserted) {
             MenuBarMenu()
                 .environment(model)
         } label: {
-            Image(nsImage: MenuBarGlyph.image(for: model.menuBarState))
+            MenuBarLabel(model: model)
         }
         .menuBarExtraStyle(.window)
     }
 
-    private func updateLaterFeatures() {
+    /// MenuBarExtra writes `isInserted` back on every scene update. Writing the same value to
+    /// UserDefaults still invalidates @AppStorage, which re-ran this body forever, so only write changes.
+    private var menuBarInserted: Binding<Bool> {
+        Binding(get: { showInMenuBar }, set: { if $0 != showInMenuBar { showInMenuBar = $0 } })
+    }
+}
+
+/// The Fieldy menu in the menu bar of the app.
+private struct FieldyCommands: Commands {
+    let model: AppModel
+
+    var body: some Commands {
+        CommandGroup(replacing: .newItem) {}
+        CommandMenu("Fieldy") { FieldyMenuItems(model: model) }
+    }
+}
+
+private struct FieldyMenuItems: View {
+    let model: AppModel
+
+    var body: some View {
+        Button("Sync Now") { _ = model.syncNow() }
+            .keyboardShortcut("s", modifiers: .command)
+            .disabled(model.sync.isRunning)
+        Button(model.isRecordingOnDevice ? "Stop Recording" : "Record from Mac") {
+            Task { await model.toggleRecording() }
+        }
+        .keyboardShortcut("r", modifiers: .command)
+        Divider()
+        Button("Show My Fieldy") { model.sidebar = .device }
+            .keyboardShortcut("2", modifiers: .command)
+        Button("Show Recordings") { model.sidebar = .recordings }
+            .keyboardShortcut("1", modifiers: .command)
+    }
+}
+
+/// The menu bar icon: ready, syncing, recording or not nearby.
+private struct MenuBarLabel: View {
+    let model: AppModel
+
+    var body: some View {
+        Image(nsImage: MenuBarGlyph.image(for: model.menuBarState))
+    }
+}
+
+/// Keeps the later-feature stubs in step with Settings and the last sync.
+private struct LaterFeaturesHost: ViewModifier {
+    @Environment(AppModel.self) private var model
+    @AppStorage(SettingsKey.showInNotch) private var showInNotch = true
+    @AppStorage(SettingsKey.notchDisplay) private var notchDisplay = ""
+    @AppStorage(SettingsKey.reminderEnabled) private var reminderEnabled = true
+    @AppStorage(SettingsKey.reminderDays) private var reminderDays = 1
+    @AppStorage(SettingsKey.reminderTime) private var reminderTime = 19 * 60
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                if Onboarding.isNeeded { Onboarding.start() }
+                update()
+            }
+            .onChange(of: showInNotch) { update() }
+            .onChange(of: notchDisplay) { update() }
+            .onChange(of: reminderEnabled) { update() }
+            .onChange(of: reminderDays) { update() }
+            .onChange(of: reminderTime) { update() }
+            .onChange(of: model.deviceState?.lastSynced) { update() }
+    }
+
+    private func update() {
         NotchDockController.shared.update(enabled: showInNotch, displayName: notchDisplay.isEmpty ? nil : notchDisplay)
         SyncReminderScheduler.shared.reschedule(enabled: reminderEnabled, afterDays: reminderDays, atMinutes: reminderTime,
                                                 lastSynced: model.deviceState?.lastSynced)

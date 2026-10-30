@@ -18,6 +18,7 @@
 		3AC8E096C22798F187EE38DB /* EarBudApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E960802D35E3A23096088A /* EarBudApp.swift */; };
 		3BE88C2F7862633B712F6C4D /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1A03CDABD8A32217E37868 /* Formatting.swift */; };
 		45FC226B67C6C6ACF956B94B /* PlaybackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48DD85F23F1C6D196392DA03 /* PlaybackController.swift */; };
+		47059E24752497563BB07780 /* DebugSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0A8DD06E42B772D96238C7 /* DebugSnapshot.swift */; };
 		49B88B12B6C4406B0C052C7B /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8ADB1ED57BD4F8FF5966B6 /* TestSupport.swift */; };
 		4ABCE9FA68CA5920343D7D2F /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364896D3D4D26A8B7F455FCE /* AppModel.swift */; };
 		585068AB57E1CB3EAAFEFF6D /* EmptyLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DE8A181AA911D6372EBEB6 /* EmptyLibraryView.swift */; };
@@ -101,6 +102,7 @@
 		B8423C975702EE180DF0C0E9 /* DeviceAndSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAndSyncTests.swift; sourceTree = "<group>"; };
 		B8486A3319ED0EF41684840A /* LibraryGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryGrouping.swift; sourceTree = "<group>"; };
 		B95747EA4B28E49985AF930D /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		BD0A8DD06E42B772D96238C7 /* DebugSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSnapshot.swift; sourceTree = "<group>"; };
 		D06FB9A79C27D917D7C0C853 /* FixtureData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureData.swift; sourceTree = "<group>"; };
 		DEB04E524407C9997D8BE3A8 /* RecordingList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingList.swift; sourceTree = "<group>"; };
 		E846D702DC3D0B6BD8FD667F /* LaterFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaterFeatures.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 		4CBFB7071F97A8D55B209601 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				BD0A8DD06E42B772D96238C7 /* DebugSnapshot.swift */,
 				15E960802D35E3A23096088A /* EarBudApp.swift */,
 				E846D702DC3D0B6BD8FD667F /* LaterFeatures.swift */,
 			);
@@ -373,6 +376,7 @@
 			files = (
 				4ABCE9FA68CA5920343D7D2F /* AppModel.swift in Sources */,
 				63FD7D414BB458EC8C702066 /* Components.swift in Sources */,
+				47059E24752497563BB07780 /* DebugSnapshot.swift in Sources */,
 				B3B3E6D65ACBD26C7E655414 /* DevicePanel.swift in Sources */,
 				3AC8E096C22798F187EE38DB /* EarBudApp.swift in Sources */,
 				585068AB57E1CB3EAAFEFF6D /* EmptyLibraryView.swift in Sources */,
