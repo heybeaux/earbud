@@ -1,0 +1,181 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .desk.tall { gap: 36px; padding: 44px 0 50px; }
+  .vrow { display: flex; gap: 30px; align-items: flex-start; }
+  .vig { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 410px; }
+  .vig .win { width: 410px; height: 330px; }
+  .vig .listcol { width: 100%; border-right: 0; }
+  .rec.ring { box-shadow: inset 0 0 0 2px var(--accent) !important; }
+  .rec.ring + .rec { box-shadow: none; }
+  .menu { width: 288px; }
+  .menu .it .ic { width: 15px; height: 15px; color: var(--label-2); }
+  .menu .it.hl .ic { color: #fff; }
+  .vig .menu { left: 150px; top: 112px; }
+  .cursor { position: absolute; z-index: 40; width: 16px; height: 23px; }
+  .alert { width: 300px; }
+  .alert .aicon { width: 56px; height: 56px; }
+  .alert p + p { margin-top: 6px; color: var(--label-2); }
+  .mainwrap { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; position: relative; }
+</style></head>
+<body><div class="desk tall">
+  <div class="vrow">
+    <!-- 1: context menu on a transcribed recording -->
+    <div class="vig">
+      <span class="cap"><span class="n">1</span>Right-click a transcribed recording</span>
+      <div class="win">
+        <div class="listcol">
+          <div class="day">Yesterday<span>2</span></div>
+          <div class="rec ring"><span class="t">Call with Dana about the deck</span><span class="m">4:30 PM · 12:05</span><span class="p">So the boards came in, but the stain is back-ordered until the ninth, which pushes the second coat.</span><span class="st"><span class="src"><i class="ic" data-i="pod"></i>Fieldy</span></span></div>
+          <div class="rec"><span class="t untitled">9:15 AM</span><span class="m">2:40</span><span class="p">Gift idea for Maya: that ceramics class on Granville, the Thursday evening one. Check if it's still open.</span><span class="st"><span class="src"><i class="ic" data-i="pod"></i>Fieldy</span></span></div>
+        </div>
+      </div>
+      <div class="menu">
+        <div class="it"><i class="ic" data-i="play"></i>Play</div>
+        <div class="it"><i class="ic" data-i="copy"></i>Copy Transcript</div>
+        <div class="it"><i class="ic" data-i="share"></i>Export<i class="ic chr" data-i="chevr"></i></div>
+        <div class="it"><i class="ic" data-i="doc"></i>Rename…</div>
+        <div class="it"><i class="ic" data-i="retry"></i>Transcribe Again</div>
+        <hr>
+        <div class="it hl"><i class="ic" data-i="waveform"></i>Delete Audio, Keep Transcript</div>
+        <div class="it"><i class="ic" data-i="trash"></i>Delete Recording…<span class="k">⌘⌫</span></div>
+      </div>
+    </div>
+
+    <!-- 2: disabled while transcribing -->
+    <div class="vig">
+      <span class="cap"><span class="n">2</span>Not offered until the transcript is ready</span>
+      <div class="win">
+        <div class="listcol">
+          <div class="day">Yesterday<span>5</span></div>
+          <div class="rec ring"><span class="t">Panel discussion</span><span class="m">10:00 AM · 2:48:30</span><span class="p">Thanks everyone for coming out on a weeknight. Tonight we're talking about the future of the market…</span><span class="st"><span class="src"><i class="ic" data-i="doc"></i>Panel discussion.m4a</span></span><span class="st"><span class="pill run"><span class="spinner" style="width:10px;height:10px;border-width:1.5px"></span>Transcribing</span><span class="minibar" style="width:110px"><i style="width:23%"></i></span><span>23%</span></span></div>
+          <div class="rec"><span class="t">Lena Okafor follow-up</span><span class="m">3:40 PM · 38:12</span><span class="p muted">Transcript will appear here</span><span class="st"><span class="src"><i class="ic" data-i="doc"></i>Lena Okafor follow-up.wav</span></span></div>
+        </div>
+      </div>
+      <div class="menu" style="top:134px">
+        <div class="it"><i class="ic" data-i="play"></i>Play</div>
+        <div class="it dis"><i class="ic" data-i="copy"></i>Copy Transcript</div>
+        <div class="it"><i class="ic" data-i="share"></i>Export<i class="ic chr" data-i="chevr"></i></div>
+        <div class="it"><i class="ic" data-i="doc"></i>Rename…</div>
+        <hr>
+        <div class="it dis two"><i class="ic" data-i="waveform"></i><span>Delete Audio, Keep Transcript<span class="sub2">Available when the transcript is ready</span></span></div>
+        <div class="it"><i class="ic" data-i="trash"></i>Delete Recording…<span class="k">⌘⌫</span></div>
+      </div>
+      <svg class="cursor" style="left:332px;top:278px" viewBox="0 0 20 28"><path d="M2 2v20l5-5 3.5 8 3-1.3-3.4-7.8H17z" fill="#111" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- 3: confirmation -->
+    <div class="vig">
+      <span class="cap"><span class="n">3</span>Confirm</span>
+      <div class="win">
+        <div class="listcol">
+          <div class="day">Yesterday<span>2</span></div>
+          <div class="rec sel"><span class="t">Call with Dana about the deck</span><span class="m">4:30 PM · 12:05</span><span class="p">So the boards came in, but the stain is back-ordered until the ninth, which pushes the second coat.</span><span class="st"><span class="src"><i class="ic" data-i="pod"></i>Fieldy</span></span></div>
+          <div class="rec"><span class="t untitled">9:15 AM</span><span class="m">2:40</span><span class="p">Gift idea for Maya: that ceramics class on Granville, the Thursday evening one.</span></div>
+        </div>
+        <div class="scrim"></div>
+        <div class="alert">
+          <img class="aicon" src="../icon-a.svg" alt="">
+          <h2>Delete the audio of "Call with Dana about the deck"?</h2>
+          <p>The transcript stays in EarBud. The audio goes to Recently Deleted, where you can restore it for 30 days.</p>
+          <p>This frees about 9 MB.</p>
+          <div class="abtns"><span class="btn">Cancel</span><span class="btn primary" style="background:var(--red)">Delete Audio</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4: transcript-only detail -->
+  <div class="mainwrap">
+    <span class="cap"><span class="n">4</span>The recording stays, with its full transcript</span>
+    <div class="win" style="width:1340px;height:740px">
+      <div class="tl"></div>
+      <div class="split">
+        <aside class="sidebar">
+          <span class="tb-btn"><i class="ic" data-i="sidebar"></i></span>
+          <div class="side-h">Library</div>
+          <div class="side-i sel"><i class="ic" data-i="waveform"></i>Recordings<span class="ct">31</span></div>
+          <div class="side-i"><i class="ic" data-i="history"></i>Sync History</div>
+          <div class="side-i"><i class="ic" data-i="trash"></i>Recently Deleted<span class="ct">3</span></div>
+          <div class="side-h">Device</div>
+          <div class="side-i"><i class="ic" data-i="pod"></i>My Fieldy<span class="ct"><span class="dot"></span></span></div>
+          <div class="devcard">
+            <span class="pod"><i class="ic" data-i="pod"></i></span>
+            <b>Fieldy 3A7C</b>
+            <small><span class="dot"></span>Connected · 82%</small>
+            <div class="last">Last synced today at 1:40 PM</div>
+          </div>
+        </aside>
+        <div class="main">
+          <div class="toolbar">
+            <div class="ttl" style="width:300px"><b>Recordings</b><small>31 recordings</small></div>
+            <span class="sp"></span>
+            <span class="tb-btn text"><i class="ic" data-i="sync"></i>Sync</span>
+            <span class="search"><i class="ic" data-i="search"></i>Search transcripts</span>
+          </div>
+          <div class="cols">
+            <div class="listcol">
+              <div class="day">Today<span>4</span></div>
+              <div class="rec"><span class="t">Run club planning</span><span class="m">1:12 PM · 6:42</span><span class="p">Okay, so for Saturday we meet at the seawall by the rowing club at seven, not six-thirty.</span><span class="st"><span class="src"><i class="ic" data-i="pod"></i>Fieldy</span></span></div>
+              <div class="rec"><span class="t">Team sync</span><span class="m">11:04 AM · 47:10</span><span class="p">Right, let's start with the launch checklist, because the store screenshots are still the old ones.</span><span class="st"><span class="src"><i class="ic" data-i="doc"></i>Team sync.wav</span></span></div>
+              <div class="day">Yesterday<span>2</span></div>
+              <div class="rec sel"><span class="t">Call with Dana about the deck</span><span class="m">4:30 PM · 12:05</span><span class="p">So the boards came in, but the stain is back-ordered until the ninth, which pushes the second coat.</span><span class="st"><span class="src"><i class="ic" data-i="pod"></i>Fieldy</span><span class="pill tonly" style="margin-left:auto">Transcript only</span></span></div>
+              <div class="rec"><span class="t untitled">9:15 AM</span><span class="m">2:40</span><span class="p">Gift idea for Maya: that ceramics class on Granville, the Thursday evening one. Check if it's still open.</span><span class="st"><span class="src"><i class="ic" data-i="pod"></i>Fieldy</span></span></div>
+              <div class="day">Wednesday 28 October<span>3</span></div>
+              <div class="rec"><span class="t">Interview with Lena Okafor</span><span class="m">2:05 PM · 1:02:14</span><span class="p">My grandmother ran the bakery on that corner for thirty-one years, and she never once took a holiday.</span><span class="st"><span class="src"><i class="ic" data-i="doc"></i>REC_0042.WAV</span><span class="pill tonly" style="margin-left:auto">Transcript only</span></span></div>
+            </div>
+            <div class="detail">
+              <div class="dhead">
+                <div>
+                  <h1>Call with Dana about the deck</h1>
+                  <div class="sub">Thursday 29 October · 4:30 PM · 12 min 5 s</div>
+                  <div class="srcline">
+                    <span class="srcchip"><i class="ic" data-i="pod"></i>Fieldy</span>
+                    <span class="pill tonly" style="height:22px;padding:0 9px;font-size:12px">Transcript only</span>
+                  </div>
+                </div>
+                <div class="acts">
+                  <span class="tb-btn"><i class="ic" data-i="copy"></i></span>
+                  <span class="tb-btn hover" id="share"><i class="ic" data-i="share"></i></span>
+                  <span class="tb-btn"><i class="ic" data-i="more"></i></span>
+                </div>
+              </div>
+              <div class="noaudio">
+                <span class="ni"><i class="ic" data-i="waveform"></i></span>
+                <div style="max-width:350px"><b>Audio deleted</b><small>The transcript is kept. You can restore the audio from Recently Deleted until 29 November.</small></div>
+                <span class="btn">Show in Recently Deleted</span>
+              </div>
+              <div class="tx">
+                <div class="tx-h">Transcript</div>
+                <div class="segm"><span class="ts" style="color:var(--label-3)">00:00</span><span>So the boards came in, but the stain is back-ordered until the ninth, which pushes the second coat.</span></div>
+                <div class="segm"><span class="ts" style="color:var(--label-3)">00:18</span><span>I'd rather wait than use the darker one. Once it's on, it's on for ten years.</span></div>
+                <div class="segm"><span class="ts" style="color:var(--label-3)">00:34</span><span>Agreed. Can your guy do the railings in the meantime? Those don't need the stain until the very end.</span></div>
+                <div class="segm"><span class="ts" style="color:var(--label-3)">01:02</span><span>He can start Tuesday. He wants the old planters moved off the east side first, so that's a job for the weekend.</span></div>
+                <div class="segm"><span class="ts" style="color:var(--label-3)">01:27</span><span>Fine. And the invoice: half now, half when it's done? That's what we said in September.</span></div>
+                <div class="segm"><span class="ts" style="color:var(--label-3)">01:45</span><span>Yes. I'll send it tonight with the new dates so we both have it in writing.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="menu" id="smenu" style="width:300px">
+      <div class="it"><i class="ic" data-i="copy"></i>Copy Transcript<span class="k">⇧⌘C</span></div>
+      <hr>
+      <div class="it hl"><i class="ic" data-i="doc"></i>Export Transcript as Text…</div>
+      <div class="it"><i class="ic" data-i="doc"></i>Export Transcript as Markdown…</div>
+      <hr>
+      <div class="it dis two"><i class="ic" data-i="waveform"></i><span>Export Audio…<span class="sub2">The audio was deleted. Restore it to export.</span></span></div>
+    </div>
+  </div>
+</div>
+<script>
+  window.addEventListener("load", () => {
+    const wrap = document.querySelector(".mainwrap").getBoundingClientRect();
+    const b = document.getElementById("share").getBoundingClientRect();
+    const m = document.getElementById("smenu");
+    m.style.left = (b.right - wrap.left - 300 + 6) + "px";
+    m.style.top = (b.bottom - wrap.top + 4) + "px";
+  });
+</script>
+</body></html>
