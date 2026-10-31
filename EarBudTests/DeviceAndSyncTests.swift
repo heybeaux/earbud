@@ -73,7 +73,7 @@ final class SyncTests: XCTestCase {
         XCTAssertEqual(fractions.last, 1)
 
         let afterSync = try await fx.store.recordings()
-        XCTAssertEqual(afterSync.count, 27)
+        XCTAssertEqual(afterSync.count, 29)
         let device = await fx.device.snapshot()
         XCTAssertEqual(device.waitingCount, 0)
         XCTAssertEqual(device.lastSynced, TestClock.reference)
