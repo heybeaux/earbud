@@ -111,9 +111,9 @@ public enum FileHeader: Equatable, Sendable {
 /// Seen on device (2026-10-31): a 610 s file that the device closed itself
 /// had `2a 45 04 6a e6 01 be 00 00 23`, and the next file, stopped with the
 /// button, had `2a 45 01 6a e6 01 ea 00 00 23`. The u32 was the wall-clock
-/// end of each recording, and the next file's header time equalled the
-/// previous trailer's. The reason byte appears to use the recording-status
-/// stop reasons (1 manual, 4 file limit).
+/// end of each recording (the first file's header held its start, 606 s
+/// earlier). The reason byte appears to use the recording-status stop
+/// reasons (1 manual, 4 file limit).
 public struct FileTrailer: Equatable, Sendable {
     public var stopReason: UInt8
     /// UTC end time, nil if absent or implausible.

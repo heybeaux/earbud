@@ -236,6 +236,35 @@ struct SyncNotificationTests {
         #expect(!q.isEndOfFile)
     }
 
+    /// Device test 2026-10-31, sync 8: the reply to a mid-sync status read
+    /// became `raw/.../10818.bin` (10818 = 0x2A42 = "*B") holding exactly
+    /// these 13 bytes, the record's bytes 7-19 read as a v2 payload. Bytes 0-6
+    /// are rebuilt from the status layout (total size 0x0013F954 = 1,309,012
+    /// is also at bytes 10-13); byte 6 (0xF9) set the end-of-file flag.
+    static let phantomPayload = hex("54 00 00 00 13 f9 54 00 00 00 00 00 02")
+    static let statusReply = hex("2a 42 00 02 00 13 f9") + phantomPayload
+
+    @Test func statusRecordIsNeverFileData() throws {
+        let expected = try StorageStatus(parsing: Self.statusReply)
+        #expect(expected.totalFileSize == 1_309_012)
+        #expect(expected.maxTransportVersion == 2)
+        for v in 1...3 {
+            #expect(SyncNotification.parse(Self.statusReply, transportVersion: v) == .storageStatus(expected))
+        }
+        // What the old parser made of it.
+        #expect(Self.statusReply.count == 20)
+        #expect(Self.statusReply.dropFirst(SyncNotification.v2HeaderLength) == Self.phantomPayload)
+    }
+
+    @Test func otherStarBRecordsAreNeverFileData() {
+        for raw in [hex("2a 42 00 01 00 05 01 b8 01 02 03 04"), Data([0x2A, 0x42]) + Data(repeating: 0xB8, count: 493),
+                    Data([0x2A, 0x42]) + Data(repeating: 0, count: 245)] {
+            for v in 1...3 {
+                #expect(SyncNotification.parse(raw, transportVersion: v) == .unrecognized(raw))
+            }
+        }
+    }
+
     @Test func shortPacketsUnrecognized() {
         #expect(SyncNotification.parse(hex("00 01 00"), transportVersion: 2) == .unrecognized(hex("00 01 00")))
         let short = Data(repeating: 1, count: 100)
@@ -332,5 +361,49 @@ struct FileLayoutTests {
         let bad = Data([0x00] + [UInt8](repeating: 1, count: 39))
         let f = RecordingFile(parsing: Self.frame + bad)
         #expect(f.unexpectedTOCCount == 1)
+        #expect(f.skippedBytes == 0)
+    }
+
+    @Test func realTrailers() throws {
+        // Device test 2026-10-31: file 1 closed by the device at 14:57:02Z,
+        // file 2 stopped with the button at 14:57:46Z.
+        var a = FileHeader.makeV2(recordedAt: 0x6AE5_FF60, recordingId: 10) + Self.frame
+        a += hex("2a 45 04 6a e6 01 be 00 00 23")
+        let fa = RecordingFile(parsing: a)
+        #expect(fa.trailer == FileTrailer(stopReason: 4, endedAt: Date(timeIntervalSince1970: 0x6AE6_01BE)))
+        #expect(fa.frameCount == 1)
+        let fb = RecordingFile(parsing: Self.frame + hex("2a 45 01 6a e6 01 ea 00 00 23") + Data(repeating: 0, count: 5))
+        #expect(fb.trailer == FileTrailer(stopReason: 1, endedAt: Date(timeIntervalSince1970: 0x6AE6_01EA)))
+        let start = try #require(fb.startFromTrailer)
+        #expect(abs(start.timeIntervalSince1970 - (0x6AE6_01EA - 0.02)) < 1e-6)
+        // A zero time is "unknown", not 1970.
+        #expect(RecordingFile(parsing: Self.frame + hex("2a 45 00 00 00 00 00 00 00 23")).trailer?.endedAt == nil)
+    }
+
+    @Test func headerlessFileRegainsFrameAlignment() {
+        // The tail of a frame whose start was lost, then whole frames.
+        var file = Data(Self.frame.suffix(8))
+        for _ in 0..<5 { file += Self.frame }
+        file += hex("2a 45 01 6a e6 01 ea 00 00 23")
+        let f = RecordingFile(parsing: file)
+        #expect(f.header == nil)
+        #expect(f.skippedBytes == 8)
+        #expect(f.frameCount == 5)
+        #expect(f.unexpectedTOCCount == 0)
+        #expect(f.discardedBytes == 0)
+        #expect(f.hadTrailer)
+    }
+
+    @Test func lostPacketMidFileRegainsFrameAlignment() {
+        // A lost packet ends mid-frame, so the next packet starts with the
+        // rest of a frame (12 bytes here) before the next whole one.
+        var file = FileHeader.makeV2(recordedAt: 1_793_391_123, recordingId: 3)
+        for _ in 0..<3 { file += Self.frame }
+        file += Self.frame.suffix(12)
+        for _ in 0..<4 { file += Self.frame }
+        let f = RecordingFile(parsing: file)
+        #expect(f.frameCount == 7)
+        #expect(f.skippedBytes == 12)
+        #expect(f.unexpectedTOCCount == 0)
     }
 }

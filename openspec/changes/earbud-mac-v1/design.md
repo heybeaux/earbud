@@ -55,7 +55,10 @@ BLE in a web shell is fragile), Python GUI (poor packaging and look).
 handler. On EOF it renames `.part` to `.bin`, then (v3 only) sends the ACK.
 Decoding, library insertion, and transcription run only from the `.bin` file.
 On launch, any `.part` file is decoded up to its last whole frame and imported
-as "Incomplete". Raw files are deleted only after the decoded recording is
+as "Incomplete". The device keeps a file after an interrupted sync and sends it
+whole next time; the "Incomplete" copy then moves to Recently Deleted.
+`...66E1` is never read while its notifications are on (CoreBluetooth cannot
+tell the reply from a notification). Raw files are deleted only after the decoded recording is
 verified (frame count matches, M4A written) and 7 days have passed.
 Alternative considered: buffer in memory and write on EOF. Rejected because
 the device has already deleted the data by then.

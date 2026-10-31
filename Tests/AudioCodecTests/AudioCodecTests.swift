@@ -52,6 +52,21 @@ struct OpusTests {
         #expect(audio.failedFrames == 1)
     }
 
+    @Test func wrongLengthFrameIsConcealed() throws {
+        // The first 40 bytes of a headerless device file (2026-10-31): the tail
+        // of a frame, not a frame. TOC 0xE4 is a valid 2.5 ms packet, which
+        // libopus decodes to 40 samples; that used to fail the whole file
+        // with "frame 0 returned 40 samples".
+        let misaligned = Data(hex: "e4df8dac463686f2b82fde09f4df9fe0782c200028c391b9daf3f2780abe1ef585b1a13015b1c4fe")!
+        #expect(misaligned.count == 40)
+        let frames = misaligned + (try FieldyOpusEncoder().encode(tone(seconds: 0.2)))
+        let audio = try FieldyOpusDecoder.decode(frames: frames)
+        #expect(audio.frameCount == 11)
+        #expect(audio.samples.count == 11 * FieldyAudioFormat.samplesPerFrame)
+        #expect(audio.failedFrames == 1)
+        #expect(audio.unexpectedTOCFrames == 1)
+    }
+
     @Test func emptyInputThrows() {
         #expect(throws: AudioCodecError.noFrames) { try FieldyOpusDecoder.decode(frames: Data([0xB8, 1, 2])) }
     }

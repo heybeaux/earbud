@@ -98,7 +98,8 @@ let package = Package(
         .testTarget(name: "LibraryTests", dependencies: ["Library"]),
         .testTarget(
             name: "SyncEngineTests",
-            dependencies: ["SyncEngine", "FieldyProtocol", "AudioCodec", "Library", .product(name: "Copus", package: "swift-opus")]
+            dependencies: ["SyncEngine", "FieldyProtocol", "AudioCodec", "Library", .product(name: "Copus", package: "swift-opus")],
+            resources: [.copy("Fixtures")]
         ),
         .testTarget(name: "TranscriberTests", dependencies: ["Transcriber", "Library"]),
     ],

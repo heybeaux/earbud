@@ -27,7 +27,9 @@
 - [x] 4.2 Progress by bytes; sync history records
 - [x] 4.3 Crash recovery of `.part` files on launch
 - [x] 4.4 Opus to PCM to M4A; frame-count verification; raw cleanup after 7 days
-- [ ] 4.5 Test on device: interrupt mid-file (out of range, quit, sleep); document what the device keeps
+- [x] 4.5 Test on device: interrupt mid-file (out of range, quit, sleep); document what the device keeps
+  (docs/device-tests/interrupted-sync-20261031.md: the device keeps the file and resends it whole;
+  fixed a mid-sync status read that lost a packet and made a phantom file)
 
 ## 5. Transcription (EarBudKit/Transcriber)
 

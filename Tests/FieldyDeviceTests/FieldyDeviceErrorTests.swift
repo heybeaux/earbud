@@ -20,5 +20,7 @@ struct FieldyDeviceErrorTests {
     @Test func descriptions() {
         #expect(FieldyDeviceError.att(code: 0x0F, operation: "read 66E1").description == "ATT error 0x0F during read 66E1")
         #expect(FieldyDeviceError.pairedElsewhere.description == "This Fieldy is paired with another device")
+        #expect(FieldyDeviceError.readWhileNotifying("66E1").description == "cannot read 66E1 while its notifications are on")
+        #expect(!FieldyDeviceError.readWhileNotifying("66E1").isPairingFailure)
     }
 }
