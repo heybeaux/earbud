@@ -14,6 +14,24 @@ enum LibraryChange: Equatable, Sendable {
     case history
 }
 
+/// Why a Delete Audio / Restore Audio request was refused (EarBudKit `AudioRetentionError`).
+enum AudioActionError: Error, Equatable, Sendable {
+    /// Waiting, transcribing, failed or never transcribed: audio is the only copy of the words.
+    case transcriptNotReady
+    /// Restore asked for audio that is not in Recently Deleted.
+    case audioNotDeleted
+    /// The deleted audio was already removed for good.
+    case audioPurged
+}
+
+/// Storage space used by the library, for Settings > Storage (mockup 27).
+struct StorageSnapshot: Equatable, Sendable {
+    var recordingCount: Int
+    var audioBytes: Int
+    var transcriptBytes: Int
+    var recentlyDeletedBytes: Int
+}
+
 /// Recordings, transcripts, search, trash and sync history.
 protocol LibraryProviding: Sendable {
     /// Recordings not in Recently Deleted, newest first.
@@ -22,6 +40,8 @@ protocol LibraryProviding: Sendable {
     /// Recordings whose title or transcript contains `query`, newest first.
     func search(_ query: String) async throws -> [SearchResult]
     func recentlyDeleted() async throws -> [RecordingItem]
+    /// Recordings whose audio is in Recently Deleted (but the recording itself is not), newest first.
+    func recentlyDeletedAudio() async throws -> [RecordingItem]
     func syncHistory() async throws -> [SyncHistoryItem]
     func rename(_ recordingID: String, to title: String?) async throws
     func moveToTrash(_ recordingID: String) async throws
@@ -35,6 +55,17 @@ protocol LibraryProviding: Sendable {
     func changes() async -> AsyncStream<LibraryChange>
     /// Transcribes every recording waiting for a transcript; returns when the queue is empty.
     func transcribeWaiting() async
+    /// Moves audio to Recently Deleted, keeping the transcript. Throws `AudioActionError.transcriptNotReady`
+    /// if any recording's transcript isn't done yet; nothing moves in that case.
+    func deleteAudio(_ recordingIDs: [String]) async throws
+    /// Puts deleted audio back and restores playback.
+    func restoreAudio(_ recordingID: String) async throws
+    /// Empties Recently Deleted: every deleted recording and all deleted audio go now.
+    func emptyRecentlyDeleted() async throws
+    /// Current space used by audio, transcripts and Recently Deleted.
+    func storage() async throws -> StorageSnapshot
+    /// Moves audio older than `days` to Recently Deleted for every finished-transcript recording. For the Storage setting and the daily cleanup pass.
+    func cleanUpOldAudio(olderThanDays days: Int) async throws -> Int
 }
 
 extension LibraryProviding {

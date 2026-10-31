@@ -6,7 +6,7 @@ final class AppModelTests: XCTestCase {
     func testStartLoadsLibraryAndSelectsNewest() async {
         let model = Fixtures().model()
         await model.start()
-        XCTAssertEqual(model.recordings.count, 24)
+        XCTAssertEqual(model.recordings.count, 26)
         XCTAssertEqual(model.deleted.count, 2)
         XCTAssertEqual(model.selectedRecording?.title, "Run club planning")
         XCTAssertEqual(model.segments.count, 15)
@@ -66,9 +66,9 @@ final class AppModelTests: XCTestCase {
         XCTAssertEqual(model.sync, .idle)
         XCTAssertEqual(model.deviceState?.waitingCount, 0)
         XCTAssertEqual(model.history.count, historyBefore + 1)
-        XCTAssertEqual(model.recordings.count, 27)
+        XCTAssertEqual(model.recordings.count, 29)
         XCTAssertNil(model.copyingEntry)
-        XCTAssertEqual(model.listGroups.first?.items.count, 6)
+        XCTAssertEqual(model.listGroups.first?.items.count, 7)
         await fx.library.waitForTranscriptions()
     }
 
@@ -106,10 +106,10 @@ final class AppModelTests: XCTestCase {
         await model.start()
         let first = model.recordings[0].id
         await model.moveToTrash(first)
-        XCTAssertEqual(model.recordings.count, 23)
-        XCTAssertEqual(model.selectedRecording?.title, "Groceries")
+        XCTAssertEqual(model.recordings.count, 25)
+        XCTAssertEqual(model.selectedRecording?.title, "Team sync")
         await model.restore(first)
-        XCTAssertEqual(model.recordings.count, 24)
+        XCTAssertEqual(model.recordings.count, 26)
     }
 
     func testTranscriptText() async {

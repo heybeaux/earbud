@@ -47,7 +47,10 @@ struct EarBudApp: App {
         }
         .defaultSize(width: Metrics.windowWidth, height: Metrics.windowHeight)
         .windowToolbarStyle(.unified)
-        .commands { FieldyCommands(model: model) }
+        .commands {
+            FieldyCommands(model: model)
+            RecordingEditCommands(model: model)
+        }
 
         Window("Welcome to EarBud", id: Self.onboardingWindowID) {
             OnboardingHost(appModel: model)
@@ -105,12 +108,46 @@ private struct FieldyMenuItems: View {
     }
 }
 
+/// Edit menu additions for the selected recording (mockup 26: Delete Audio, Keep Transcript; ⌘⌫ Delete Recording…).
+private struct RecordingEditCommands: Commands {
+    let model: AppModel
+
+    var body: some Commands {
+        CommandGroup(after: .pasteboard) {
+            Divider()
+            Button("Delete Audio, Keep Transcript") {
+                if let id = model.selectedID { model.requestDeleteAudio([id]) }
+            }
+            .disabled(!canDeleteAudio)
+            Button("Delete Recording…") {
+                if let id = model.selectedID { Task { await model.moveToTrash(id) } }
+            }
+            .keyboardShortcut(.delete, modifiers: .command)
+            .disabled(model.selectedRecording == nil)
+        }
+    }
+
+    private var canDeleteAudio: Bool {
+        guard let recording = model.selectedRecording else { return false }
+        return !recording.isTranscriptOnly && recording.transcript.isFinished
+    }
+}
+
 /// The menu bar icon: ready, syncing, recording or not nearby.
 private struct MenuBarLabel: View {
     let model: AppModel
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         Image(nsImage: MenuBarGlyph.image(for: model.menuBarState))
+            .onAppear {
+                #if DEBUG
+                // Snapshot mode is menu-bar-first, so open the main window to capture it.
+                if UserDefaults.standard.string(forKey: "EarBudSnapshot") != nil {
+                    openWindow(id: EarBudApp.mainWindowID)
+                }
+                #endif
+            }
     }
 }
 

@@ -34,11 +34,15 @@ actor FixtureLibrary: LibraryProviding {
             let recordedAt = FixtureData.date(dayOffset: script.dayOffset, hour: script.hour, minute: script.minute, reference: reference, calendar: calendar)
             let segments = FixtureData.segments(script.lines, duration: script.duration)
             let deletedAt = script.deletedDaysAgo.map { reference.addingTimeInterval(-Double($0) * 86_400) }
+            let audioDeletedAt = script.audioDeletedDaysAgo.map { reference.addingTimeInterval(-Double($0) * 86_400) }
             let item = RecordingItem(
                 id: "\(prefix)-\(index + 1)", recordedAt: recordedAt, duration: script.duration, title: script.title,
                 audio: .ok, transcript: script.noSpeech ? .noSpeech : .done, preview: segments.first?.text,
                 copiedAt: recordedAt.addingTimeInterval(3_600), transcribedAt: recordedAt.addingTimeInterval(3_700),
-                deletedAt: deletedAt, waveformSeed: script.seed)
+                deletedAt: deletedAt, waveformSeed: script.seed, source: script.source,
+                isTranscriptOnly: audioDeletedAt != nil, audioDeletedAt: audioDeletedAt,
+                audioBytes: Int(script.duration) * FixtureData.bytesPerSecond * 8,
+                timeFromFile: script.timeFromFile)
             return Entry(item: item, segments: segments, script: segments)
         }
 
@@ -86,6 +90,12 @@ actor FixtureLibrary: LibraryProviding {
         entries.values.map(\.item).filter { $0.deletedAt != nil }.sorted { ($0.deletedAt ?? .distantPast) > ($1.deletedAt ?? .distantPast) }
     }
 
+    func recentlyDeletedAudio() -> [RecordingItem] {
+        entries.values.map(\.item)
+            .filter { $0.deletedAt == nil && $0.audioDeletedAt != nil }
+            .sorted { ($0.audioDeletedAt ?? .distantPast) > ($1.audioDeletedAt ?? .distantPast) }
+    }
+
     func syncHistory() -> [SyncHistoryItem] {
         // Newest first; syncs that started at the same moment keep the order they were added.
         history.enumerated()
@@ -121,6 +131,63 @@ actor FixtureLibrary: LibraryProviding {
 
     func fileURL(for recordingID: String) throws -> URL? {
         try audioURL(for: recordingID)
+    }
+
+    func deleteAudio(_ recordingIDs: [String]) throws {
+        for id in recordingIDs {
+            guard let item = entries[id]?.item else { throw AudioActionError.transcriptNotReady }
+            guard item.transcript.isFinished else { throw AudioActionError.transcriptNotReady }
+        }
+        let date = now()
+        for id in recordingIDs where entries[id]?.item.isTranscriptOnly == false {
+            entries[id]?.item.isTranscriptOnly = true
+            entries[id]?.item.audioDeletedAt = date
+            broadcast(.recording(id: id))
+        }
+    }
+
+    func restoreAudio(_ recordingID: String) throws {
+        guard let item = entries[recordingID]?.item, item.audioDeletedAt != nil else {
+            throw AudioActionError.audioNotDeleted
+        }
+        entries[recordingID]?.item.isTranscriptOnly = false
+        entries[recordingID]?.item.audioDeletedAt = nil
+        broadcast(.recording(id: recordingID))
+    }
+
+    func emptyRecentlyDeleted() {
+        for id in entries.keys where entries[id]?.item.audioDeletedAt != nil {
+            entries[id]?.item.audioDeletedAt = nil
+        }
+        entries = entries.filter { $0.value.item.deletedAt == nil }
+        broadcast(.recordings)
+    }
+
+    func storage() -> StorageSnapshot {
+        let live = entries.values.map(\.item).filter { $0.deletedAt == nil }
+        let audioBytes = live.filter { !$0.isTranscriptOnly }.reduce(0) { $0 + ($1.audioBytes ?? 0) }
+        let deleted = entries.values.map(\.item).filter { $0.deletedAt != nil }
+        let recentlyDeletedBytes = deleted.reduce(0) { $0 + ($1.audioBytes ?? 0) }
+            + live.filter { $0.isTranscriptOnly }.reduce(0) { $0 + ($1.audioBytes ?? 0) }
+        let transcriptBytes = live.reduce(0) { total, item in
+            total + (entries[item.id]?.segments.reduce(0) { $0 + $1.text.utf8.count } ?? 0)
+        }
+        return StorageSnapshot(recordingCount: live.count, audioBytes: audioBytes, transcriptBytes: transcriptBytes,
+                               recentlyDeletedBytes: recentlyDeletedBytes)
+    }
+
+    func cleanUpOldAudio(olderThanDays days: Int) -> Int {
+        let cutoff = now().addingTimeInterval(-Double(days) * 86_400)
+        var count = 0
+        for id in entries.keys {
+            guard let item = entries[id]?.item, item.deletedAt == nil, !item.isTranscriptOnly,
+                  item.transcript.isFinished, item.recordedAt < cutoff else { continue }
+            entries[id]?.item.isTranscriptOnly = true
+            entries[id]?.item.audioDeletedAt = now()
+            broadcast(.recording(id: id))
+            count += 1
+        }
+        return count
     }
 
     func changes() -> AsyncStream<LibraryChange> {

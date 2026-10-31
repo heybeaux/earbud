@@ -7,15 +7,15 @@ final class LibraryTests: XCTestCase {
         let fx = Fixtures()
         let recordings = try await fx.store.recordings()
         let deleted = try await fx.store.recentlyDeleted()
-        XCTAssertEqual(recordings.count, 24)
+        XCTAssertEqual(recordings.count, 26)
         XCTAssertEqual(deleted.count, 2)
         XCTAssertEqual(recordings.first?.title, "Run club planning")
         XCTAssertEqual(recordings.first?.duration, 402)
 
         let groups = LibraryGrouping.byDay(recordings, date: \.recordedAt, now: TestClock.reference, formatting: TestClock.formatting)
         XCTAssertEqual(groups.prefix(3).map(\.title), ["Today", "Yesterday", "Wednesday 28 October"])
-        XCTAssertEqual(groups.prefix(3).map(\.items.count), [3, 2, 4])
-        XCTAssertEqual(groups[0].items.map { $0.title ?? "untitled" }, ["Run club planning", "Groceries", "untitled"])
+        XCTAssertEqual(groups.prefix(3).map(\.items.count), [4, 2, 5])
+        XCTAssertEqual(groups[0].items.map { $0.title ?? "untitled" }, ["Run club planning", "Team sync", "Groceries", "untitled"])
     }
 
     func testGroupingSortsNewestFirst() {
@@ -71,7 +71,7 @@ final class LibraryTests: XCTestCase {
         let first = try await fx.store.recordings()[0]
         try await fx.store.moveToTrash(first.id)
         var count = try await fx.store.recordings().count
-        XCTAssertEqual(count, 23)
+        XCTAssertEqual(count, 25)
         let trash = try await fx.store.recentlyDeleted()
         XCTAssertEqual(trash.count, 3)
         XCTAssertEqual(trash.first?.id, first.id)
@@ -80,7 +80,7 @@ final class LibraryTests: XCTestCase {
 
         try await fx.store.restore(first.id)
         count = try await fx.store.recordings().count
-        XCTAssertEqual(count, 24)
+        XCTAssertEqual(count, 26)
 
         try await fx.store.rename(first.id, to: "  Saturday run  ")
         var renamed = try await fx.store.recordings()[0]

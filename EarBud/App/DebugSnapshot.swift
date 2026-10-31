@@ -27,6 +27,13 @@ enum DebugSnapshot {
             }
             if let query = defaults.string(forKey: "EarBudSnapshotSearch") { model.searchText = query }
             if defaults.bool(forKey: "EarBudSnapshotSync") { _ = model.syncNow() }
+            // Bring the main window on-screen and frontmost so the window server has
+            // composited content to capture (otherwise the capture comes back blank).
+            NSApp.setActivationPolicy(.regular)
+            NSApp.activate(ignoringOtherApps: true)
+            if let window = NSApp.windows.first(where: { $0.canBecomeMain }) {
+                window.makeKeyAndOrderFront(nil)
+            }
             try? await Task.sleep(for: .seconds(delay > 0 ? delay : 2.5))
             if let window = NSApp.windows.first(where: { $0.isVisible && $0.canBecomeMain }) {
                 let data: Data? = switch defaults.string(forKey: "EarBudSnapshotMethod") {
