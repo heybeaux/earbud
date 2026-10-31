@@ -29,11 +29,13 @@ struct EarBudApp: App {
 
     @State private var model: AppModel
     @AppStorage(SettingsKey.showInMenuBar) private var showInMenuBar = true
+    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
 
     init() {
         let model = AppModel.usesFixtures ? AppModel.fixture() : AppModel.real()
         _model = State(initialValue: model)
         SyncReminderScheduler.shared.attach(model: model)
+        ImportRouter.shared.attach(model: model)
         #if DEBUG
         DebugSnapshot.runIfRequested(model: model)
         #endif
@@ -85,6 +87,7 @@ private struct FieldyCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {}
+        CommandGroup(replacing: .importExport) { ImportMenuItem(model: model) }
         CommandMenu("Fieldy") { FieldyMenuItems(model: model) }
     }
 }
@@ -105,6 +108,20 @@ private struct FieldyMenuItems: View {
             .keyboardShortcut("2", modifiers: .command)
         Button("Show Recordings") { model.sidebar = .recordings }
             .keyboardShortcut("1", modifiers: .command)
+    }
+}
+
+/// File > Import Audio… ⇧⌘I (mockup 23).
+private struct ImportMenuItem: View {
+    let model: AppModel
+
+    var body: some View {
+        Button {
+            if let urls = ImportPanel.choose() { model.importAudio(urls) }
+        } label: {
+            Label("Import Audio\u{2026}", systemImage: "arrow.down.circle")
+        }
+        .keyboardShortcut("i", modifiers: [.command, .shift])
     }
 }
 
@@ -164,6 +181,7 @@ private struct LaterFeaturesHost: ViewModifier {
                 if OnboardingState.isNeeded { openWindow(id: EarBudApp.onboardingWindowID) }
                 let openWindow = openWindow
                 SyncReminderScheduler.shared.openMainWindow = { openWindow(id: EarBudApp.mainWindowID) }
+                ImportRouter.shared.openMainWindow = { openWindow(id: EarBudApp.mainWindowID) }
                 update()
             }
             .onChange(of: showInNotch) { update() }

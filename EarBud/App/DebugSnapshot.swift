@@ -4,7 +4,7 @@ import AppKit
 /// Debug builds only: `EarBud -EarBudSnapshot /path/out.png [-EarBudSnapshotPane device]` saves the
 /// main window as a PNG and quits. It captures the app's own window, which needs no Screen Recording
 /// permission, so screens can be checked against the mockups from a script.
-/// Other options: `-EarBudSnapshotSearch <query>`, `-EarBudSnapshotSync YES`, `-EarBudSnapshotDelay <s>`,
+/// Other options: `-EarBudSnapshotSearch <query>`, `-EarBudSnapshotSync YES`, `-EarBudSnapshotImport YES`, `-EarBudSnapshotDelay <s>`,
 /// `-EarBudSnapshotAppearance light|dark`.
 @MainActor
 enum DebugSnapshot {
@@ -27,6 +27,8 @@ enum DebugSnapshot {
             }
             if let query = defaults.string(forKey: "EarBudSnapshotSearch") { model.searchText = query }
             if defaults.bool(forKey: "EarBudSnapshotSync") { _ = model.syncNow() }
+            // With fixtures: imports the "October interviews" folder from mockups 23-24 (summary after ~3 s).
+            if defaults.bool(forKey: "EarBudSnapshotImport") { model.importAudio([FixtureImport.octoberInterviews]) }
             // Bring the main window on-screen and frontmost so the window server has
             // composited content to capture (otherwise the capture comes back blank).
             NSApp.setActivationPolicy(.regular)

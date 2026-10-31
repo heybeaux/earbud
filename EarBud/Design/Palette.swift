@@ -60,6 +60,12 @@ enum Palette {
     static let pillIncompleteText = rgbStatic(0xA8641A)
     static let pillIncompleteBackground = rgbStatic(0xE8912D, 0.15)
 
+    // Import drop target (mockup 23) and summary sheet (mockup 24). Dark values are not in the mockups.
+    static let dropTarget = dynamic(light: rgb(0xF0F7F5, 0.9), dark: rgb(0x1C2725, 0.9))
+    static let formatTag = dynamic(light: white(1, 0.8), dark: white(1, 0.08))
+    static let formatTagBorder = dynamic(light: rgb(0x2C7A6B, 0.3), dark: rgb(0x3FA592, 0.35))
+    static let sheetBackground = dynamic(light: rgb(0xF7F6F4), dark: rgb(0x2A2A2A))
+
     // Record card.
     static let recordCard = rgbStatic(0xE5483C, 0.07)
     static let recordCardBorder = rgbStatic(0xE5483C, 0.25)

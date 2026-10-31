@@ -4,6 +4,8 @@ import SwiftUI
 struct MainWindow: View {
     @Environment(AppModel.self) private var model
     @State private var columns: NavigationSplitViewVisibility = .all
+    /// Files are being dragged over the window (mockup 23).
+    @State private var dropTargeted = false
 
     var body: some View {
         @Bindable var model = model
@@ -12,6 +14,9 @@ struct MainWindow: View {
                 .navigationSplitViewColumnWidth(min: 200, ideal: Metrics.sidebarWidth, max: 280)
         } detail: {
             pane
+                .overlay {
+                    if dropTargeted { ImportDropTarget().padding(8) }
+                }
                 .navigationTitle(title)
                 .navigationSubtitle(subtitle)
                 .toolbar {
@@ -20,7 +25,23 @@ struct MainWindow: View {
                 .searchable(text: $model.searchText, placement: .toolbar, prompt: "Search transcripts")
         }
         .frame(minWidth: Metrics.windowMinWidth, minHeight: Metrics.windowMinHeight)
+        .dropDestination(for: URL.self) { urls, _ in
+            let files = urls.filter(\.isFileURL)
+            guard !files.isEmpty else { return false }
+            model.importAudio(files)
+            return true
+        } isTargeted: { dropTargeted = $0 }
+        .sheet(isPresented: importSheetShown) {
+            if let sheet = model.importSheet {
+                ImportSheetView(sheet: sheet)
+                    .interactiveDismissDisabled(model.isImporting)
+            }
+        }
         .task { await model.start() }
+    }
+
+    private var importSheetShown: Binding<Bool> {
+        Binding(get: { model.importSheet != nil }, set: { if !$0 { model.dismissImportSummary() } })
     }
 
     @ViewBuilder private var pane: some View {
