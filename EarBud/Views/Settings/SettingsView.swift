@@ -23,7 +23,7 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.reminderDays) private var reminderDays = ReminderSettings.defaultDays
     @AppStorage(SettingsKey.reminderTime) private var reminderTime = ReminderSettings.defaultMinutes
     @AppStorage(SettingsKey.showInMenuBar) private var showInMenuBar = true
-    @AppStorage(SettingsKey.showInNotch) private var showInNotch = true
+    @AppStorage(SettingsKey.showInNotch) private var showInNotch = false
     @AppStorage(SettingsKey.notchDisplay) private var notchDisplay = ""
     @State private var openAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginItemError: String?

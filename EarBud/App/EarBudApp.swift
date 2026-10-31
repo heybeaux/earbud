@@ -116,8 +116,9 @@ private struct MenuBarLabel: View {
 
 /// Keeps the later-feature stubs in step with Settings, and lets reminder clicks open this window.
 private struct LaterFeaturesHost: ViewModifier {
+    @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
-    @AppStorage(SettingsKey.showInNotch) private var showInNotch = true
+    @AppStorage(SettingsKey.showInNotch) private var showInNotch = false
     @AppStorage(SettingsKey.notchDisplay) private var notchDisplay = ""
 
     func body(content: Content) -> some View {
@@ -133,6 +134,10 @@ private struct LaterFeaturesHost: ViewModifier {
     }
 
     private func update() {
+        NotchDockController.shared.attach(model: model) {
+            NSApp.activate()
+            openWindow(id: EarBudApp.mainWindowID)
+        }
         NotchDockController.shared.update(enabled: showInNotch, displayName: notchDisplay.isEmpty ? nil : notchDisplay)
     }
 }
