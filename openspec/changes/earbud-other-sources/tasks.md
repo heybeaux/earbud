@@ -2,7 +2,7 @@
 
 - [ ] 1.1 Migration v2: `source`, `sourceName`, `contentHash`; existing rows become `fieldy`; `rawDeletedAt` set when an import copy or capture file is removed
 - [ ] 1.2 Source shown in list rows and the detail view (Fieldy, file name, microphone name)
-- [ ] 1.3 Chunked transcription input: 10-minute windows, 5-second overlap, de-duplicated segments, percent progress in the row
+- [x] 1.3 Chunked transcription input: 10-minute windows, 5-second overlap, de-duplicated segments, percent progress in the row
 
 ## 2. Import audio files (v1.1)
 

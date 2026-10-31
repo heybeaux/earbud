@@ -13,6 +13,8 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
     let store: LibraryStore
     private let queue: TranscriptionQueue
     private let changeContinuations = ChangeBroadcaster()
+    /// Transcription progress (0-1) of the recording being transcribed, from queue events.
+    private let progress = ProgressByID()
 
     init(store: LibraryStore) {
         self.store = store
@@ -25,13 +27,17 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
 
     /// Launch-time housekeeping: resume interrupted transcription jobs, then drain the queue.
     func resumeTranscriptionQueue() {
-        Task.detached { [queue, changeContinuations] in
+        Task.detached { [queue, changeContinuations, progress] in
             try? await queue.resume()
             let events = await queue.events()
             Task {
                 for await event in events {
                     switch event {
                     case .started(let id), .finished(let id, _), .failed(let id, _):
+                        progress.set(id, nil)
+                        await changeContinuations.yield(.recording(id: id))
+                    case .progress(let id, let fraction):
+                        progress.set(id, fraction)
                         await changeContinuations.yield(.recording(id: id))
                     }
                 }
@@ -112,6 +118,11 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
 
     /// List rows show the opening of the transcript, so done recordings need their segments.
     private func mapWithPreview(_ rec: Recording) throws -> RecordingItem {
+        if rec.transcriptState == .transcribing, let fraction = progress.get(rec.id) {
+            var item = Self.map(rec)
+            item.transcript = .transcribing(progress: fraction, secondsLeft: nil)
+            return item
+        }
         guard rec.transcriptState == .done, !rec.noSpeech else { return Self.map(rec) }
         let text = try store.segments(recordingId: rec.id).prefix(3).map { $0.text.trimmingCharacters(in: .whitespaces) }.joined(separator: " ")
         return Self.map(rec, preview: text.isEmpty ? nil : text)
@@ -173,6 +184,20 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
 
     private static func matchCount(_ highlighted: String) -> Int {
         highlighted.components(separatedBy: Library.SearchHit.markStart).count - 1
+    }
+}
+
+/// Latest transcription progress per recording, readable from the synchronous mapping code.
+final class ProgressByID: @unchecked Sendable {
+    private let lock = NSLock()
+    private var values: [String: Double] = [:]
+
+    func get(_ id: String) -> Double? {
+        lock.withLock { values[id] }
+    }
+
+    func set(_ id: String, _ value: Double?) {
+        lock.withLock { values[id] = value }
     }
 }
 

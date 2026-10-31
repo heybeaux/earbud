@@ -237,6 +237,7 @@ func runQueue(library: LibraryStore, model: TranscriptionModel) async throws {
         for await e in events {
             switch e {
             case .started(let id): log("transcribing \(id)")
+            case .progress(let id, let f): log("transcribing \(id): \(Int((f * 100).rounded()))%")
             case .finished(let id, let n): log("transcribed \(id): \(n) segment(s)")
             case .failed(let id, let m): log("transcription failed for \(id): \(m)")
             }
