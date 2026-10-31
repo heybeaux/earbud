@@ -43,7 +43,7 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
     // MARK: LibraryProviding
 
     func recordings() async throws -> [RecordingItem] {
-        try store.recordings().map(Self.map)
+        try store.recordings().map(mapWithPreview)
     }
 
     func segments(for recordingID: String) async throws -> [TranscriptSegment] {
@@ -57,7 +57,7 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
     }
 
     func recentlyDeleted() async throws -> [RecordingItem] {
-        try store.trash().map(Self.map)
+        try store.trash().map(mapWithPreview)
     }
 
     func syncHistory() async throws -> [SyncHistoryItem] {
@@ -101,7 +101,14 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
 
     // MARK: Mapping
 
-    static func map(_ rec: Recording) -> RecordingItem {
+    /// List rows show the opening of the transcript, so done recordings need their segments.
+    private func mapWithPreview(_ rec: Recording) throws -> RecordingItem {
+        guard rec.transcriptState == .done, !rec.noSpeech else { return Self.map(rec) }
+        let text = try store.segments(recordingId: rec.id).prefix(3).map { $0.text.trimmingCharacters(in: .whitespaces) }.joined(separator: " ")
+        return Self.map(rec, preview: text.isEmpty ? nil : text)
+    }
+
+    static func map(_ rec: Recording, preview: String? = nil) -> RecordingItem {
         RecordingItem(
             id: rec.id,
             recordedAt: rec.recordedAt,
@@ -109,7 +116,7 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
             title: rec.title,
             audio: map(rec.audioState),
             transcript: map(rec),
-            preview: nil,
+            preview: preview,
             copiedAt: rec.createdAt,
             transcribedAt: rec.transcribedAt,
             deletedAt: rec.deletedAt,

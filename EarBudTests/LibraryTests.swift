@@ -1,4 +1,5 @@
 import XCTest
+import Library
 @testable import EarBud
 
 final class LibraryTests: XCTestCase {
@@ -143,5 +144,21 @@ final class MatchingTests: XCTestCase {
         let attributed = Highlighting.attributed(text, query: "Powell River", current: 1)
         let marked = attributed.runs.filter { $0.backgroundColor != nil }
         XCTAssertEqual(marked.count, 2)
+    }
+}
+
+final class RealLibraryProviderTests: XCTestCase {
+    func testListRowsShowTranscriptPreview() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let store = try LibraryStore(paths: LibraryPaths(root: root))
+        try store.insert(Recording(id: "r1", recordedAt: Date(), durationSeconds: 5, frameCount: 250, rawPath: "raw/r1.bin"))
+        try store.completeTranscription(recordingId: "r1", segments: [
+            Segment(recordingId: "r1", position: 0, start: 0, end: 2, text: " This is my first recording"),
+            Segment(recordingId: "r1", position: 1, start: 2, end: 5, text: "with EarBud."),
+        ], model: "test")
+
+        let items = try await RealLibraryProvider(store: store).recordings()
+        XCTAssertEqual(items.first?.preview, "This is my first recording with EarBud.")
     }
 }
