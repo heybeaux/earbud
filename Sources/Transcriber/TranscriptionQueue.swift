@@ -8,6 +8,8 @@ import Library
 public actor TranscriptionQueue {
     public enum Event: Sendable, Equatable {
         case started(recordingId: String)
+        /// Fraction done (0-1), after each recognizer window.
+        case progress(recordingId: String, fraction: Double)
         case finished(recordingId: String, segments: Int)
         case failed(recordingId: String, message: String)
     }
@@ -77,10 +79,13 @@ public actor TranscriptionQueue {
         emit(.started(recordingId: job.recordingId))
         do {
             guard let rec = try library.recording(id: job.recordingId) else { return }
-            let samples = try Self.loadSamples(rec, paths: library.paths)
+            let source = try Self.audioSource(rec, paths: library.paths)
             let recognizer = recognizers[job.model] ?? recognizerFor(job.model)
             recognizers[job.model] = recognizer
-            let raw = try await recognizer.recognize(samples: samples)
+            let id = rec.id
+            let raw = try await ChunkedTranscriber.transcribe(source, with: recognizer) { fraction in
+                await self.emit(.progress(recordingId: id, fraction: fraction))
+            }
             let kept = TranscriptFilter.clean(raw)
             let segments = kept.map { Segment(recordingId: rec.id, position: 0, start: $0.start, end: $0.end, text: $0.text) }
             try library.completeTranscription(recordingId: rec.id, segments: segments, model: job.model)
@@ -92,17 +97,18 @@ public actor TranscriptionQueue {
         }
     }
 
-    /// 16 kHz mono samples: decoded from the original Opus frames when
-    /// present, else read from the M4A.
-    static func loadSamples(_ rec: Recording, paths: LibraryPaths) throws -> [Float] {
+    /// 16 kHz mono audio: decoded from the original Opus frames when
+    /// present (short Fieldy recordings, decoded whole), else read from the
+    /// audio file a window at a time.
+    static func audioSource(_ rec: Recording, paths: LibraryPaths) throws -> any AudioSampleSource {
         if let opus = rec.opusPath {
             let url = paths.absolute(opus)
             if FileManager.default.fileExists(atPath: url.path) {
-                return try FieldyOpusDecoder.decode(frames: try Data(contentsOf: url)).floatSamples
+                return InMemorySamples(try FieldyOpusDecoder.decode(frames: try Data(contentsOf: url)).floatSamples)
             }
         }
-        if let m4a = rec.audioPath {
-            return try AudioFileInfo.readMono16k(paths.absolute(m4a))
+        if let audio = rec.audioPath {
+            return try AudioSamples.open(paths.absolute(audio))
         }
         throw TranscriberError.audioMissing(rec.id)
     }
