@@ -27,6 +27,13 @@ enum DeviceNotice: Equatable {
     case message(String)
 }
 
+/// Pending "Delete Audio, Keep Transcript" confirmation (mockup 26), for one or many recordings.
+struct DeleteAudioRequest: Equatable {
+    var ids: [String]
+    var titles: [String]
+    var freedBytes: Int?
+}
+
 /// A row in the recordings list.
 enum ListEntry: Identifiable, Equatable {
     struct SearchInfo: Equatable {
@@ -97,10 +104,17 @@ final class AppModel {
     private(set) var modelDownloads: [String: Double] = [:]
     private(set) var isLoaded = false
 
+    /// Pending "Delete Audio, Keep Transcript" confirmation (mockup 26).
+    var deleteAudioConfirmation: DeleteAudioRequest?
+    /// "Deleted audio" in Recently Deleted (mockup 27).
+    private(set) var deletedAudio: [RecordingItem] = []
+    private(set) var storage: StorageSnapshot?
+
     @ObservationIgnored private var isStarting = false
     @ObservationIgnored private var changesTask: Task<Void, Never>?
     @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored private var selectionTask: Task<Void, Never>?
+    @ObservationIgnored private var cleanupTask: Task<Void, Never>?
 
     init(library: any LibraryProviding, device: any DeviceProviding, sync: any SyncProviding, speech: any SpeechModelProviding,
          formatting: Formatting = .standard, now: @escaping () -> Date = Date.init, noticeDuration: Duration = .seconds(3)) {
@@ -160,11 +174,27 @@ final class AppModel {
             await select(first.id)
         }
         isLoaded = true
+        startAudioCleanupLoop()
+    }
+
+    /// Runs the automatic audio cleanup (Settings > Storage) at launch, then once a day
+    /// while the app stays open. Off unless the user turned it on (0 = off).
+    private func startAudioCleanupLoop() {
+        cleanupTask?.cancel()
+        cleanupTask = Task { [weak self] in
+            while !Task.isCancelled {
+                let days = UserDefaults.standard.integer(forKey: SettingsKey.audioCleanupDays)
+                if days > 0 { await self?.cleanUpOldAudio(olderThanDays: days) }
+                try? await Task.sleep(for: .seconds(86_400))
+            }
+        }
     }
 
     private func reloadLibrary() async {
         recordings = (try? await library.recordings()) ?? []
         deleted = (try? await library.recentlyDeleted()) ?? []
+        deletedAudio = (try? await library.recentlyDeletedAudio()) ?? []
+        storage = try? await library.storage()
         if !activeQuery.isEmpty {
             searchResults = try? await library.search(activeQuery)
         }
@@ -359,6 +389,43 @@ final class AppModel {
     func restore(_ id: String) async {
         try? await library.restore(id)
         await reloadLibrary()
+    }
+
+    // MARK: Transcript retention
+
+    /// Opens the Delete Audio confirmation for one or more recordings (mockup 26).
+    func requestDeleteAudio(_ ids: [String]) {
+        let items = ids.compactMap(recording)
+        guard !items.isEmpty else { return }
+        let freedBytes = items.reduce(0) { $0 + ($1.audioBytes ?? 0) }
+        deleteAudioConfirmation = DeleteAudioRequest(
+            ids: ids, titles: items.map { $0.isUntitled ? formatting.untitledHeading($0.recordedAt, now: now()) : ($0.title ?? "") },
+            freedBytes: freedBytes > 0 ? freedBytes : nil)
+    }
+
+    func confirmDeleteAudio() async {
+        guard let request = deleteAudioConfirmation else { return }
+        deleteAudioConfirmation = nil
+        try? await library.deleteAudio(request.ids)
+        await reloadLibrary()
+    }
+
+    func restoreAudio(_ id: String) async {
+        try? await library.restoreAudio(id)
+        await reloadLibrary()
+    }
+
+    func emptyRecentlyDeleted() async {
+        try? await library.emptyRecentlyDeleted()
+        await reloadLibrary()
+    }
+
+    /// Runs the automatic cleanup pass now (launch and once a day while the app is open).
+    @discardableResult
+    func cleanUpOldAudio(olderThanDays days: Int) async -> Int {
+        let count = (try? await library.cleanUpOldAudio(olderThanDays: days)) ?? 0
+        await reloadLibrary()
+        return count
     }
 
     func showInFinder(_ id: String) async {

@@ -23,8 +23,26 @@ struct RecordingItem: Identifiable, Equatable, Sendable {
     var deletedAt: Date?
     /// Seeds the drawn waveform so each recording keeps the same shape.
     var waveformSeed: Int
+    var source: RecordingSourceKind = .fieldy
+    /// The audio was deleted (in Recently Deleted or purged); only the transcript is left.
+    var isTranscriptOnly: Bool = false
+    /// In Recently Deleted (audio section) since this time; nil once restored or purged.
+    var audioDeletedAt: Date?
+    /// Audio file size in bytes, when known; used for "This frees about 9 MB".
+    var audioBytes: Int?
+    /// The recording's time came from the file's date, not a header or metadata (mockup 25).
+    var timeFromFile: Bool = false
 
     var isUntitled: Bool { title?.isEmpty ?? true }
+}
+
+/// Where a recording came from (mirrors EarBudKit `RecordingSource`).
+enum RecordingSourceKind: Equatable, Sendable {
+    case fieldy
+    /// An imported file; `name` is the original file name.
+    case imported(name: String)
+    /// A Mac microphone recording; `name` is the microphone name.
+    case microphone(name: String)
 }
 
 /// Whether a recording's audio can be played (EarBudKit `AudioState`).

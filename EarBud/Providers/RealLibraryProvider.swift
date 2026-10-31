@@ -66,6 +66,10 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
         try store.trash().map(mapWithPreview)
     }
 
+    func recentlyDeletedAudio() async throws -> [RecordingItem] {
+        try store.deletedAudio().map(mapWithPreview)
+    }
+
     func syncHistory() async throws -> [SyncHistoryItem] {
         try store.syncHistory().map(Self.map)
     }
@@ -111,6 +115,44 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
         _ = try? await queue.processAll()
     }
 
+    func deleteAudio(_ recordingIDs: [String]) async throws {
+        do {
+            try store.deleteAudio(recordingIds: recordingIDs)
+        } catch Library.AudioRetentionError.transcriptNotReady {
+            throw AudioActionError.transcriptNotReady
+        }
+        for id in recordingIDs { await changeContinuations.yield(.recording(id: id)) }
+    }
+
+    func restoreAudio(_ recordingID: String) async throws {
+        do {
+            try store.restoreAudio(recordingId: recordingID)
+        } catch Library.AudioRetentionError.audioNotDeleted {
+            throw AudioActionError.audioNotDeleted
+        } catch Library.AudioRetentionError.audioPurged {
+            throw AudioActionError.audioPurged
+        }
+        await changeContinuations.yield(.recording(id: recordingID))
+    }
+
+    func emptyRecentlyDeleted() async throws {
+        try store.emptyRecentlyDeleted()
+        await changeContinuations.yield(.recordings)
+    }
+
+    func storage() async throws -> StorageSnapshot {
+        let usage = try Library.AudioCleanup.storage(store: store)
+        return StorageSnapshot(recordingCount: usage.recordingCount, audioBytes: usage.audioBytes,
+                               transcriptBytes: usage.transcriptBytes, recentlyDeletedBytes: usage.recentlyDeletedBytes)
+    }
+
+    func cleanUpOldAudio(olderThanDays days: Int) async throws -> Int {
+        let ids = try Library.AudioCleanup.run(store: store, olderThanDays: days)
+        for id in ids { await changeContinuations.yield(.recording(id: id)) }
+        if !ids.isEmpty { await changeContinuations.yield(.recordings) }
+        return ids.count
+    }
+
     /// One recording as the list shows it, including its transcript preview.
     func item(for recordingID: String) throws -> RecordingItem? {
         try store.recording(id: recordingID).map(mapWithPreview)
@@ -123,11 +165,18 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
         if rec.transcriptState == .transcribing, let fraction = progress.get(rec.id) {
             var item = Self.map(rec, preview: nil)
             item.transcript = .transcribing(progress: fraction, secondsLeft: nil)
+            item.audioBytes = audioBytes(of: rec)
             return item
         }
-        guard rec.transcriptState == .done, !rec.noSpeech else { return Self.map(rec) }
+        guard rec.transcriptState == .done, !rec.noSpeech else {
+            var item = Self.map(rec, preview: nil)
+            item.audioBytes = audioBytes(of: rec)
+            return item
+        }
         let text = try store.segments(recordingId: rec.id).prefix(3).map { $0.text.trimmingCharacters(in: .whitespaces) }.joined(separator: " ")
-        return Self.map(rec, preview: text.isEmpty ? nil : text)
+        var item = Self.map(rec, preview: text.isEmpty ? nil : text)
+        item.audioBytes = audioBytes(of: rec)
+        return item
     }
 
     static func map(_ rec: Recording, preview: String? = nil) -> RecordingItem {
@@ -142,7 +191,31 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
             copiedAt: rec.createdAt,
             transcribedAt: rec.transcribedAt,
             deletedAt: rec.deletedAt,
-            waveformSeed: abs(rec.id.hashValue % 1000))
+            waveformSeed: abs(rec.id.hashValue % 1000),
+            source: Self.map(rec.source, sourceName: rec.sourceName),
+            isTranscriptOnly: rec.isTranscriptOnly,
+            audioDeletedAt: rec.audioDeletedAt,
+            audioBytes: nil,
+            // TODO(audio-import 2.3): `Recording` has no column yet for whether the time
+            // came from the file's date rather than a header/metadata; the importer task
+            // owns that migration. Always false until it lands.
+            timeFromFile: false)
+    }
+
+    static func map(_ source: Library.RecordingSource, sourceName: String?) -> RecordingSourceKind {
+        switch source {
+        case .fieldy: .fieldy
+        case .imported: .imported(name: sourceName ?? "Imported file")
+        case .microphone: .microphone(name: sourceName ?? "Microphone")
+        }
+    }
+
+    /// Audio file size on disk, for "This frees about 9 MB" and Settings > Storage.
+    func audioBytes(of rec: Recording) -> Int? {
+        guard let path = rec.audioPath else { return nil }
+        let url = store.paths.absolute(path)
+        guard let size = try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int else { return nil }
+        return size
     }
 
     static func map(_ state: Library.AudioState) -> AudioState {

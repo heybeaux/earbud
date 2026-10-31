@@ -23,6 +23,11 @@ enum FixtureData {
         var noSpeech = false
         /// For Recently Deleted: days ago it was deleted.
         var deletedDaysAgo: Int?
+        var source: RecordingSourceKind = .fieldy
+        /// Days ago the audio was deleted (Transcript only), if any.
+        var audioDeletedDaysAgo: Int?
+        /// Mockup 25: the time came from the file's date, not a header (shows "Time taken from the file").
+        var timeFromFile = false
     }
 
     /// A recording still on the Fieldy, copied by the next sync.
@@ -61,6 +66,15 @@ enum FixtureData {
     // MARK: Library (24 recordings)
 
     static let recordings: [Script] = [
+        Script(dayOffset: 0, hour: 11, minute: 4, duration: m(47, 10), title: "Team sync", seed: 29, lines: [
+            Line(0, 0, "Right, let's start with the launch checklist, because the store screenshots are still the old ones."),
+            Line(0, 41, "I can redo them tomorrow. I just need the final copy for the second and third screens."),
+            Line(1, 26, "Copy is done. Theo signed it off last night, it's in the shared folder under \u{201C}store, final, actually final\u{201D}."),
+            Line(2, 38, "Great. Then the only real blocker is the onboarding bug on older phones. Where are we on that?"),
+            Line(3, 12, "Fixed on the branch. It was the keyboard pushing the button off screen. I want one more test on the small phone."),
+            Line(4, 5, "Okay. If that passes by Monday, we submit Tuesday morning and plan the announcement for the following week."),
+            Line(4, 47, "Next thing: support. We had forty tickets last week and about half were the same password question."),
+        ], source: .imported(name: "Team sync.wav"), timeFromFile: true),
         Script(dayOffset: 0, hour: 13, minute: 12, duration: m(6, 42), title: "Run club planning", seed: 3, lines: [
             Line(0, 0, "Okay, so for Saturday we meet at the seawall by the rowing club at seven, not six-thirty. It's too dark at six-thirty now."),
             Line(0, 14, "Priya said she can bring the cones and the first-aid kit again, so that's sorted."),
@@ -96,13 +110,18 @@ enum FixtureData {
             Line(6, 10, "Also, keep the dog off the boards for forty-eight hours after each coat. Paw prints are forever."),
             Line(8, 2, "She mentioned a guy who does gutters, if we ever get to that. Number's in my texts."),
             Line(10, 30, "Okay. I'll forward the quote to you when it comes in. Talk later."),
-        ]),
+        ], audioDeletedDaysAgo: 1),
         Script(dayOffset: -1, hour: 9, minute: 15, duration: m(2, 40), title: nil, seed: 6, lines: [
             Line(0, 0, "Gift idea for Maya: that ceramics class on Granville, the Thursday evening one. Check if it's still open."),
             Line(0, 24, "If it's full, the bookshop does gift cards, and she's been talking about that new graphic novel."),
             Line(1, 10, "Her birthday is the twentieth, so order by the fifteenth at the latest."),
             Line(1, 52, "And a card. Don't forget the card this time."),
         ]),
+        Script(dayOffset: -2, hour: 14, minute: 5, duration: m(62, 14), title: "Interview with Lena Okafor", seed: 32, lines: [
+            Line(0, 0, "My grandmother ran the bakery on that corner for thirty-one years, and she never once took a holiday."),
+            Line(0, 48, "She always said the bread doesn't care if you're tired. It still needs you at four in the morning."),
+            Line(1, 40, "The hardest year was the one after my grandfather passed. She kept the ovens going anyway."),
+        ], source: .imported(name: "REC_0042.WAV"), audioDeletedDaysAgo: 2),
         Script(dayOffset: -2, hour: 18, minute: 2, duration: m(3, 55), title: "Podcast notes", seed: 8, lines: [
             Line(0, 0, "The bit about sleep and memory, the guest said most of it happens in the first half of the night."),
             Line(0, 26, "So going to bed late costs you more than waking up early. That's the opposite of what I assumed."),
@@ -120,7 +139,7 @@ enum FixtureData {
             Line(1, 30, "I keep meaning to start running in the mornings. Maybe Monday. Maybe."),
             Line(2, 40, "The slides are mostly done. It's the last section, the numbers, that needs a clearer story."),
             Line(3, 30, "Okay. Coffee."),
-        ]),
+        ], source: .microphone(name: "Wireless PRO RX")),
         Script(dayOffset: -2, hour: 6, minute: 31, duration: m(0, 35), title: nil, seed: 11, lines: [
             Line(0, 0, "Note to self: the dentist moved the appointment to the fourth at ten-thirty."),
             Line(0, 15, "Bring the insurance card. They said the old one expired."),
