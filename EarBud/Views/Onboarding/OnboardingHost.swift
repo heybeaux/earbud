@@ -9,7 +9,8 @@ struct OnboardingHost: View {
 
     init(appModel: AppModel) {
         self.appModel = appModel
-        let hasNotch = NSScreen.main?.safeAreaInsets.top ?? 0 > 0
+        // Any display with a notch, not just the main one: the laptop may be next to a monitor.
+        let hasNotch = NSScreen.screens.contains { $0.notchRect != nil }
         let provider: any OnboardingProviding
         if let realDevice = appModel.device as? RealDeviceProvider, let realLibrary = appModel.library as? RealLibraryProvider {
             provider = RealOnboarding(device: realDevice.device, store: realLibrary.store, library: realLibrary, hasNotch: hasNotch)

@@ -147,6 +147,42 @@ final class OnboardingModelTests: XCTestCase {
         XCTAssertEqual(model.step, .notchDock)
     }
 
+    func testTurningOnTheNotchDockTakesEffectWhenOnboardingFinishes() {
+        let suite = "OnboardingModelTests.notch"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.removePersistentDomain(forName: suite)
+        let completed = UserDefaults.standard.object(forKey: OnboardingState.completedKey)
+        defer {
+            defaults.removePersistentDomain(forName: suite)
+            UserDefaults.standard.set(completed, forKey: OnboardingState.completedKey)
+        }
+        let provider = FixtureOnboarding(pace: .zero, now: { TestClock.reference }, hasNotch: true)
+        let model = OnboardingModel(provider: provider, defaults: defaults)
+
+        model.chooseNotchDock(true)
+        XCTAssertEqual(model.step, .finished)
+        XCTAssertNil(defaults.object(forKey: SettingsKey.showInNotch), "the dock waits until onboarding finishes")
+        model.finish()
+        XCTAssertTrue(defaults.bool(forKey: SettingsKey.showInNotch))
+    }
+
+    func testNotNowLeavesTheNotchDockOff() {
+        let suite = "OnboardingModelTests.notchOff"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.removePersistentDomain(forName: suite)
+        let completed = UserDefaults.standard.object(forKey: OnboardingState.completedKey)
+        defer {
+            defaults.removePersistentDomain(forName: suite)
+            UserDefaults.standard.set(completed, forKey: OnboardingState.completedKey)
+        }
+        let provider = FixtureOnboarding(pace: .zero, now: { TestClock.reference }, hasNotch: true)
+        let model = OnboardingModel(provider: provider, defaults: defaults)
+
+        model.chooseNotchDock(false)
+        model.finish()
+        XCTAssertFalse(defaults.bool(forKey: SettingsKey.showInNotch))
+    }
+
     // MARK: Completion flag
 
     func testFinishMarksOnboardingCompleted() async {

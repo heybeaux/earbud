@@ -25,8 +25,11 @@ final class OnboardingModel {
     private(set) var testRecording: RecordingItem?
     private(set) var testRecordingSegments: [TranscriptSegment] = []
     var openAtLogin = false
+    /// "Turn on" or "Not now" on the notch step; saved to Settings when onboarding finishes.
+    private(set) var notchDockChoice: Bool?
 
     @ObservationIgnored private var speech: (any SpeechModelProviding)?
+    @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var resetTask: Task<Void, Never>?
     @ObservationIgnored private var scanTask: Task<Void, Never>?
 
@@ -35,9 +38,10 @@ final class OnboardingModel {
     /// `path` lists only the steps actually visited, in order, for step-dot progress and Back.
     private(set) var path: [OnboardingStep] = [.welcome]
 
-    init(provider: any OnboardingProviding, speech: (any SpeechModelProviding)? = nil) {
+    init(provider: any OnboardingProviding, speech: (any SpeechModelProviding)? = nil, defaults: UserDefaults = .standard) {
         self.provider = provider
         self.speech = speech
+        self.defaults = defaults
     }
 
     // MARK: Navigation
@@ -212,14 +216,16 @@ final class OnboardingModel {
 
     // MARK: Notch dock
 
+    /// Remembers the choice; the dock appears once onboarding finishes.
     func chooseNotchDock(_ turnOn: Bool) {
-        UserDefaults.standard.set(turnOn, forKey: SettingsKey.showInNotch)
+        notchDockChoice = turnOn
         advance(to: .finished)
     }
 
     // MARK: Finish
 
     func finish() {
+        if let notchDockChoice { defaults.set(notchDockChoice, forKey: SettingsKey.showInNotch) }
         OnboardingState.markCompleted()
         onFinished?()
     }
