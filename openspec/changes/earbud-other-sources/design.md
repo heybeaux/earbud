@@ -73,15 +73,24 @@ the file name and "EarBud can't read this kind of file."
 
 ### Chunked transcription
 `TranscriptionQueue` gains a chunked input: WhisperKit runs on 10-minute
-windows with 5 seconds of overlap, and segments in the overlap are kept from
-the earlier window only. Fieldy recordings fit in one window, so their path
+windows with 5 seconds of overlap. Each overlap is split at its middle: the
+earlier window keeps segments that start before the middle, the later window
+keeps the rest. Neither window is near its cut there, so a word Whisper drops
+at a window edge is still heard by the other window. A later segment that
+starts inside the earlier window's last kept segment repeats it and is
+dropped. (Changed from "earlier window only", approved by Beaux 2026-10-30.)
+Fieldy recordings fit in one window, so their path
 does not change. Progress for long files shows as a percentage in the list
 row.
 
 ### Recording time
 For imports, EarBud uses, in order: the BWF `bext` origination date and time
 (written by RØDE and most field recorders), the M4A/MP3 creation date
-metadata, then the file's creation date. When it falls back to the file date,
+metadata, then the file's creation date. The M4A/MP3 date is skipped when it
+is less than half the recording's duration before the file's last change, or
+after it: a recorder finishes writing about one duration after it starts, so
+that pattern means a converter or editor stamped its save time (approved by
+Beaux 2026-10-30). When it falls back to the file date,
 the detail view says "Time taken from the file", because a copied file can
 carry the copy date. Editing the time is out of scope.
 

@@ -30,14 +30,18 @@ extension AudioIngest {
 
     /// Recording time, in order: `bext` origination (in `timeZone`, since BWF
     /// carries no zone), M4A/MP3 creation metadata, the file's creation date.
+    /// Metadata that looks like it was stamped by a re-save is skipped.
     public static func recordingTime(of url: URL, timeZone: TimeZone = .current) async throws -> RecordingTime {
         if let date = broadcastWaveOrigination(of: url, timeZone: timeZone) {
             return RecordingTime(date: date, origin: .broadcastWave)
         }
-        if let date = await metadataCreationDate(of: url) {
-            return RecordingTime(date: date, origin: .fileMetadata)
-        }
         let values = try? url.resourceValues(forKeys: [.creationDateKey, .contentModificationDateKey])
+        if let date = await metadataCreationDate(of: url) {
+            let duration = (try? await AVURLAsset(url: url).load(.duration).seconds) ?? 0
+            if !metadataDateLooksResaved(metadata: date, modified: values?.contentModificationDate, duration: duration) {
+                return RecordingTime(date: date, origin: .fileMetadata)
+            }
+        }
         guard let date = values?.creationDate ?? values?.contentModificationDate else {
             throw AudioIngestError.unreadable(fileName: url.lastPathComponent)
         }
@@ -67,6 +71,16 @@ extension AudioIngest {
             if let date, date >= earliestPlausibleDate, date <= latest { return date }
         }
         return nil
+    }
+
+    /// A recorder stamps the creation date when it starts and finishes writing
+    /// about one duration later. A converter or editor stamps the date when it
+    /// saves and finishes faster than real time. So a metadata date less than
+    /// half the duration before the file's last change, or after it, is the
+    /// re-save time, not the recording time.
+    static func metadataDateLooksResaved(metadata: Date, modified: Date?, duration: Double) -> Bool {
+        guard let modified, duration.isFinite, duration > 0 else { return false }
+        return modified.timeIntervalSince(metadata) < duration / 2
     }
 
     /// ISO 8601-style date with a time. Date-only and year-only strings are

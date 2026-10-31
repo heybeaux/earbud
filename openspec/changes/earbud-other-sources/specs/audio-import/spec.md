@@ -44,12 +44,19 @@ it, including when the earlier copy is in Recently Deleted.
 ### Requirement: Recording time from the file
 EarBud SHALL date an imported recording from the recording time embedded in
 the file when present (Broadcast WAV origination time, or M4A/MP3 creation
-metadata), otherwise from the file's creation date. When the file date is
-used, the detail view SHALL say "Time taken from the file".
+metadata), otherwise from the file's creation date. EarBud SHALL skip an
+M4A/MP3 creation date that is less than half the recording's duration before
+the file's last modification, or after it, because a re-saved file carries the
+save time. When the file date is used, the detail view SHALL say "Time taken
+from the file".
 
 #### Scenario: Field recorder WAV
 - **WHEN** the user imports a WAV with a Broadcast WAV origination date of 2026-10-28 14:05
 - **THEN** the recording is listed under that day at 2:05 PM
+
+#### Scenario: Converted M4A
+- **WHEN** the user imports a one-hour M4A whose creation metadata is 40 seconds before the file was last modified
+- **THEN** EarBud uses the file's creation date and the detail view says "Time taken from the file"
 
 ### Requirement: Long files
 EarBud SHALL import and transcribe files of at least 4 hours without loading

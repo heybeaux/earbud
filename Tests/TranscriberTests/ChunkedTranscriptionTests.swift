@@ -112,9 +112,10 @@ struct ChunkedTranscriptionTests {
         #expect(ChunkedTranscriber.plan(totalSamples: source.sampleCount, window: window, overlap: overlap).map(\.start)
                 == [0, 8 * Self.rate, 16 * Self.rate])
         let r = ScriptedRecognizer([
-            [seg(0, 4, "a"), seg(4, 8.5, "b"), seg(8.5, 10, "c")],           // 8.5-10 is in the overlap: kept here
-            [seg(0.4, 2, "c again"), seg(2, 6, "d"), seg(6, 9, "e"), seg(9, 10, "f")], // 8.4 s dropped; 18 s kept
-            [seg(1, 2, "f again"), seg(2.5, 9, "g")],                        // 17 s dropped; 18.5 s kept
+            // Overlaps are 8-10 s and 16-18 s; they split at 9 s and 17 s.
+            [seg(0, 4, "a"), seg(4, 8.5, "b"), seg(8.5, 10, "c")],           // 8.5 s is before 9 s: kept here
+            [seg(0.4, 2, "c again"), seg(2, 6, "d"), seg(6, 9, "e"), seg(9, 10, "f")], // 8.4 s dropped; 17 s left to the next window
+            [seg(1, 2, "f"), seg(2.5, 9, "g")],                              // 17 s kept; 18.5 s kept
         ])
         let log = ProgressLog()
         let out = try await ChunkedTranscriber.transcribe(source, with: r, window: window, overlap: overlap) { log.add($0) }
@@ -129,13 +130,41 @@ struct ChunkedTranscriptionTests {
         #expect(log.values == log.values.sorted())
     }
 
-    @Test func segmentStartingAtWindowEndIsKept() {
+    @Test func overlapSplitsAtItsMiddle() {
+        // Overlap 8-10 s: the earlier window keeps up to 9 s, the later one from 9 s.
         let prev = TranscriptionWindow(start: 0, count: 10 * Self.rate)
         let next = TranscriptionWindow(start: 8 * Self.rate, count: 10 * Self.rate)
         var merged: [RecognizedSegment] = []
-        ChunkedTranscriber.merge([seg(1.99, 3, "dup"), seg(2, 3, "new")], from: next, previous: prev, into: &merged)
-        #expect(merged.map(\.text) == ["new"])
-        #expect(merged.first?.start == 10)
+        ChunkedTranscriber.merge([seg(4, 8.99, "early"), seg(9, 10, "late in earlier")], from: prev,
+                                 previous: nil, next: next, into: &merged)
+        ChunkedTranscriber.merge([seg(0.99, 2, "dup"), seg(1, 2, "late"), seg(4, 5, "after")], from: next,
+                                 previous: prev, next: nil, into: &merged)
+        #expect(merged.map(\.text) == ["early", "late", "after"])
+        #expect(merged.map(\.start) == [4, 9, 12])
+    }
+
+    @Test func wordCutOffAtWindowEndIsKeptFromNextWindow() {
+        // Whisper leaves out a word cut off at 10 s; the later window hears it whole.
+        let prev = TranscriptionWindow(start: 0, count: 10 * Self.rate)
+        let next = TranscriptionWindow(start: 8 * Self.rate, count: 10 * Self.rate)
+        var merged: [RecognizedSegment] = []
+        ChunkedTranscriber.merge([seg(5, 8.5, "before")], from: prev, previous: nil, next: next, into: &merged)
+        ChunkedTranscriber.merge([seg(0.5, 1.3, "before"), seg(1.5, 2.4, "cut word")], from: next,
+                                 previous: prev, next: nil, into: &merged)
+        #expect(merged.map(\.text) == ["before", "cut word"])
+        #expect(merged.last?.start == 9.5)
+    }
+
+    @Test func laterSegmentRepeatingEarlierOneIsDropped() {
+        // The earlier window's last segment runs past the split (8.5-9.8 s);
+        // the later window's copy starts at 9.2 s, inside it.
+        let prev = TranscriptionWindow(start: 0, count: 10 * Self.rate)
+        let next = TranscriptionWindow(start: 8 * Self.rate, count: 10 * Self.rate)
+        var merged: [RecognizedSegment] = []
+        ChunkedTranscriber.merge([seg(8.5, 9.8, "long line")], from: prev, previous: nil, next: next, into: &merged)
+        ChunkedTranscriber.merge([seg(1.2, 1.8, "line"), seg(1.8, 3, "next")], from: next,
+                                 previous: prev, next: nil, into: &merged)
+        #expect(merged.map(\.text) == ["long line", "next"])
     }
 
     @Test func threeHourRunReportsProgress() async throws {

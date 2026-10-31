@@ -179,16 +179,25 @@ public enum ChunkedTranscriber {
     }
 
     /// Adds `window`'s raw segments (timestamps relative to the window) to
-    /// `merged` (absolute timestamps). Segments that start inside the overlap
-    /// with the previous window were already recognized there, so they are
-    /// dropped.
+    /// `merged` (absolute timestamps). Each overlap is split at its middle:
+    /// the earlier window keeps segments that start before the middle, the
+    /// later window keeps the rest. Neither window is near its own edge
+    /// there, so a word Whisper drops at a cut is still heard by the other
+    /// window. A segment from the later window that starts more than
+    /// `repeatTolerance` seconds before the earlier window's last kept
+    /// segment ends repeats it, so it is dropped too.
+    public static let repeatTolerance = 0.5
+
     public static func merge(_ segments: [RecognizedSegment], from window: TranscriptionWindow,
-                             previous: TranscriptionWindow?, into merged: inout [RecognizedSegment]) {
+                             previous: TranscriptionWindow?, next: TranscriptionWindow?,
+                             into merged: inout [RecognizedSegment]) {
         let offset = window.startSeconds
-        let keepFrom = previous.map { $0.endSeconds } ?? -.infinity
+        let keepFrom = previous.map { (window.startSeconds + $0.endSeconds) / 2 } ?? -.infinity
+        let keepUntil = next.map { ($0.startSeconds + window.endSeconds) / 2 } ?? .infinity
+        let earlierEnd = previous == nil ? -Double.infinity : (merged.last?.end ?? -.infinity)
         for s in segments {
             let start = s.start + offset
-            guard start >= keepFrom else { continue }
+            guard start >= keepFrom, start < keepUntil, start >= earlierEnd - repeatTolerance else { continue }
             merged.append(RecognizedSegment(start: start, end: s.end + offset, text: s.text,
                                             noSpeechProbability: s.noSpeechProbability))
         }
@@ -206,7 +215,8 @@ public enum ChunkedTranscriber {
             try Task.checkCancellation()
             let samples = try source.read(from: w.start, count: w.count)
             let raw = try await recognizer.recognize(samples: samples)
-            merge(raw, from: w, previous: previous, into: &merged)
+            merge(raw, from: w, previous: previous, next: windows.indices.contains(i + 1) ? windows[i + 1] : nil,
+                  into: &merged)
             previous = w
             await progress?(Double(i + 1) / Double(windows.count))
         }

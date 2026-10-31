@@ -312,12 +312,45 @@ struct RecordingTimeTests {
         let start = Date()
         try writeTone(to: url, settings: [AVFormatIDKey: kAudioFormatMPEG4AAC, AVSampleRateKey: 48_000, AVNumberOfChannelsKey: 1], seconds: 1)
         // The file date is set far away so the metadata date is distinguishable.
-        try FileManager.default.setAttributes([.creationDate: Date(timeIntervalSince1970: 1_600_000_000)], ofItemAtPath: url.path)
+        // A recorder finishes writing about one duration after it starts.
+        try FileManager.default.setAttributes([.creationDate: Date(timeIntervalSince1970: 1_600_000_000),
+                                               .modificationDate: Date().addingTimeInterval(30)], ofItemAtPath: url.path)
 
         let t = try await AudioIngest.recordingTime(of: url)
         #expect(t.origin == .fileMetadata)
         #expect(!t.timeFromFileDate)
         #expect(abs(t.date.timeIntervalSince(start)) < 120)
+    }
+
+    @Test func resavedM4AUsesFileDate() async throws {
+        let dir = try tempDir()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let url = dir.appendingPathComponent("converted.m4a")
+        // Written much faster than real time, like a converter: the metadata
+        // date is the save time, seconds before the file's last change.
+        try writeTone(to: url, settings: [AVFormatIDKey: kAudioFormatMPEG4AAC, AVSampleRateKey: 48_000, AVNumberOfChannelsKey: 1], seconds: 20)
+        let created = Date(timeIntervalSince1970: 1_600_000_000)
+        try FileManager.default.setAttributes([.creationDate: created], ofItemAtPath: url.path)
+
+        let t = try await AudioIngest.recordingTime(of: url)
+        #expect(t.origin == .fileDate)
+        #expect(t.timeFromFileDate)
+        #expect(abs(t.date.timeIntervalSince(created)) < 1)
+    }
+
+    @Test func resavedMetadataRule() {
+        let stamp = Date(timeIntervalSince1970: 1_793_221_500)
+        // A one-hour recording finished an hour after it started: trusted.
+        #expect(!AudioIngest.metadataDateLooksResaved(metadata: stamp, modified: stamp.addingTimeInterval(3600), duration: 3600))
+        // Saved 40 s after the stamp: a re-save of a one-hour file.
+        #expect(AudioIngest.metadataDateLooksResaved(metadata: stamp, modified: stamp.addingTimeInterval(40), duration: 3600))
+        // Stamped after the file last changed: not a recording time.
+        #expect(AudioIngest.metadataDateLooksResaved(metadata: stamp, modified: stamp.addingTimeInterval(-60), duration: 10))
+        // Copied or downloaded later: trusted.
+        #expect(!AudioIngest.metadataDateLooksResaved(metadata: stamp, modified: stamp.addingTimeInterval(86_400 * 30), duration: 3600))
+        // Nothing to compare with: trusted.
+        #expect(!AudioIngest.metadataDateLooksResaved(metadata: stamp, modified: nil, duration: 3600))
+        #expect(!AudioIngest.metadataDateLooksResaved(metadata: stamp, modified: stamp, duration: 0))
     }
 
     @Test func metadataDateStrings() {
