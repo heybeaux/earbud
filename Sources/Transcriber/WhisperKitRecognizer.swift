@@ -57,6 +57,10 @@ public actor WhisperKitRecognizer: SpeechRecognizer {
 
     // MARK: Recognition
 
+    /// Decoder prompt with product names Whisper otherwise mishears
+    /// ("Fieldy" comes out as "Fility").
+    static let vocabularyPrompt = "Fieldy, EarBud."
+
     public func load() async throws {
         guard kit == nil else { return }
         guard let folder = Self.installedFolder(model, in: modelsDirectory) else {
@@ -70,7 +74,7 @@ public actor WhisperKitRecognizer: SpeechRecognizer {
     public func recognize(samples: [Float]) async throws -> [RecognizedSegment] {
         try await load()
         guard let kit else { throw TranscriberError.modelNotInstalled(model) }
-        let options = DecodingOptions(
+        var options = DecodingOptions(
             verbose: false,
             task: .transcribe,
             language: "en",
@@ -79,6 +83,11 @@ public actor WhisperKitRecognizer: SpeechRecognizer {
             withoutTimestamps: false,
             noSpeechThreshold: Float(TranscriptFilter.defaultNoSpeechThreshold),
             chunkingStrategy: .vad)
+        if let tokenizer = kit.tokenizer {
+            // Same encoding as WhisperKit's CLI --prompt: leading space, no special tokens.
+            options.promptTokens = tokenizer.encode(text: " " + Self.vocabularyPrompt)
+                .filter { $0 < tokenizer.specialTokens.specialTokenBegin }
+        }
         let results = try await kit.transcribe(audioArray: samples, decodeOptions: options)
         return results.flatMap(\.segments).map {
             RecognizedSegment(start: Double($0.start), end: Double($0.end), text: $0.text,

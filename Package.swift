@@ -81,7 +81,8 @@ let package = Package(
         .testTarget(name: "FieldyDeviceTests", dependencies: ["FieldyDevice"]),
         .testTarget(
             name: "AudioCodecTests",
-            dependencies: ["AudioCodec", .product(name: "Copus", package: "swift-opus")]
+            dependencies: ["AudioCodec", .product(name: "Copus", package: "swift-opus")],
+            resources: [.copy("Fixtures")]
         ),
         .testTarget(name: "LibraryTests", dependencies: ["Library"]),
         .testTarget(

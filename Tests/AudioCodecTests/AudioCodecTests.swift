@@ -90,3 +90,34 @@ struct AudioFileTests {
         #expect(size > 1000 && size < 40_000) // ~32 kbit/s
     }
 }
+
+@Suite("Real device file")
+struct RealFileTests {
+    /// File 1 of the 2026-10-31 00:25Z sync, v2 header, saved as received.
+    static func fixture() throws -> Data {
+        let url = try #require(Bundle.module.url(forResource: "v2-recording-0005", withExtension: "bin", subdirectory: "Fixtures"))
+        return try Data(contentsOf: url)
+    }
+
+    @Test func v2HeaderParsesAndDecodes() throws {
+        let data = try Self.fixture()
+        let header = try #require(FileHeader.parse(data))
+        guard case .v2(let recordedAt, let recordingId, let length, let crcValid) = header else {
+            Issue.record("expected v2 header, got \(header)"); return
+        }
+        #expect(length == 16)
+        #expect(recordingId == 5)
+        #expect(crcValid)
+        #expect(recordedAt == Date(timeIntervalSince1970: 0x6AE5_33F3))
+
+        let file = RecordingFile(parsing: data)
+        #expect(file.hadTrailer)
+        #expect(file.discardedBytes == 0)
+        #expect(file.frameCount == 330)
+        #expect(file.unexpectedTOCCount == 0)
+
+        let audio = try FieldyOpusDecoder.decode(frames: file.opusFrames)
+        #expect(audio.failedFrames == 0)
+        #expect(audio.samples.count == 330 * FieldyAudioFormat.samplesPerFrame)
+    }
+}
