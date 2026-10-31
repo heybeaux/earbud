@@ -10,13 +10,14 @@ let package = Package(
     products: [
         .library(
             name: "EarBudKit",
-            targets: ["FieldyProtocol", "FieldyDevice", "SyncEngine", "AudioCodec", "AudioIngest", "Transcriber", "Library"]
+            targets: ["FieldyProtocol", "FieldyDevice", "SyncEngine", "AudioCodec", "AudioIngest", "AudioImport", "Transcriber", "Library"]
         ),
         .library(name: "FieldyProtocol", targets: ["FieldyProtocol"]),
         .library(name: "FieldyDevice", targets: ["FieldyDevice"]),
         .library(name: "SyncEngine", targets: ["SyncEngine"]),
         .library(name: "AudioCodec", targets: ["AudioCodec"]),
         .library(name: "AudioIngest", targets: ["AudioIngest"]),
+        .library(name: "AudioImport", targets: ["AudioImport"]),
         .library(name: "Transcriber", targets: ["Transcriber"]),
         .library(name: "Library", targets: ["Library"]),
         .executable(name: "earbud-cli", targets: ["earbud-cli"]),
@@ -49,6 +50,10 @@ let package = Package(
 
         // Imported files -> playback M4A + 16 kHz recognizer audio; content hash; recording time.
         .target(name: "AudioIngest"),
+
+        // Copy-first import of files/folders into the library: duplicate check,
+        // AudioIngest, verification, raw-copy cleanup, transcription queueing.
+        .target(name: "AudioImport", dependencies: ["AudioIngest", "Library"]),
 
         // GRDB storage: recordings, segments, sync history, queue, settings, FTS5.
         .target(
@@ -89,6 +94,7 @@ let package = Package(
             resources: [.copy("Fixtures")]
         ),
         .testTarget(name: "AudioIngestTests", dependencies: ["AudioIngest"]),
+        .testTarget(name: "AudioImportTests", dependencies: ["AudioImport", "AudioIngest", "Library"]),
         .testTarget(name: "LibraryTests", dependencies: ["Library"]),
         .testTarget(
             name: "SyncEngineTests",
