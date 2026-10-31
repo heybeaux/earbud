@@ -7,7 +7,7 @@
 ## 2. Import audio files (v1.1)
 
 - [x] 2.1 `AudioIngest` module: AVAudioFile decode in 30-second blocks to playback M4A and 16 kHz mono for the recognizer; unit tests with generated WAV/AIFF/CAF/M4A/FLAC/MP3 fixtures, including 32-bit float and stereo
-- [ ] 2.2 Copy-first import with SHA-256 duplicate check (including trash), deletion of the full-size copy once the M4A is verified, and cleanup of partial copies on launch
+- [x] 2.2 Copy-first import with SHA-256 duplicate check (including trash), deletion of the full-size copy once the M4A is verified, and cleanup of partial copies on launch
 - [x] 2.3 Recording time: Broadcast WAV `bext`, M4A/MP3 creation metadata, file date fallback with "Time taken from the file"
 - [ ] 2.4 Drag and drop onto the window and Dock icon, File > Import Audio…, recursive folders, import summary sheet
 - [x] 2.5 Mockups for the drop target, import summary, and source labels; Beaux approves before 2.4 UI code

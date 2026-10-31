@@ -73,6 +73,29 @@ struct LibraryV2Tests {
         #expect(try s.recording(id: imp.id) == imp)
     }
 
+    @Test func migratesV3LibraryToAddTimeFromFileDate() throws {
+        let root = fm.temporaryDirectory.appendingPathComponent("earbudkit-v3-\(UUID().uuidString)", isDirectory: true)
+        let paths = LibraryPaths(root: root)
+        do {
+            let v3 = try LibraryStore(paths: paths, migratingUpTo: "v3")
+            try v3.db.write { db in
+                #expect(try !db.columns(in: "recording").map(\.name).contains("timeFromFileDate"))
+                try db.execute(sql: """
+                    INSERT INTO recording (id, recordedAt, timeUnknown, durationSeconds, frameCount, audioState, rawPath,
+                        createdAt, transcriptState, noSpeech, source)
+                    VALUES ('old', ?, 0, 12, 0, 'ok', 'imported/old.wav', ?, 'none', 0, 'imported')
+                    """, arguments: [Date(timeIntervalSince1970: 1000), Date(timeIntervalSince1970: 2000)])
+            }
+        }
+        let s = try LibraryStore(paths: paths)
+        let r = try #require(try s.recording(id: "old"))
+        #expect(r.timeFromFileDate == false)
+        var imp = try rec(s, at: 5000)
+        imp.timeFromFileDate = true
+        try s.update(imp)
+        #expect(try s.recording(id: imp.id)?.timeFromFileDate == true)
+    }
+
     @Test func sourceFieldsRoundTrip() throws {
         let s = try makeStore()
         let mic = Recording(recordedAt: Date(timeIntervalSince1970: 100), durationSeconds: 3600, frameCount: 0,

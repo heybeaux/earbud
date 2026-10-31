@@ -66,6 +66,9 @@ public struct Recording: Codable, Sendable, Identifiable, Equatable, FetchableRe
     public var audioDeletedAt: Date?
     /// Deleted audio files were removed for good; the recording is transcript only.
     public var audioPurgedAt: Date?
+    /// `recordedAt` came from the file's creation date, not embedded metadata
+    /// (design.md "Recording time"); the detail view says "Time taken from the file".
+    public var timeFromFileDate: Bool
 
     public init(id: String = UUID().uuidString, recordedAt: Date, timeUnknown: Bool = false, durationSeconds: Double,
                 frameCount: Int, title: String? = nil, audioState: AudioState = .ok, rawPath: String,
@@ -74,7 +77,8 @@ public struct Recording: Codable, Sendable, Identifiable, Equatable, FetchableRe
                 createdAt: Date = Date(), deletedAt: Date? = nil, transcriptState: TranscriptState = .none,
                 transcriptError: String? = nil, transcriptModel: String? = nil, transcribedAt: Date? = nil,
                 noSpeech: Bool = false, source: RecordingSource = .fieldy, sourceName: String? = nil,
-                contentHash: String? = nil, audioDeletedAt: Date? = nil, audioPurgedAt: Date? = nil) {
+                contentHash: String? = nil, audioDeletedAt: Date? = nil, audioPurgedAt: Date? = nil,
+                timeFromFileDate: Bool = false) {
         self.id = id
         self.recordedAt = recordedAt
         self.timeUnknown = timeUnknown
@@ -102,6 +106,7 @@ public struct Recording: Codable, Sendable, Identifiable, Equatable, FetchableRe
         self.contentHash = contentHash
         self.audioDeletedAt = audioDeletedAt
         self.audioPurgedAt = audioPurgedAt
+        self.timeFromFileDate = timeFromFileDate
     }
 
     /// The audio was deleted (in Recently Deleted or purged); only the transcript is left.
