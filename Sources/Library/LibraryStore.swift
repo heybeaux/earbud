@@ -107,6 +107,12 @@ public final class LibraryStore: Sendable {
                 t.add(column: "audioPurgedAt", .datetime)
             }
         }
+        // v1.1: imported recording time can fall back to the file date.
+        m.registerMigration("v4") { db in
+            try db.alter(table: "recording") { t in
+                t.add(column: "timeFromFileDate", .boolean).notNull().defaults(to: false)
+            }
+        }
         return m
     }
 
