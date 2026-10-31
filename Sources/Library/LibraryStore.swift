@@ -113,6 +113,17 @@ public final class LibraryStore: Sendable {
                 t.add(column: "timeFromFileDate", .boolean).notNull().defaults(to: false)
             }
         }
+        // One device recording split over several files: later files are parts.
+        m.registerMigration("v5") { db in
+            try db.create(table: "recordingPart") { t in
+                t.primaryKey("rawPath", .text)
+                t.column("recordingId", .text).notNull().indexed()
+                    .references("recording", onDelete: .cascade)
+                t.column("deviceFileId", .integer)
+                t.column("frameCount", .integer).notNull()
+                t.column("appendedAt", .datetime).notNull()
+            }
+        }
         return m
     }
 
@@ -130,8 +141,13 @@ public final class LibraryStore: Sendable {
         try db.read { try Recording.fetchOne($0, key: id) }
     }
 
+    /// The recording whose raw file, or one of whose parts, is `rawPath`.
     public func recording(rawPath: String) throws -> Recording? {
-        try db.read { try Recording.filter(Column("rawPath") == rawPath).fetchOne($0) }
+        try db.read { db in
+            if let r = try Recording.filter(Column("rawPath") == rawPath).fetchOne(db) { return r }
+            guard let part = try RecordingPart.fetchOne(db, key: rawPath) else { return nil }
+            return try Recording.fetchOne(db, key: part.recordingId)
+        }
     }
 
     /// Duplicate check for imports. Includes recordings in Recently Deleted.
@@ -143,7 +159,38 @@ public final class LibraryStore: Sendable {
 
     /// Raw paths already imported, for crash recovery.
     public func importedRawPaths() throws -> Set<String> {
-        try db.read { Set(try String.fetchAll($0, sql: "SELECT rawPath FROM recording")) }
+        try db.read { Set(try String.fetchAll($0, sql: "SELECT rawPath FROM recording UNION SELECT rawPath FROM recordingPart")) }
+    }
+
+    // MARK: Parts (one device recording over several files)
+
+    /// Appended files of a recording, in the order they were appended.
+    public func parts(recordingId: String) throws -> [RecordingPart] {
+        try db.read {
+            try RecordingPart.filter(Column("recordingId") == recordingId).order(Column("appendedAt"), Column("deviceFileId")).fetchAll($0)
+        }
+    }
+
+    /// Saves a recording that now includes `part`, in one transaction.
+    public func append(_ part: RecordingPart, updating recording: Recording) throws {
+        try db.write { db in
+            try part.insert(db)
+            try recording.update(db)
+        }
+    }
+
+    /// Deletes a recording for good: row, transcript, parts, and every file
+    /// it owns. `keepRaw` leaves the raw files (its own and its parts') so
+    /// they can be imported again. A raw sync folder left empty is removed.
+    public func deleteRecording(id: String, keepRaw: Bool = false) throws {
+        let found = try db.write { db -> (Recording, [String])? in
+            guard let r = try Recording.fetchOne(db, key: id) else { return nil }
+            let parts = try String.fetchAll(db, sql: "SELECT rawPath FROM recordingPart WHERE recordingId = ?", arguments: [id])
+            _ = try r.delete(db)
+            return (r, parts)
+        }
+        guard let (r, parts) = found else { return }
+        removeFiles(of: r, partRawPaths: parts, keepRaw: keepRaw)
     }
 
     /// Library list: newest first, excluding Recently Deleted.
@@ -153,6 +200,16 @@ public final class LibraryStore: Sendable {
             if let limit { q = q.limit(limit) }
             return try q.fetchAll(db)
         }
+    }
+
+    /// Every recording, Recently Deleted included, oldest first.
+    public func allRecordings() throws -> [Recording] {
+        try db.read { try Recording.order(Column("recordedAt")).fetchAll($0) }
+    }
+
+    /// Every recording of one sync, Recently Deleted included, by device file ID.
+    public func recordings(syncId: String) throws -> [Recording] {
+        try db.read { try Recording.filter(Column("syncId") == syncId).order(Column("deviceFileId")).fetchAll($0) }
     }
 
     public func rename(recordingId: String, title: String?) throws {
@@ -181,14 +238,17 @@ public final class LibraryStore: Sendable {
     /// file, deleted audio). Returns the removed rows.
     @discardableResult
     public func purgeTrash(deletedBefore cutoff: Date) throws -> [Recording] {
-        let rows = try db.write { db in
+        let removed = try db.write { db in
             let rows = try Recording.filter(Column("deletedAt") != nil && Column("deletedAt") < cutoff).fetchAll(db)
-            for r in rows { _ = try r.delete(db) }
-            return rows
+            return try rows.map { r in
+                let parts = try String.fetchAll(db, sql: "SELECT rawPath FROM recordingPart WHERE recordingId = ?", arguments: [r.id])
+                _ = try r.delete(db)
+                return (r, parts)
+            }
         }
         // After the commit: a leftover raw file would otherwise be imported again by crash recovery.
-        for r in rows { removeFiles(of: r) }
-        return rows
+        for (r, parts) in removed { removeFiles(of: r, partRawPaths: parts) }
+        return removed.map(\.0)
     }
 
     /// Empty Recently Deleted: every deleted recording and all deleted audio go now.
@@ -197,12 +257,18 @@ public final class LibraryStore: Sendable {
         try purgeAudio(deletedBefore: .distantFuture, at: date)
     }
 
-    private func removeFiles(of r: Recording) {
+    private func removeFiles(of r: Recording, partRawPaths: [String], keepRaw: Bool = false) {
         let fm = FileManager.default
         var urls = [r.audioPath, r.opusPath].compactMap { $0 }.map(paths.absolute)
-        if r.rawDeletedAt == nil { urls.append(paths.absolute(r.rawPath)) }
+        let raws = keepRaw || r.rawDeletedAt != nil ? [] : ([r.rawPath] + partRawPaths).map(paths.absolute)
+        urls += raws
         urls.append(paths.trashedAudioDirectory(recordingID: r.id))
         for url in urls where fm.fileExists(atPath: url.path) { try? fm.removeItem(at: url) }
+        for dir in Set(raws.map { $0.deletingLastPathComponent() }) where dir.path.hasPrefix(paths.raw.path + "/") {
+            if let left = try? fm.contentsOfDirectory(atPath: dir.path), left.allSatisfy({ $0 == ".DS_Store" }) {
+                try? fm.removeItem(at: dir)
+            }
+        }
     }
 
     // MARK: Delete audio, keep transcript
@@ -411,8 +477,11 @@ public final class LibraryStore: Sendable {
         }
     }
 
-    /// Replaces the transcript atomically and removes the job.
-    public func completeTranscription(recordingId: String, segments: [Segment], model: String, at date: Date = Date()) throws {
+    /// Replaces the transcript atomically and removes the job. With
+    /// `jobEnqueuedAt`, a job queued again since (the audio grew while it was
+    /// transcribed) stays queued.
+    public func completeTranscription(recordingId: String, segments: [Segment], model: String, at date: Date = Date(),
+                                      jobEnqueuedAt: Date? = nil) throws {
         try db.write { db in
             try Segment.filter(Column("recordingId") == recordingId).deleteAll(db)
             for (i, var s) in segments.enumerated() {
@@ -425,15 +494,17 @@ public final class LibraryStore: Sendable {
                 UPDATE recording SET transcriptState = 'done', transcriptError = NULL, transcriptModel = ?,
                     transcribedAt = ?, noSpeech = ? WHERE id = ?
                 """, arguments: [model, date, segments.isEmpty, recordingId])
-            try db.execute(sql: "DELETE FROM transcriptionJob WHERE recordingId = ?", arguments: [recordingId])
+            try db.execute(sql: "DELETE FROM transcriptionJob WHERE recordingId = ? AND (? IS NULL OR enqueuedAt = ?)",
+                           arguments: [recordingId, jobEnqueuedAt, jobEnqueuedAt])
         }
     }
 
     /// Marks the job failed. A recording that already had a transcript keeps it.
-    public func failTranscription(recordingId: String, error: String) throws {
+    /// `jobEnqueuedAt` as for `completeTranscription`.
+    public func failTranscription(recordingId: String, error: String, jobEnqueuedAt: Date? = nil) throws {
         try db.write { db in
-            try db.execute(sql: "UPDATE transcriptionJob SET state = 'failed', lastError = ? WHERE recordingId = ?",
-                           arguments: [error, recordingId])
+            try db.execute(sql: "UPDATE transcriptionJob SET state = 'failed', lastError = ? WHERE recordingId = ? AND (? IS NULL OR enqueuedAt = ?)",
+                           arguments: [error, recordingId, jobEnqueuedAt, jobEnqueuedAt])
             let hadTranscript = try Bool.fetchOne(db, sql: "SELECT transcribedAt IS NOT NULL FROM recording WHERE id = ?",
                                                   arguments: [recordingId]) ?? false
             try db.execute(sql: "UPDATE recording SET transcriptState = ?, transcriptError = ? WHERE id = ?",

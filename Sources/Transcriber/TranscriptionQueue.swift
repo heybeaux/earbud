@@ -88,11 +88,11 @@ public actor TranscriptionQueue {
             }
             let kept = TranscriptFilter.clean(raw)
             let segments = kept.map { Segment(recordingId: rec.id, position: 0, start: $0.start, end: $0.end, text: $0.text) }
-            try library.completeTranscription(recordingId: rec.id, segments: segments, model: job.model)
+            try library.completeTranscription(recordingId: rec.id, segments: segments, model: job.model, jobEnqueuedAt: job.enqueuedAt)
             emit(.finished(recordingId: rec.id, segments: segments.count))
         } catch {
             let message = "\(error)"
-            try library.failTranscription(recordingId: job.recordingId, error: message)
+            try library.failTranscription(recordingId: job.recordingId, error: message, jobEnqueuedAt: job.enqueuedAt)
             emit(.failed(recordingId: job.recordingId, message: message))
         }
     }

@@ -113,7 +113,8 @@ public enum FileHeader: Equatable, Sendable {
 /// button, had `2a 45 01 6a e6 01 ea 00 00 23`. The u32 was the wall-clock
 /// end of each recording (the first file's header held its start, 606 s
 /// earlier). The reason byte appears to use the recording-status stop
-/// reasons (1 manual, 4 file limit).
+/// reasons (1 manual, 4 file limit). The two files were one recording: the
+/// device closed the first at its length limit and went on in the second.
 public struct FileTrailer: Equatable, Sendable {
     public var stopReason: UInt8
     /// UTC end time, nil if absent or implausible.

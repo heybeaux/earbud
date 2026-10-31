@@ -58,6 +58,16 @@ public struct SyncSummary: Sendable {
     public var storageStatus: StorageStatus?
     public var message: String?
     public var history: SyncHistoryEntry
+
+    /// Adds an imported recording, or replaces it: a file appended to the
+    /// previous file's recording returns that recording again, longer.
+    mutating func add(_ r: Recording) {
+        if let i = recordings.firstIndex(where: { $0.id == r.id }) {
+            recordings[i] = r
+        } else {
+            recordings.append(r)
+        }
+    }
 }
 
 /// Downloads every stored recording with durable per-packet writes, then
@@ -239,12 +249,12 @@ public actor SyncEngine {
             publish(progress)
             let syncTime = startedAt
             for (fid, url, _) in w.completedFiles {
-                summary.recordings.append(try importer.importRaw(url, syncId: syncId, deviceFileId: Int(fid),
+                summary.add(try importer.importRaw(url, syncId: syncId, deviceFileId: Int(fid),
                                                                   incomplete: false, syncTime: syncTime, now: now()))
             }
             for p in partials {
                 let fid = Int(p.url.deletingPathExtension().lastPathComponent.prefix(5))
-                summary.recordings.append(try importer.importRaw(p.url, syncId: syncId, deviceFileId: fid,
+                summary.add(try importer.importRaw(p.url, syncId: syncId, deviceFileId: fid,
                                                                   incomplete: true, syncTime: syncTime, now: now()))
             }
             if outcome == .success, summary.droppedFiles > 0 {
@@ -268,13 +278,13 @@ public actor SyncEngine {
                 for (fid, url, _) in w.completedFiles {
                     if let r = try? importer.importRaw(url, syncId: syncId, deviceFileId: Int(fid), incomplete: false,
                                                        syncTime: startedAt, now: now()) {
-                        summary.recordings.append(r)
+                        summary.add(r)
                     }
                 }
                 for url in summary.rawFiles where url.pathExtension == "part" {
                     if let r = try? importer.importRaw(url, syncId: syncId, deviceFileId: nil, incomplete: true,
                                                        syncTime: startedAt, now: now()) {
-                        summary.recordings.append(r)
+                        summary.add(r)
                     }
                 }
             }

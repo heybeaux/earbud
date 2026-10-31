@@ -138,6 +138,17 @@ Decisions made while building `EarBudKit` (tasks 1 to 6.1 of
   cause.
 - v2 file header CRC: read big-endian like every other multi-byte field in
   the storage section; checked on the real device (see below).
+- Device file format, as seen on device (Fieldy 3, firmware 3.3.5,
+  2026-10-31): v2 header `'*' 0x02 len=16, start u32, recording ID u16,
+  4 bytes, CRC u16, '#'`; frames; trailer `'*' 'E' stop reason u8, end u32,
+  2 bytes, '#'`, then zero padding. Stop reason 1 = manual, 4 = file limit.
+  The device closes a file at about 610 s and goes on recording into the
+  next file, so one recording can be several files. EarBud joins them: a
+  file whose start equals the previous file's trailer end (same sync, within
+  2 s + 1 % of its length) is appended to that recording. A headered file
+  also needs stop reason 4 before it. What the next file's header holds
+  (same recording ID or not) is not known yet. See
+  docs/device-tests/interrupted-sync-20261031.md.
 - Trailer stripping: zero padding is stripped only to find the `*E...#`
   trailer. Without a trailer, trailing whole all-zero frames are dropped but a
   frame that merely ends in zero bytes is kept (fieldy-local's `rstrip`

@@ -56,7 +56,10 @@ handler. On EOF it renames `.part` to `.bin`, then (v3 only) sends the ACK.
 Decoding, library insertion, and transcription run only from the `.bin` file.
 On launch, any `.part` file is decoded up to its last whole frame and imported
 as "Incomplete". The device keeps a file after an interrupted sync and sends it
-whole next time; the "Incomplete" copy then moves to Recently Deleted.
+whole next time; the complete copy then replaces the "Incomplete" one, which
+is deleted with its audio and `.part`. The device splits a recording longer
+than about 610 s into files; a file that continues the previous one is
+appended to its recording.
 `...66E1` is never read while its notifications are on (CoreBluetooth cannot
 tell the reply from a notification). Raw files are deleted only after the decoded recording is
 verified (frame count matches, M4A written) and 7 days have passed.

@@ -109,19 +109,20 @@ struct InterruptedSyncTests {
         #expect(s2.recordings.map(\.audioState) == [.ok, .ok])
         #expect(s2.recordings.map(\.frameCount) == [framesA, framesB])
 
-        // The library shows the two complete recordings; the partial copy is
-        // in Recently Deleted, and emptying that removes its `.part`.
-        let shown = try lib.recordings()
-        #expect(shown.count == 2)
-        #expect(!shown.contains { $0.id == partial.id })
-        #expect(try lib.recording(id: partial.id)?.deletedAt != nil)
-        #expect(FileManager.default.fileExists(atPath: partURL.path))
-        #expect(try lib.purgeTrash(deletedBefore: .distantFuture).map(\.id) == [partial.id])
+        // The complete recording supersedes the partial copy: its row,
+        // transcript, audio and `.part` are gone, not in Recently Deleted.
+        #expect(try lib.recordings().count == 2)
+        #expect(try lib.recording(id: partial.id) == nil)
+        #expect(try lib.trash().isEmpty)
         #expect(!FileManager.default.fileExists(atPath: partURL.path))
+        #expect(!FileManager.default.fileExists(atPath: partURL.deletingLastPathComponent().path))
+        for rel in [partial.audioPath, partial.opusPath] {
+            #expect(!FileManager.default.fileExists(atPath: lib.paths.absolute(try #require(rel)).path))
+        }
         #expect(try importer.recoverUnimported().isEmpty)
     }
 
-    @Test func partialRecoveredAfterCompleteCopyGoesStraightToRecentlyDeleted() throws {
+    @Test func partialRecoveredAfterCompleteCopyIsDropped() throws {
         let root = tempRoot()
         let lib = try LibraryStore(paths: LibraryPaths(root: root))
         let importer = RecordingImporter(library: lib, transcriptionModel: "m")
@@ -135,10 +136,9 @@ struct InterruptedSyncTests {
         let complete = try importer.importRaw(newer.appendingPathComponent("00001.bin"), syncId: "20261031T150603Z-c11b",
                                               deviceFileId: 1, incomplete: false, syncTime: Date())
         let recovered = try importer.recoverUnimported()
-        #expect(recovered.count == 1)
-        #expect(recovered[0].audioState == .incomplete)
-        #expect(recovered[0].deletedAt != nil)
-        #expect(try lib.recordings().map(\.id) == [complete.id])
+        #expect(recovered.map(\.id) == [complete.id])
+        #expect(try lib.allRecordings().map(\.id) == [complete.id])
+        #expect(!FileManager.default.fileExists(atPath: older.appendingPathComponent("00001.part").path))
         #expect(try lib.jobs().map(\.recordingId) == [complete.id])
     }
 

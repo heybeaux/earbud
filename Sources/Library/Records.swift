@@ -113,6 +113,29 @@ public struct Recording: Codable, Sendable, Identifiable, Equatable, FetchableRe
     public var isTranscriptOnly: Bool { audioDeletedAt != nil || audioPurgedAt != nil }
 }
 
+/// A raw device file appended to a recording: the device split one
+/// recording into several files (it closes a file at about 610 s) and this is
+/// a later one. Its frames are in the recording's `.opus` and M4A after the
+/// frames of `Recording.rawPath` and of earlier parts.
+public struct RecordingPart: Codable, Sendable, Equatable, FetchableRecord, PersistableRecord {
+    public static let databaseTableName = "recordingPart"
+
+    /// Relative to the library root; unique across recordings and parts.
+    public var rawPath: String
+    public var recordingId: String
+    public var deviceFileId: Int?
+    public var frameCount: Int
+    public var appendedAt: Date
+
+    public init(rawPath: String, recordingId: String, deviceFileId: Int?, frameCount: Int, appendedAt: Date) {
+        self.rawPath = rawPath
+        self.recordingId = recordingId
+        self.deviceFileId = deviceFileId
+        self.frameCount = frameCount
+        self.appendedAt = appendedAt
+    }
+}
+
 public struct Segment: Codable, Sendable, Equatable, FetchableRecord, MutablePersistableRecord {
     public static let databaseTableName = "segment"
 

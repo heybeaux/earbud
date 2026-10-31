@@ -12,7 +12,7 @@ struct EarBudCLI: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "earbud-cli",
         abstract: "Drive EarBudKit against a real Fieldy 3.",
-        subcommands: [Status.self, Setup.self, Sync.self, Record.self, Transcribe.self, Scan.self])
+        subcommands: [Status.self, Setup.self, Sync.self, Record.self, Transcribe.self, Scan.self, Repair.self])
 }
 
 struct Scan: AsyncParsableCommand {
@@ -118,6 +118,41 @@ struct Setup: AsyncParsableCommand {
             log("This Fieldy is paired with another device. Reset it (short click, then hold 10 s) and run setup again.")
         }
         await dev.disconnect()
+    }
+}
+
+// MARK: repair
+
+struct Repair: ParsableCommand {
+    static let configuration = CommandConfiguration(
+        abstract: "One-off fix of a library hurt by the 2026-10-31 sync bugs (quit EarBud and back up the library first).",
+        discussion: """
+            Deletes phantom file 10818 rows and "Incomplete" rows whose complete copy is in, \
+            and re-imports headerless device files: appended to the recording they continue, \
+            or kept as their own recording. See docs/device-tests/interrupted-sync-20261031.md.
+            """)
+
+    @Option(help: "Library root (default ~/Library/Application Support/EarBud).")
+    var out: String?
+
+    @Flag(help: "Print what would change and change nothing.")
+    var dryRun = false
+
+    @Option(help: "Model for recordings that need a transcript and have none yet: accurate or faster.")
+    var model: String = "accurate"
+
+    func run() throws {
+        let paths = out.map { LibraryPaths(root: URL(fileURLWithPath: ($0 as NSString).expandingTildeInPath)) } ?? .default
+        let library = try LibraryStore(paths: paths)
+        let repair = LibraryRepair(importer: RecordingImporter(library: library, transcriptionModel: try parseModel(model).rawValue))
+        let plan = try repair.plan()
+        if plan.isEmpty { log("nothing to repair in \(paths.root.path)"); return }
+        if dryRun {
+            for a in plan { log("would \(a)") }
+            return
+        }
+        for line in try repair.run() { log(line) }
+        log("open EarBud to transcribe recordings that were queued again")
     }
 }
 
