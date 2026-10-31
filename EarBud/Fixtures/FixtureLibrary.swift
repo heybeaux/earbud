@@ -151,6 +151,12 @@ actor FixtureLibrary: LibraryProviding {
         broadcast(.history)
     }
 
+    /// Adds a recording that already has its transcript, for the onboarding test recording.
+    func addTestRecording(_ item: RecordingItem, segments: [TranscriptSegment]) {
+        entries[item.id] = Entry(item: item, segments: segments, script: segments)
+        broadcast(.recordings)
+    }
+
     /// Resolves when the transcription queue is empty. For tests.
     func waitForTranscriptions() async {
         while let running = worker {

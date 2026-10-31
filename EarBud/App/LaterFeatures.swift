@@ -6,18 +6,6 @@ import os
 
 private let log = Logger(subsystem: "dev.heybeaux.earbud", category: "later")
 
-/// First-run setup (onboarding mockups 02–11).
-@MainActor
-enum Onboarding {
-    /// Whether to show setup at launch. Batch 1 runs on the sample library, so never.
-    static var isNeeded: Bool { false }
-
-    /// Opens the setup window.
-    static func start() {
-        log.info("Onboarding is not built yet")
-    }
-}
-
 /// The notch dock and floating capsule (mockups 19, 20).
 @MainActor
 final class NotchDockController {

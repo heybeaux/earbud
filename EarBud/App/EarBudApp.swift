@@ -25,6 +25,7 @@ struct TestHostApp: App {
 /// so a model change doesn't re-run the whole scene graph and rebuild the main menu.
 struct EarBudApp: App {
     static let mainWindowID = "main"
+    static let onboardingWindowID = "onboarding"
 
     @State private var model: AppModel
     @AppStorage(SettingsKey.showInMenuBar) private var showInMenuBar = true
@@ -46,6 +47,12 @@ struct EarBudApp: App {
         .defaultSize(width: Metrics.windowWidth, height: Metrics.windowHeight)
         .windowToolbarStyle(.unified)
         .commands { FieldyCommands(model: model) }
+
+        Window("Welcome to EarBud", id: Self.onboardingWindowID) {
+            OnboardingHost(appModel: model)
+        }
+        .defaultSize(width: 560, height: 560)
+        .windowResizability(.contentSize)
 
         Settings {
             SettingsView()
@@ -109,6 +116,7 @@ private struct MenuBarLabel: View {
 /// Keeps the later-feature stubs in step with Settings and the last sync.
 private struct LaterFeaturesHost: ViewModifier {
     @Environment(AppModel.self) private var model
+    @Environment(\.openWindow) private var openWindow
     @AppStorage(SettingsKey.showInNotch) private var showInNotch = true
     @AppStorage(SettingsKey.notchDisplay) private var notchDisplay = ""
     @AppStorage(SettingsKey.reminderEnabled) private var reminderEnabled = true
@@ -118,7 +126,7 @@ private struct LaterFeaturesHost: ViewModifier {
     func body(content: Content) -> some View {
         content
             .onAppear {
-                if Onboarding.isNeeded { Onboarding.start() }
+                if OnboardingState.isNeeded { openWindow(id: EarBudApp.onboardingWindowID) }
                 update()
             }
             .onChange(of: showInNotch) { update() }
