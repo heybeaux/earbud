@@ -126,3 +126,19 @@ window links to GitHub releases.
 
 Resolved 2026-10-30 (Beaux): spec approved; English only for v1; mockups
 before UI; public repo `heybeaux/earbud` approved.
+
+## Notch dock details approved by Beaux (2026-10-30)
+
+Small gaps filled while building 9.4 and 9.5, all approved:
+
+- The capsule has a fixed width per state; long names or messages are cut off.
+- It sits 8 pt below the menu bar (8 pt below the top on a display without one).
+- Resting text: "● Fieldy 3A7C | Synced 23m ago", "Synced just now", "Not synced yet".
+- "Menu bar only" is the existing "Show EarBud in the notch" switch turned off.
+- An unplugged chosen display stays selected, shown as "Name (not connected)".
+- Displays are matched by name; two identical monitors cannot be told apart.
+- With no setting and no built-in display, the dock is menu bar only.
+- A display with a notch always gets the notch dock, never the capsule.
+- "Not now" in onboarding saves the dock as off.
+- The recording capsule has no hover Stop button; the quick panel's Record
+  button becomes Stop.
