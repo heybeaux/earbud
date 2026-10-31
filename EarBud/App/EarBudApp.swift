@@ -136,9 +136,18 @@ private struct RecordingEditCommands: Commands {
 /// The menu bar icon: ready, syncing, recording or not nearby.
 private struct MenuBarLabel: View {
     let model: AppModel
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         Image(nsImage: MenuBarGlyph.image(for: model.menuBarState))
+            .onAppear {
+                #if DEBUG
+                // Snapshot mode is menu-bar-first, so open the main window to capture it.
+                if UserDefaults.standard.string(forKey: "EarBudSnapshot") != nil {
+                    openWindow(id: EarBudApp.mainWindowID)
+                }
+                #endif
+            }
     }
 }
 
