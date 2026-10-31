@@ -169,6 +169,74 @@ struct StatusPill: View {
     }
 }
 
+// MARK: - Source
+
+/// `.src`: a recording's source, shown in the list row and detail view
+/// (mockup 25 "Source shown and shared library"): Fieldy, the imported file name,
+/// or the microphone name.
+struct SourceBadge: View {
+    var source: RecordingSourceKind
+    var onAccent = false
+
+    var body: some View {
+        HStack(spacing: 4) {
+            icon
+            Text(label).lineLimit(1)
+        }
+        .font(Typography.rowMeta)
+        .foregroundStyle(onAccent ? .white.opacity(0.85) : Palette.label3)
+    }
+
+    @ViewBuilder private var icon: some View {
+        switch source {
+        case .fieldy: PodGlyph(size: 12, lineWidth: 1.8)
+        case .imported: Image(systemName: "doc").font(.system(size: 10.5))
+        case .microphone: Image(systemName: "mic").font(.system(size: 10.5))
+        }
+    }
+
+    private var label: String {
+        switch source {
+        case .fieldy: "Fieldy"
+        case .imported(let name): name
+        case .microphone(let name): name
+        }
+    }
+}
+
+/// `.srcchip` / `.pill tonly`: the source and "Transcript only" line in the detail header.
+struct SourceLine: View {
+    var recording: RecordingItem
+
+    var body: some View {
+        HStack(spacing: 10) {
+            SourceBadge(source: recording.source)
+            if recording.isTranscriptOnly {
+                TranscriptOnlyPill()
+            } else if recording.timeFromFile {
+                HStack(spacing: 4) {
+                    Image(systemName: "info.circle").font(.system(size: 10.5))
+                    Text("Time taken from the file")
+                }
+                .font(Typography.rowMeta)
+                .foregroundStyle(Palette.label3)
+            }
+        }
+    }
+}
+
+/// `.pill.tonly`: "Transcript only".
+struct TranscriptOnlyPill: View {
+    var body: some View {
+        Text("Transcript only")
+            .font(Typography.pill)
+            .foregroundStyle(Palette.label2)
+            .padding(.horizontal, 8)
+            .frame(height: Metrics.pillHeight)
+            .background(Capsule().fill(Palette.fill2))
+    }
+}
+
 // MARK: - Grouped form
 
 /// `.fsec`: a titled section with an optional footnote.

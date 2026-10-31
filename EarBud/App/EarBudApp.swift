@@ -47,7 +47,10 @@ struct EarBudApp: App {
         }
         .defaultSize(width: Metrics.windowWidth, height: Metrics.windowHeight)
         .windowToolbarStyle(.unified)
-        .commands { FieldyCommands(model: model) }
+        .commands {
+            FieldyCommands(model: model)
+            RecordingEditCommands(model: model)
+        }
 
         Window("Welcome to EarBud", id: Self.onboardingWindowID) {
             OnboardingHost(appModel: model)
@@ -102,6 +105,31 @@ private struct FieldyMenuItems: View {
             .keyboardShortcut("2", modifiers: .command)
         Button("Show Recordings") { model.sidebar = .recordings }
             .keyboardShortcut("1", modifiers: .command)
+    }
+}
+
+/// Edit menu additions for the selected recording (mockup 26: Delete Audio, Keep Transcript; ⌘⌫ Delete Recording…).
+private struct RecordingEditCommands: Commands {
+    let model: AppModel
+
+    var body: some Commands {
+        CommandGroup(after: .pasteboard) {
+            Divider()
+            Button("Delete Audio, Keep Transcript") {
+                if let id = model.selectedID { model.requestDeleteAudio([id]) }
+            }
+            .disabled(!canDeleteAudio)
+            Button("Delete Recording…") {
+                if let id = model.selectedID { Task { await model.moveToTrash(id) } }
+            }
+            .keyboardShortcut(.delete, modifiers: .command)
+            .disabled(model.selectedRecording == nil)
+        }
+    }
+
+    private var canDeleteAudio: Bool {
+        guard let recording = model.selectedRecording else { return false }
+        return !recording.isTranscriptOnly && recording.transcript.isFinished
     }
 }
 

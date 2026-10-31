@@ -12,16 +12,37 @@ enum SettingsKey {
     static let showInMenuBar = "menuBar.show"
     static let showInNotch = "notch.show"
     static let notchDisplay = "notch.display"
+    /// 0 means off; otherwise 30, 90 or 365.
+    static let audioCleanupDays = "audioCleanup.days"
 }
 
-/// EarBud Settings (mockup 17).
+/// EarBud Settings, tabbed: General, Transcription, Recording, Storage (mockup 17, 27).
 struct SettingsView: View {
     @Environment(AppModel.self) private var model
 
-    @AppStorage(SettingsKey.transcriptionModel) private var modelID = "openai_whisper-small.en"
-    @AppStorage(SettingsKey.reminderEnabled) private var reminderEnabled = true
-    @AppStorage(SettingsKey.reminderDays) private var reminderDays = ReminderSettings.defaultDays
-    @AppStorage(SettingsKey.reminderTime) private var reminderTime = ReminderSettings.defaultMinutes
+    var body: some View {
+        TabView {
+            GeneralSettingsTab()
+                .tabItem { Label("General", systemImage: "gearshape") }
+            TranscriptionSettingsTab()
+                .tabItem { Label("Transcription", systemImage: "waveform") }
+            RecordingSettingsTab()
+                .tabItem { Label("Recording", systemImage: "mic") }
+            StorageSettingsTab()
+                .tabItem { Label("Storage", systemImage: "folder") }
+        }
+        .frame(width: 600)
+        .fixedSize(horizontal: false, vertical: true)
+        .background(Palette.settingsBackground)
+        .navigationTitle("EarBud Settings")
+        .task { await model.start() }
+    }
+}
+
+/// General: menu bar, notch dock and login item (mockup 17 "Where EarBud shows up", "General").
+private struct GeneralSettingsTab: View {
+    @Environment(AppModel.self) private var model
+
     @AppStorage(SettingsKey.showInMenuBar) private var showInMenuBar = true
     @AppStorage(SettingsKey.showInNotch) private var showInNotch = false
     @AppStorage(SettingsKey.notchDisplay) private var notchDisplay = ""
@@ -31,23 +52,110 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            transcription
-            reminder
             placement
             general
         }
         .padding(.horizontal, 24)
         .padding(.top, 18)
         .padding(.bottom, 20)
-        .frame(width: 600)
-        .fixedSize(horizontal: false, vertical: true)
-        .background(Palette.settingsBackground)
-        .navigationTitle("EarBud Settings")
-        .task { await model.start() }
         .onAppear { if notchDisplay.isEmpty { notchDisplay = NotchScreenPicker.defaultName(screens) ?? "" } }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
             screens = NSScreen.screens.map(\.dockCandidate)
         }
+    }
+
+    private var placement: some View {
+        FormSection(title: "Where EarBud shows up",
+                    footer: "On a screen without a notch, EarBud floats a small capsule at the top centre instead. If that display is unplugged, it moves back to your Mac's built-in display.") {
+            FormGroup(fill: Palette.content) {
+                FormRow(title: "Show in menu bar", detail: "Sync and see your Fieldy's status from the top of the screen.") {
+                    RowIcon(background: Palette.accent) {
+                        StrokedGlyph(kind: .bud)
+                            .stroke(style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round))
+                            .frame(width: 15, height: 15)
+                    }
+                } trailing: {
+                    AccentSwitch(isOn: $showInMenuBar, label: "Show in menu bar")
+                }
+                FormDivider()
+                FormRow(title: "Show EarBud in the notch", detail: "A small strip beside the camera shows sync progress and recording time.") {
+                    RowIcon(systemName: "laptopcomputer")
+                } trailing: {
+                    AccentSwitch(isOn: $showInNotch, label: "Show EarBud in the notch")
+                }
+                FormDivider()
+                FormRow(title: "Show it on", indent: 28) {
+                    Picker("Show it on", selection: $notchDisplay) {
+                        ForEach(NotchScreenPicker.choices(screens, saved: notchDisplay), id: \.self) { name in
+                            Text(screens.contains { $0.name == name } ? name : "\(name) (not connected)").tag(name)
+                        }
+                    }
+                    .labelsHidden()
+                    .fixedSize()
+                }
+                .disabled(!showInNotch)
+            }
+        }
+    }
+
+    private var general: some View {
+        FormSection(title: "General", footer: loginItemError) {
+            FormGroup(fill: Palette.content) {
+                FormRow(title: "Open EarBud when you log in", detail: "EarBud starts quietly in the menu bar, so reminders still arrive.") {
+                    RowIcon(systemName: "power", background: Palette.neutralIcon)
+                } trailing: {
+                    AccentSwitch(isOn: Binding(get: { openAtLogin }, set: setOpenAtLogin), label: "Open EarBud when you log in")
+                }
+            }
+        }
+    }
+
+    private func setOpenAtLogin(_ on: Bool) {
+        do {
+            if on { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
+            loginItemError = nil
+        } catch {
+            loginItemError = "macOS didn't allow this change. You can add EarBud in System Settings, General, Login Items."
+        }
+        openAtLogin = SMAppService.mainApp.status == .enabled
+    }
+}
+
+/// Recording: placeholder for v1.2 (microphone picker and Record with setting, design.md).
+private struct RecordingSettingsTab: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            FormSection(title: "Recording", footer: "Recording from a Mac microphone is coming in a future update.") {
+                FormGroup(fill: Palette.content) {
+                    FormRow(title: "Record with", detail: "Choosing a microphone will appear here.") {
+                        RowIcon(systemName: "mic", background: Palette.neutralIcon)
+                    } trailing: { EmptyView() }
+                }
+            }
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 18)
+        .padding(.bottom, 20)
+    }
+}
+
+/// Transcription and sync reminder (mockup 17).
+private struct TranscriptionSettingsTab: View {
+    @Environment(AppModel.self) private var model
+
+    @AppStorage(SettingsKey.transcriptionModel) private var modelID = "openai_whisper-small.en"
+    @AppStorage(SettingsKey.reminderEnabled) private var reminderEnabled = true
+    @AppStorage(SettingsKey.reminderDays) private var reminderDays = ReminderSettings.defaultDays
+    @AppStorage(SettingsKey.reminderTime) private var reminderTime = ReminderSettings.defaultMinutes
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            transcription
+            reminder
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 18)
+        .padding(.bottom, 20)
     }
 
     // MARK: Sections
@@ -101,67 +209,140 @@ struct SettingsView: View {
         }
     }
 
-    private var placement: some View {
-        FormSection(title: "Where EarBud shows up",
-                    footer: "On a screen without a notch, EarBud floats a small capsule at the top centre instead. If that display is unplugged, it moves back to your Mac's built-in display.") {
-            FormGroup(fill: Palette.content) {
-                FormRow(title: "Show in menu bar", detail: "Sync and see your Fieldy's status from the top of the screen.") {
-                    RowIcon(background: Palette.accent) {
-                        StrokedGlyph(kind: .bud)
-                            .stroke(style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round))
-                            .frame(width: 15, height: 15)
-                    }
-                } trailing: {
-                    AccentSwitch(isOn: $showInMenuBar, label: "Show in menu bar")
-                }
-                FormDivider()
-                FormRow(title: "Show EarBud in the notch", detail: "A small strip beside the camera shows sync progress and recording time.") {
-                    RowIcon(systemName: "laptopcomputer")
-                } trailing: {
-                    AccentSwitch(isOn: $showInNotch, label: "Show EarBud in the notch")
-                }
-                FormDivider()
-                FormRow(title: "Show it on", indent: 28) {
-                    Picker("Show it on", selection: $notchDisplay) {
-                        ForEach(NotchScreenPicker.choices(screens, saved: notchDisplay), id: \.self) { name in
-                            Text(screens.contains { $0.name == name } ? name : "\(name) (not connected)").tag(name)
-                        }
-                    }
-                    .labelsHidden()
-                    .fixedSize()
-                }
-                .disabled(!showInNotch)
-            }
-        }
-    }
-
-    private var general: some View {
-        FormSection(title: "General", footer: loginItemError) {
-            FormGroup(fill: Palette.content) {
-                FormRow(title: "Open EarBud when you log in", detail: "EarBud starts quietly in the menu bar, so reminders still arrive.") {
-                    RowIcon(systemName: "power", background: Palette.neutralIcon)
-                } trailing: {
-                    AccentSwitch(isOn: Binding(get: { openAtLogin }, set: setOpenAtLogin), label: "Open EarBud when you log in")
-                }
-            }
-        }
-    }
-
     // MARK: Helpers
 
     private func timeLabel(_ minutes: Int) -> String {
         let date = Calendar.current.date(bySettingHour: minutes / 60, minute: minutes % 60, second: 0, of: Date()) ?? Date()
         return model.formatting.time(date)
     }
+}
 
-    private func setOpenAtLogin(_ on: Bool) {
-        do {
-            if on { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
-            loginItemError = nil
-        } catch {
-            loginItemError = "macOS didn't allow this change. You can add EarBud in System Settings, General, Login Items."
+/// Storage: space used, Recently Deleted, and automatic cleanup (mockup 27).
+private struct StorageSettingsTab: View {
+    @Environment(AppModel.self) private var model
+    @AppStorage(SettingsKey.audioCleanupDays) private var cleanupDays = 0
+    @State private var confirmingEmpty = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            usage
+            cleanup
         }
-        openAtLogin = SMAppService.mainApp.status == .enabled
+        .padding(.horizontal, 24)
+        .padding(.top, 18)
+        .padding(.bottom, 20)
+        .confirmationDialog("Empty Recently Deleted?", isPresented: $confirmingEmpty, titleVisibility: .visible) {
+            Button("Empty Recently Deleted", role: .destructive) { Task { await model.emptyRecentlyDeleted() } }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This removes the deleted audio and recordings for good. You can't undo this.")
+        }
+    }
+
+    private var usage: some View {
+        FormSection(title: "Space used on this Mac") {
+            FormGroup(fill: Palette.content) {
+                StorageUsageRow(storage: model.storage)
+                FormDivider()
+                FormRow(title: "Recently Deleted",
+                        detail: "Holds \(model.formatting.bytes(model.storage?.recentlyDeletedBytes ?? 0)) of audio for up to 30 days. Empty it to free the space now.") {
+                    EmptyView()
+                } trailing: {
+                    Button("Empty…") { confirmingEmpty = true }
+                        .buttonStyle(EarBudButtonStyle())
+                        .disabled((model.storage?.recentlyDeletedBytes ?? 0) == 0)
+                }
+            }
+        }
+    }
+
+    private var cleanup: some View {
+        FormSection(title: "Automatic cleanup") {
+            FormGroup(fill: Palette.content) {
+                FormRow(title: "Delete audio older than \(ageLabel), keep transcripts",
+                        detail: "Only recordings with a finished transcript. The audio goes to Recently Deleted first, so you have 30 days to change your mind.",
+                        alignTop: true) {
+                    RowIcon(systemName: "waveform", background: Palette.neutralIcon)
+                } trailing: {
+                    HStack(spacing: 8) {
+                        if cleanupDays != 0 {
+                            Picker("Age", selection: $cleanupDays) {
+                                Text("30 days").tag(30)
+                                Text("90 days").tag(90)
+                                Text("365 days").tag(365)
+                            }
+                            .labelsHidden()
+                            .fixedSize()
+                        }
+                        AccentSwitch(isOn: cleanupToggle, label: "Delete audio older than, keep transcripts")
+                    }
+                }
+            }
+        }
+        .task(id: cleanupDays) {
+            guard cleanupDays != 0 else { return }
+            await model.cleanUpOldAudio(olderThanDays: cleanupDays)
+        }
+    }
+
+    private var ageLabel: String {
+        cleanupDays == 0 ? "90 days" : "\(cleanupDays) days"
+    }
+
+    private var cleanupToggle: Binding<Bool> {
+        Binding(get: { cleanupDays != 0 }, set: { cleanupDays = $0 ? 90 : 0 })
+    }
+}
+
+/// `.usage`: the stacked meter and legend for audio, transcripts and Recently Deleted.
+private struct StorageUsageRow: View {
+    @Environment(AppModel.self) private var model
+    var storage: StorageSnapshot?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(model.formatting.bytes(total)).font(.system(size: 20, weight: .bold))
+                Spacer()
+                Text(model.formatting.recordings(storage?.recordingCount ?? 0)).font(Typography.caption).foregroundStyle(Palette.label2)
+            }
+            GeometryReader { geo in
+                HStack(spacing: 1.5) {
+                    segment(width: geo.size.width, fraction: fraction(audioBytes), color: Palette.accent)
+                    segment(width: geo.size.width, fraction: fraction(transcriptBytes), color: Palette.pillDoneText, minWidth: 4)
+                    segment(width: geo.size.width, fraction: fraction(deletedBytes), color: Palette.label3, minWidth: 4)
+                }
+            }
+            .frame(height: 6)
+            HStack(spacing: 16) {
+                legend("Audio", audioBytes, Palette.accent)
+                legend("Transcripts", transcriptBytes, Palette.pillDoneText)
+                legend("Recently Deleted", deletedBytes, Palette.label3)
+            }
+        }
+        .padding(14)
+    }
+
+    private var audioBytes: Int { storage?.audioBytes ?? 0 }
+    private var transcriptBytes: Int { storage?.transcriptBytes ?? 0 }
+    private var deletedBytes: Int { storage?.recentlyDeletedBytes ?? 0 }
+    private var total: Int { audioBytes + transcriptBytes + deletedBytes }
+
+    private func fraction(_ bytes: Int) -> Double {
+        total > 0 ? Double(bytes) / Double(total) : 0
+    }
+
+    private func segment(width: CGFloat, fraction: Double, color: Color, minWidth: CGFloat = 0) -> some View {
+        Capsule().fill(color).frame(width: max(fraction > 0 ? minWidth : 0, width * fraction))
+    }
+
+    private func legend(_ title: String, _ bytes: Int, _ color: Color) -> some View {
+        HStack(spacing: 5) {
+            Circle().fill(color).frame(width: 7, height: 7)
+            Text(title).foregroundStyle(Palette.label2)
+            Text(model.formatting.bytes(bytes)).font(Typography.captionSemibold).foregroundStyle(Palette.label)
+        }
+        .font(Typography.caption)
     }
 }
 

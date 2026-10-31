@@ -124,6 +124,13 @@ struct RecordingRow: View {
                 .lineLimit(2)
                 .cssLineHeight(1.35, size: 12.5)
                 .frame(maxWidth: .infinity, alignment: .leading)
+            if let item {
+                HStack(spacing: 8) {
+                    SourceBadge(source: item.source, onAccent: isSelected)
+                    if item.isTranscriptOnly { TranscriptOnlyPill() }
+                }
+                .padding(.top, 2)
+            }
             status
             if case .recording(_, let info?) = entry {
                 Text(info.matchCount == 1 ? "1 match" : "\(info.matchCount) matches")
