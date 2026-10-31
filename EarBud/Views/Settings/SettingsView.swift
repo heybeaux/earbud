@@ -20,8 +20,8 @@ struct SettingsView: View {
 
     @AppStorage(SettingsKey.transcriptionModel) private var modelID = "openai_whisper-small.en"
     @AppStorage(SettingsKey.reminderEnabled) private var reminderEnabled = true
-    @AppStorage(SettingsKey.reminderDays) private var reminderDays = 1
-    @AppStorage(SettingsKey.reminderTime) private var reminderTime = 19 * 60
+    @AppStorage(SettingsKey.reminderDays) private var reminderDays = ReminderSettings.defaultDays
+    @AppStorage(SettingsKey.reminderTime) private var reminderTime = ReminderSettings.defaultMinutes
     @AppStorage(SettingsKey.showInMenuBar) private var showInMenuBar = true
     @AppStorage(SettingsKey.showInNotch) private var showInNotch = true
     @AppStorage(SettingsKey.notchDisplay) private var notchDisplay = ""

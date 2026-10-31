@@ -33,6 +33,7 @@ struct EarBudApp: App {
     init() {
         let model = AppModel.usesFixtures ? AppModel.fixture() : AppModel.real()
         _model = State(initialValue: model)
+        SyncReminderScheduler.shared.attach(model: model)
         #if DEBUG
         DebugSnapshot.runIfRequested(model: model)
         #endif
@@ -113,33 +114,25 @@ private struct MenuBarLabel: View {
     }
 }
 
-/// Keeps the later-feature stubs in step with Settings and the last sync.
+/// Keeps the later-feature stubs in step with Settings, and lets reminder clicks open this window.
 private struct LaterFeaturesHost: ViewModifier {
-    @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
     @AppStorage(SettingsKey.showInNotch) private var showInNotch = true
     @AppStorage(SettingsKey.notchDisplay) private var notchDisplay = ""
-    @AppStorage(SettingsKey.reminderEnabled) private var reminderEnabled = true
-    @AppStorage(SettingsKey.reminderDays) private var reminderDays = 1
-    @AppStorage(SettingsKey.reminderTime) private var reminderTime = 19 * 60
 
     func body(content: Content) -> some View {
         content
             .onAppear {
                 if OnboardingState.isNeeded { openWindow(id: EarBudApp.onboardingWindowID) }
+                let openWindow = openWindow
+                SyncReminderScheduler.shared.openMainWindow = { openWindow(id: EarBudApp.mainWindowID) }
                 update()
             }
             .onChange(of: showInNotch) { update() }
             .onChange(of: notchDisplay) { update() }
-            .onChange(of: reminderEnabled) { update() }
-            .onChange(of: reminderDays) { update() }
-            .onChange(of: reminderTime) { update() }
-            .onChange(of: model.deviceState?.lastSynced) { update() }
     }
 
     private func update() {
         NotchDockController.shared.update(enabled: showInNotch, displayName: notchDisplay.isEmpty ? nil : notchDisplay)
-        SyncReminderScheduler.shared.reschedule(enabled: reminderEnabled, afterDays: reminderDays, atMinutes: reminderTime,
-                                                lastSynced: model.deviceState?.lastSynced)
     }
 }

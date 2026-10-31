@@ -54,9 +54,9 @@
 
 ## 8. Device panel, menu bar, reminders
 
-- [ ] 8.1 Device panel with status and controls (read-back confirmation)
-- [ ] 8.2 Menu-bar icon and menu; working state; toggle in Settings
-- [ ] 8.3 Daily reminder notification, interval/time settings, click-to-sync
+- [x] 8.1 Device panel with status and controls (read-back confirmation)
+- [x] 8.2 Menu-bar icon and menu; working state; toggle in Settings
+- [x] 8.3 Daily reminder notification, interval/time settings, click-to-sync
 
 ## 9. Notch dock
 

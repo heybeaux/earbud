@@ -38,7 +38,7 @@ struct FinishedStep: View {
                 FormRow(title: "EarBud lives in the menu bar", detail: "Look for the EarBud icon at the top of your screen to sync or check your Fieldy.",
                         leading: { OnboardingIconTile(systemName: "menubar.rectangle") }, trailing: { EmptyView() })
                 FormDivider()
-                FormRow(title: "A gentle daily reminder", detail: "If you haven't synced for a day, EarBud reminds you at 6:00 PM. Change it in Settings.",
+                FormRow(title: "A gentle daily reminder", detail: "If you haven't synced for a day, EarBud reminds you at 7:00 PM. Change it in Settings.",
                         leading: { OnboardingIconTile(systemName: "bell") }, trailing: { EmptyView() })
                 FormDivider()
                 FormRow(title: "Open EarBud when you log in", detail: "So reminders still arrive if you forget to open EarBud.",

@@ -21,14 +21,3 @@ final class NotchDockController {
         log.info("Notch dock not built yet (enabled: \(enabled))")
     }
 }
-
-/// The daily sync reminder notification (mockup 21).
-@MainActor
-final class SyncReminderScheduler {
-    static let shared = SyncReminderScheduler()
-
-    /// Called when reminder settings change and after each sync.
-    func reschedule(enabled: Bool, afterDays: Int, atMinutes: Int, lastSynced: Date?) {
-        log.info("Sync reminder not built yet (enabled: \(enabled), days: \(afterDays), at: \(atMinutes))")
-    }
-}
