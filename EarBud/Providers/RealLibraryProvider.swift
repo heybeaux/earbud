@@ -196,10 +196,7 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
             isTranscriptOnly: rec.isTranscriptOnly,
             audioDeletedAt: rec.audioDeletedAt,
             audioBytes: nil,
-            // TODO(audio-import 2.3): `Recording` has no column yet for whether the time
-            // came from the file's date rather than a header/metadata; the importer task
-            // owns that migration. Always false until it lands.
-            timeFromFile: false)
+            timeFromFile: rec.timeFromFileDate)
     }
 
     static func map(_ source: Library.RecordingSource, sourceName: String?) -> RecordingSourceKind {

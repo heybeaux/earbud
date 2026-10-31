@@ -133,6 +133,7 @@
 		62DE774F2F35624332303047 /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
 		65F74E62B04841D4706F51A5 /* RealLibraryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealLibraryProvider.swift; sourceTree = "<group>"; };
 		666E4CDCA87C41409C878E35 /* ScaffoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaffoldTests.swift; sourceTree = "<group>"; };
+		66BA49E953556412BA5BB5CD /* earbud-app */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "earbud-app"; path = .; sourceTree = SOURCE_ROOT; };
 		67037DD9B40C2A6E2D9851F5 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		6C54FDBEC73AFA2265C9F583 /* NotchDockStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchDockStep.swift; sourceTree = "<group>"; };
 		6CCE8D95965C66D08E4F5FC7 /* FixtureOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureOnboarding.swift; sourceTree = "<group>"; };
@@ -168,7 +169,6 @@
 		BD0A8DD06E42B772D96238C7 /* DebugSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSnapshot.swift; sourceTree = "<group>"; };
 		CFCCB221B851F9358F271B31 /* SpeechModelStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelStep.swift; sourceTree = "<group>"; };
 		D06FB9A79C27D917D7C0C853 /* FixtureData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureData.swift; sourceTree = "<group>"; };
-		D22F83238044233B31A12D11 /* earbud-retention */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "earbud-retention"; path = .; sourceTree = SOURCE_ROOT; };
 		D305EFB20B1C337BDA511F28 /* PairedElsewhereStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairedElsewhereStep.swift; sourceTree = "<group>"; };
 		D51CC66CA45705221E813C63 /* OnboardingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModel.swift; sourceTree = "<group>"; };
 		DEB04E524407C9997D8BE3A8 /* RecordingList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingList.swift; sourceTree = "<group>"; };
@@ -256,7 +256,7 @@
 		5A09840DC77537109DDEE5B4 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				D22F83238044233B31A12D11 /* earbud-retention */,
+				66BA49E953556412BA5BB5CD /* earbud-app */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
