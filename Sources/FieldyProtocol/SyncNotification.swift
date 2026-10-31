@@ -71,6 +71,11 @@ public enum SyncNotification: Equatable, Sendable {
     /// Transfer header: `'*' 'B' fileCount u16 ... 'B' '#'`.
     case transferHeader(fileCount: Int)
     case fileFailed(FileFailure)
+    /// The 20-byte storage status record. It is never sent as a notification
+    /// during a sync, but CoreBluetooth delivers the reply to a read of
+    /// `...66E1` through the same callback as notifications, so a status read
+    /// made mid-sync arrives here.
+    case storageStatus(StorageStatus)
     case data(DataPacket)
     /// Too short or otherwise not understood. Kept so callers can log it.
     case unrecognized(Data)
@@ -92,6 +97,14 @@ public enum SyncNotification: Equatable, Sendable {
         if b.count == 16, b[0] == 0x2A, b[1] == 0x42, b[2] == 0x46, b[15] == 0x23 {
             return .fileFailed(FileFailure(
                 flags: b[3], fsResult: b[4], fileId: r.u16be(5), fileSize: r.u32be(7), failureOffset: r.u32be(11)))
+        }
+        // Every control and status record starts with '*' 'B'. Anything else
+        // with that prefix is not file data either: read as a data packet it
+        // would be file 0x2A42 (10818), far above any real file ID, and the
+        // status record's size bytes even set the end-of-file flag.
+        if b.count >= 2, b[0] == 0x2A, b[1] == 0x42 {
+            if b.count == 20, let s = try? StorageStatus(parsing: data) { return .storageStatus(s) }
+            return .unrecognized(Data(b))
         }
         if transportVersion <= 1 {
             guard b.count >= v1PacketLength else { return .unrecognized(Data(b)) }

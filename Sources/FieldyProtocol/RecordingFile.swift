@@ -105,22 +105,68 @@ public enum FileHeader: Equatable, Sendable {
     }
 }
 
+/// The trailer at the end of a synced file (10 bytes):
+/// `'*' 'E' stopReason u8, endedAt u32 (UTC seconds), 2 bytes unknown, '#'`.
+///
+/// Seen on device (2026-10-31): a 610 s file that the device closed itself
+/// had `2a 45 04 6a e6 01 be 00 00 23`, and the next file, stopped with the
+/// button, had `2a 45 01 6a e6 01 ea 00 00 23`. The u32 was the wall-clock
+/// end of each recording, and the next file's header time equalled the
+/// previous trailer's. The reason byte appears to use the recording-status
+/// stop reasons (1 manual, 4 file limit).
+public struct FileTrailer: Equatable, Sendable {
+    public var stopReason: UInt8
+    /// UTC end time, nil if absent or implausible.
+    public var endedAt: Date?
+
+    public init(stopReason: UInt8, endedAt: Date?) {
+        self.stopReason = stopReason
+        self.endedAt = endedAt
+    }
+
+    /// `bytes` is the 10-byte trailer, `'*' 'E'` through `'#'`.
+    init(_ bytes: ArraySlice<UInt8>) {
+        let r = ByteReader(Array(bytes))
+        stopReason = r.u8(2)
+        let ts = r.u32be(3)
+        let date = Date(timeIntervalSince1970: TimeInterval(ts))
+        endedAt = date >= FileHeader.earliestValidDate ? date : nil
+    }
+}
+
 /// A synced file split into header, Opus frames, and trailer.
 public struct RecordingFile: Equatable, Sendable {
     public var header: FileHeader?
     /// Whole 40-byte frames only.
     public var opusFrames: Data
-    public var hadTrailer: Bool
+    public var trailer: FileTrailer?
     /// Bytes after the last whole frame that were discarded (not counting padding).
     public var discardedBytes: Int
+    /// Bytes dropped to regain the 40-byte frame alignment: the tail of a
+    /// frame whose start is missing (headerless file, or a lost packet).
+    public var skippedBytes: Int
 
+    public var hadTrailer: Bool { trailer != nil }
     public var frameCount: Int { opusFrames.count / FieldyAudioFormat.frameBytes }
     public var durationSeconds: Double { FieldyAudioFormat.seconds(frames: frameCount) }
 
+    /// Start time when the header is missing: the trailer's end time minus
+    /// the decoded length. The trailer time is the device's wall clock, so
+    /// this is close but not exact: on device the audio ran about 0.7 %
+    /// longer than the header-to-trailer time (610 s of frames, 606 s of
+    /// clock), and any audio lost with the header is not counted.
+    public var startFromTrailer: Date? {
+        trailer?.endedAt.map { $0.addingTimeInterval(-durationSeconds) }
+    }
+
     public static let trailerLength = 10
+    /// Consecutive frame starts needed to accept a new frame alignment.
+    static let realignRun = 4
 
     /// Splits raw file bytes: header, then bare frames, then an optional
-    /// `'*' 'E' ... '#'` trailer followed by zero padding.
+    /// `'*' 'E' ... '#'` trailer followed by zero padding. If the frames do not
+    /// start where expected (no header, or a packet went missing), the bytes
+    /// up to the next run of frame starts are skipped.
     public init(parsing data: Data) {
         let all = [UInt8](data)
         header = FileHeader.parse(data)
@@ -128,25 +174,52 @@ public struct RecordingFile: Equatable, Sendable {
         // Look for the trailer before any zero padding in the last packet.
         var stripped = body
         while let last = stripped.last, last == 0 { stripped.removeLast() }
-        hadTrailer = false
+        trailer = nil
         if stripped.count >= Self.trailerLength {
             let t = stripped.count - Self.trailerLength
             if stripped[t] == 0x2A, stripped[t + 1] == 0x45, stripped[stripped.count - 1] == 0x23 {
+                trailer = FileTrailer(stripped[t...])
                 body = Array(stripped.prefix(t))
-                hadTrailer = true
             }
+        }
+        let n = FieldyAudioFormat.frameBytes
+        var frames: [UInt8] = []
+        frames.reserveCapacity(body.count)
+        var skipped = 0
+        var i = 0
+        while i + n <= body.count {
+            if body[i] != FieldyAudioFormat.toc, let j = Self.realign(body, after: i) {
+                skipped += j - i
+                i = j
+                continue
+            }
+            frames += body[i..<(i + n)]
+            i += n
         }
         // Without a trailer, keep zero bytes (a frame may end in 0x00) but drop
         // whole frames of padding at the end.
-        var whole = body.count - body.count % FieldyAudioFormat.frameBytes
-        if !hadTrailer {
-            while whole >= FieldyAudioFormat.frameBytes,
-                  body[(whole - FieldyAudioFormat.frameBytes)..<whole].allSatisfy({ $0 == 0 }) {
-                whole -= FieldyAudioFormat.frameBytes
+        if trailer == nil {
+            while frames.count >= n, frames.suffix(n).allSatisfy({ $0 == 0 }) {
+                frames.removeLast(n)
+                i -= n
             }
         }
-        discardedBytes = hadTrailer ? body.count - whole : max(0, stripped.count - whole)
-        opusFrames = Data(body.prefix(whole))
+        skippedBytes = skipped
+        discardedBytes = trailer != nil ? body.count - i : max(0, stripped.count - i)
+        opusFrames = Data(frames)
+    }
+
+    /// The first offset after `i`, less than one frame on, where frame starts
+    /// (TOC 0xB8) repeat every 40 bytes for `realignRun` frames (or every
+    /// remaining whole frame, if at least two). Nil keeps the current alignment.
+    static func realign(_ body: [UInt8], after i: Int) -> Int? {
+        let n = FieldyAudioFormat.frameBytes
+        for j in (i + 1)..<min(i + n, body.count) {
+            let need = min(realignRun, (body.count - j) / n)
+            guard need >= 2 else { return nil }
+            if (0..<need).allSatisfy({ body[j + $0 * n] == FieldyAudioFormat.toc }) { return j }
+        }
+        return nil
     }
 
     /// Number of frames whose first byte is not the expected TOC.

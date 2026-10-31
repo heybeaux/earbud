@@ -42,8 +42,9 @@ public final class FieldyOpusDecoder {
 
     deinit { opus_decoder_destroy(decoder) }
 
-    /// Decodes concatenated frames. A frame libopus rejects is concealed (PLC)
-    /// so the output length always equals `frames * 20 ms`.
+    /// Decodes concatenated frames. A frame libopus rejects, or decodes to
+    /// other than 20 ms, is concealed (PLC) so the output length always
+    /// equals `frames * 20 ms`.
     public func decode(frames data: Data, frameBytes: Int = FieldyAudioFormat.frameBytes) throws -> DecodedAudio {
         let bytes = [UInt8](data)
         let frameCount = bytes.count / frameBytes
@@ -59,7 +60,9 @@ public final class FieldyOpusDecoder {
                     let dst = out.baseAddress! + i * samplesPerFrame
                     if src.pointee != FieldyAudioFormat.toc { badTOC += 1 }
                     var n = opus_decode(decoder, src, Int32(frameBytes), dst, Int32(samplesPerFrame), 0)
-                    if n < 0 {
+                    // A valid Opus packet of another size (e.g. bytes that are not a
+                    // frame start, TOC 0xE4 = 2.5 ms) is as wrong as a rejected one.
+                    if n < 0 || Int(n) != samplesPerFrame {
                         failed += 1
                         n = opus_decode(decoder, nil, 0, dst, Int32(samplesPerFrame), 0)
                         if n < 0 { throw AudioCodecError.opus(code: n, during: "concealment of frame \(i)") }

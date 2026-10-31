@@ -31,6 +31,10 @@ public enum FieldyDeviceError: Error, Equatable, Sendable, CustomStringConvertib
     /// Protected reads keep failing with an encryption/authentication error.
     case pairedElsewhere
     case invalidResponse(String)
+    /// A read of a characteristic whose notifications are on was refused:
+    /// CoreBluetooth reports read replies and notifications through the same
+    /// callback, so the two cannot be told apart.
+    case readWhileNotifying(String)
 
     public var description: String {
         switch self {
@@ -44,6 +48,7 @@ public enum FieldyDeviceError: Error, Equatable, Sendable, CustomStringConvertib
         case .coreBluetooth(let code, let m): "CoreBluetooth error \(code): \(m)"
         case .pairedElsewhere: "This Fieldy is paired with another device"
         case .invalidResponse(let m): "invalid response: \(m)"
+        case .readWhileNotifying(let u): "cannot read \(u) while its notifications are on"
         }
     }
 
@@ -270,6 +275,12 @@ final class BluetoothCentral: NSObject, @unchecked Sendable {
         }
     }
 
+    /// Notifications for `uuid` are on (or being turned on) with a handler.
+    func isNotifying(_ uuid: String) -> Bool {
+        let k = key(uuid)
+        return queue.sync { notifyHandlers[k] != nil }
+    }
+
     func maximumWriteLength() -> Int? {
         queue.sync { peripheral?.maximumWriteValueLength(for: .withResponse) }
     }
@@ -292,6 +303,12 @@ final class BluetoothCentral: NSObject, @unchecked Sendable {
                 }
                 guard let ch = characteristic(k) else {
                     cont.resume(throwing: FieldyDeviceError.characteristicMissing(uuid)); return
+                }
+                // The reply would be indistinguishable from a notification in
+                // didUpdateValueFor: the read would take a notification and the
+                // reply would reach the notification handler.
+                guard notifyHandlers[k] == nil else {
+                    cont.resume(throwing: FieldyDeviceError.readWhileNotifying(uuid)); return
                 }
                 let id = makeID()
                 readWaiters.add(id: id, key: k, cont)

@@ -31,7 +31,9 @@ public struct RecordingImporter: Sendable {
 
         let data = try Data(contentsOf: rawURL)
         let file = RecordingFile(parsing: data)
-        let recordedAt = file.header?.recordedAt
+        // A file whose header was lost still has its trailer, which holds the
+        // device's wall-clock end time; see `RecordingFile.startFromTrailer`.
+        let recordedAt = file.header?.recordedAt ?? file.startFromTrailer
         var rec = Recording(
             recordedAt: recordedAt ?? syncTime,
             timeUnknown: recordedAt == nil,
@@ -70,12 +72,41 @@ public struct RecordingImporter: Sendable {
             rec.transcriptError = "\(error)"
         }
 
+        let partialCopies = try partialCopies(of: rec)
+        if rec.audioState == .incomplete, !partialCopies.complete.isEmpty {
+            // Recovered after the complete copy is already in: not worth showing.
+            rec.deletedAt = now
+        }
         try library.insert(rec)
-        if rec.audioState != .unreadable, let model = transcriptionModel {
+        if rec.deletedAt == nil, rec.audioState != .unreadable, let model = transcriptionModel {
             try library.enqueueTranscription(recordingId: rec.id, model: model, at: now)
             rec = try library.recording(id: rec.id) ?? rec
         }
+        for old in partialCopies.incomplete {
+            try library.moveToTrash(recordingId: old.id, at: now)
+        }
         return rec
+    }
+
+    /// Other library rows of the same device recording: same header recording
+    /// ID and start time. The device keeps a file after an interrupted sync and
+    /// sends it again whole next time (seen 2026-10-31), so an "Incomplete"
+    /// row from the first attempt is a shorter copy of the complete one.
+    /// `incomplete` lists such rows to retire when `rec` is the complete copy;
+    /// `complete` lists complete copies when `rec` is itself incomplete.
+    /// Retired rows go to Recently Deleted, which later removes their files,
+    /// `.part` included.
+    private func partialCopies(of rec: Recording) throws -> (incomplete: [Recording], complete: [Recording]) {
+        guard rec.source == .fieldy, rec.audioState != .unreadable, !rec.timeUnknown,
+              let rid = rec.deviceRecordingId else { return ([], []) }
+        let same = try library.recordings().filter {
+            $0.id != rec.id && $0.source == .fieldy && $0.deviceRecordingId == rid
+                && !$0.timeUnknown && $0.recordedAt == rec.recordedAt
+        }
+        if rec.audioState == .ok {
+            return (same.filter { $0.audioState == .incomplete && $0.frameCount <= rec.frameCount }, [])
+        }
+        return ([], same.filter { $0.audioState == .ok && $0.frameCount >= rec.frameCount })
     }
 
     /// Crash recovery on launch: imports every `.bin` and `.part` under

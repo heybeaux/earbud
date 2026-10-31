@@ -11,6 +11,12 @@ public enum SyncWriterEvent: Sendable, Equatable {
     /// `.part` renamed to `.bin` after a full flush. Safe to ACK.
     case fileCompleted(fileId: UInt16, url: URL, byteCount: Int)
     case fileFailed(FileFailure)
+    /// A storage status record reached the sync handler (the reply to a
+    /// status read made during the sync). Not file data; nothing is written.
+    case storageStatus(StorageStatus)
+    /// A packet index was not the one expected: packets `expected..<received`
+    /// of this file never arrived, so the file has a hole.
+    case packetGap(fileId: UInt16, expected: UInt32, received: UInt32)
     case endOfRecords
     case noFiles
     case unrecognized(Data)
@@ -65,6 +71,7 @@ public final class DurableSyncWriter: @unchecked Sendable {
             case .noFiles: return [.noFiles]
             case .transferHeader(let n): return [.transferHeader(fileCount: n)]
             case .fileFailed(let f): return [.fileFailed(f)]
+            case .storageStatus(let s): return [.storageStatus(s)]
             case .unrecognized(let d): return [.unrecognized(d)]
             case .data(let packet): return write(packet)
             }
@@ -95,6 +102,14 @@ public final class DurableSyncWriter: @unchecked Sendable {
                 events.append(.fileStarted(fileId: fid, url: url))
             }
             var file = open[fid]!
+            // v2/v3 indexes are u16 on the air; compare in that width.
+            let expected = file.lastIndex &+ 1
+            let matches = transportVersion <= 1
+                ? packet.packetIndex == expected
+                : UInt16(truncatingIfNeeded: packet.packetIndex) == UInt16(truncatingIfNeeded: expected)
+            if !matches {
+                events.append(.packetGap(fileId: fid, expected: expected, received: packet.packetIndex))
+            }
             if !packet.payload.isEmpty {
                 try file.handle.write(contentsOf: packet.payload)
                 try file.handle.synchronize()

@@ -64,6 +64,7 @@ public actor FieldyDevice {
     private var activities = 0
     private var idleTask: Task<Void, Never>?
     private var hooksInstalled = false
+    private var lastStorageStatus: StorageStatus?
 
     public init(configuration: Configuration = Configuration(), rememberedIdentifier: UUID? = nil) {
         self.configuration = configuration
@@ -284,8 +285,7 @@ public actor FieldyDevice {
             var lastError: FieldyDeviceError = .pairedElsewhere
             for attempt in 1...attempts {
                 do {
-                    let data = try await ble.read(FieldyGATT.storage, timeout: max(configuration.gattTimeout, pause))
-                    return try StorageStatus(parsing: data)
+                    return try await readStorageStatus(timeout: max(configuration.gattTimeout, pause))
                 } catch let e as FieldyDeviceError where e.isPairingFailure {
                     lastError = e
                     if attempt < attempts { try await Task.sleep(for: .seconds(pause)) }
@@ -333,7 +333,22 @@ public actor FieldyDevice {
     // MARK: Status
 
     public func storageStatus() async throws -> StorageStatus {
-        try await op { try StorageStatus(parsing: try await ble.read(FieldyGATT.storage, timeout: configuration.gattTimeout)) }
+        try await op { try await readStorageStatus(timeout: configuration.gattTimeout) }
+    }
+
+    /// Reads `...66E1`. While a sync has its notifications on, a read would
+    /// take the next file packet as its reply and push the real reply into the
+    /// sync (CoreBluetooth reports both through one callback; seen on device
+    /// 2026-10-31, when a status refresh mid-sync lost a file's first packet).
+    /// So during a sync the last status read is returned instead.
+    private func readStorageStatus(timeout: TimeInterval) async throws -> StorageStatus {
+        if ble.isNotifying(FieldyGATT.storage) {
+            if let s = lastStorageStatus { return s }
+            throw FieldyDeviceError.readWhileNotifying(FieldyGATT.storage)
+        }
+        let s = try StorageStatus(parsing: try await ble.read(FieldyGATT.storage, timeout: timeout))
+        lastStorageStatus = s
+        return s
     }
 
     public func recordingStatus() async throws -> RecordingStatus {

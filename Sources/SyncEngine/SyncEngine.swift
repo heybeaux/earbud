@@ -212,6 +212,10 @@ public actor SyncEngine {
                     case .endOfRecords, .noFiles:
                         outcome = .success
                         break loop
+                    case .storageStatus(let s):
+                        log("ignored storage status in sync stream (\(s.totalFileCount) file(s), \(s.totalFileSize) bytes)")
+                    case .packetGap(let fid, let expected, let received):
+                        log("file \(fid): expected packet \(expected), got \(received); packets missing")
                     case .unrecognized(let d):
                         log("ignored notification: \(d.hexString)")
                     case .writeFailed(let fid, let m):
