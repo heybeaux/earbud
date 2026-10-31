@@ -163,8 +163,13 @@ final class OnboardingModel {
         advance(to: .speechModel)
     }
 
+    /// Onboarding offers the recommended model only; the other choice lives in Settings.
+    var targetSpeechModel: SpeechModel? {
+        speechModels.first(where: \.recommended) ?? speechModels.first
+    }
+
     func downloadSpeechModel() async {
-        guard let model = speechModels.first(where: { !$0.installed }) ?? speechModels.first else {
+        guard let model = targetSpeechModel, !model.installed else {
             advance(to: .testRecording)
             return
         }

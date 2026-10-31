@@ -99,6 +99,15 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
         await changeContinuations.makeStream()
     }
 
+    func transcribeWaiting() async {
+        _ = try? await queue.processAll()
+    }
+
+    /// One recording as the list shows it, including its transcript preview.
+    func item(for recordingID: String) throws -> RecordingItem? {
+        try store.recording(id: recordingID).map(mapWithPreview)
+    }
+
     // MARK: Mapping
 
     /// List rows show the opening of the transcript, so done recordings need their segments.

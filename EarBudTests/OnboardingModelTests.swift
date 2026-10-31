@@ -10,6 +10,20 @@ final class OnboardingModelTests: XCTestCase {
         return (model, provider)
     }
 
+    // MARK: Speech model
+
+    func testSpeechStepOffersRecommendedModelAndSkipsDownloadWhenInstalled() async {
+        let (model, _) = makeModel()
+        await model.continueFromConnected()
+        XCTAssertEqual(model.targetSpeechModel?.recommended, true)
+        XCTAssertEqual(model.targetSpeechModel?.installed, true)
+
+        await model.downloadSpeechModel()
+        XCTAssertEqual(model.step, .testRecording)
+        // The fixture's recommended model is already installed; the other one must not be fetched instead.
+        XCTAssertEqual(model.speechModels.filter(\.installed).map(\.recommended), [true])
+    }
+
     // MARK: Step order
 
     func testHappyPathStepOrder() async {

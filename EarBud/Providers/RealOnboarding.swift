@@ -101,7 +101,9 @@ actor RealOnboarding: OnboardingProviding {
         let engine = SyncEngine(device: device, importer: importer)
         let summary = try await engine.sync()
         guard let recording = summary.recordings.first else { throw FieldyDeviceError.notFound }
-        return RealLibraryProvider.map(recording)
+        // Transcribe now so the test-recording pane can show the words.
+        await library.transcribeWaiting()
+        return try library.item(for: recording.id) ?? RealLibraryProvider.map(recording)
     }
 
     private static func map(_ authorization: CBManagerAuthorization) -> BluetoothAuthorization {

@@ -5,7 +5,7 @@ struct SpeechModelStep: View {
     @Bindable var model: OnboardingModel
 
     private var targetModel: SpeechModel? {
-        model.speechModels.first(where: { !$0.installed }) ?? model.speechModels.first
+        model.targetSpeechModel
     }
 
     var body: some View {

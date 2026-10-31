@@ -329,6 +329,7 @@ final class AppModel {
             deviceState = await device.snapshot()
             history = (try? await library.syncHistory()) ?? history
             await reloadLibrary()
+            Task { [library] in await library.transcribeWaiting() }
             try? await Task.sleep(for: noticeDuration * 1.5)
             if case .finished(_, let at) = sync, at == finishedAt { sync = .idle }
         }
@@ -456,6 +457,7 @@ final class AppModel {
         }
         modelDownloads[id] = nil
         speechModels = await speech.models()
+        Task { [library] in await library.transcribeWaiting() }
     }
 
     // MARK: Menu bar

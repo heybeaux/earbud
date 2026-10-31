@@ -33,6 +33,12 @@ protocol LibraryProviding: Sendable {
     func fileURL(for recordingID: String) async throws -> URL?
     /// A stream of changes. Each call returns a new stream.
     func changes() async -> AsyncStream<LibraryChange>
+    /// Transcribes every recording waiting for a transcript; returns when the queue is empty.
+    func transcribeWaiting() async
+}
+
+extension LibraryProviding {
+    func transcribeWaiting() async {}
 }
 
 /// The Fieldy: status and the settings it exposes.
