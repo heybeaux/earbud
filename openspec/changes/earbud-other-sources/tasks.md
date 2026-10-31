@@ -1,6 +1,6 @@
 ## 1. Library (shared)
 
-- [ ] 1.1 Migration v2: `source`, `sourceName`, `contentHash`; existing rows become `fieldy`; `rawDeletedAt` set when an import copy or capture file is removed
+- [x] 1.1 Migration v2: `source`, `sourceName`, `contentHash`; existing rows become `fieldy`; `rawDeletedAt` set when an import copy or capture file is removed
 - [ ] 1.2 Source shown in list rows and the detail view (Fieldy, file name, microphone name)
 - [ ] 1.3 Chunked transcription input: 10-minute windows, 5-second overlap, de-duplicated segments, percent progress in the row
 
@@ -15,7 +15,7 @@
 
 ## 3. Keep the transcript, delete the audio (v1.1)
 
-- [ ] 3.1 Migration: `audioDeletedAt`, `audioPurgedAt`; move audio to `trash/audio/<id>/` and back; purge after 30 days or on Empty Recently Deleted; unit tests that segments and search survive every step
+- [x] 3.1 Migration: `audioDeletedAt`, `audioPurgedAt`; move audio to `trash/audio/<id>/` and back; purge after 30 days or on Empty Recently Deleted; unit tests that segments and search survive every step
 - [ ] 3.2 Delete Audio, Keep Transcript for one or many recordings (detail view, context menu, Edit menu), disabled until the transcript is done; "Transcript only" state in the list and detail; audio export and playback disabled with a reason
 - [ ] 3.3 Recently Deleted lists deleted audio separately from deleted recordings, with Restore
 - [ ] 3.4 Settings > Storage: audio and transcript sizes, optional "Delete audio older than 30/90/365 days, keep transcripts" (off by default)

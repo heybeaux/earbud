@@ -7,6 +7,9 @@ import Foundation
 /// <root>/library.sqlite
 /// <root>/audio/YYYY/MM/<recordingID>.m4a   (+ .opus original frames)
 /// <root>/raw/<syncID>/<fileID>.part|.bin   exact bytes from the device
+/// <root>/imported/<recordingID>.<ext>      copy of an imported file until its M4A is verified
+/// <root>/capture/<recordingID>.caf         microphone capture, kept 7 days after verification
+/// <root>/trash/audio/<recordingID>/        audio in Recently Deleted (transcript kept)
 /// <root>/models/                           WhisperKit models
 /// ```
 public struct LibraryPaths: Sendable, Equatable {
@@ -26,8 +29,16 @@ public struct LibraryPaths: Sendable, Equatable {
     public var audio: URL { root.appendingPathComponent("audio", isDirectory: true) }
     public var raw: URL { root.appendingPathComponent("raw", isDirectory: true) }
     public var models: URL { root.appendingPathComponent("models", isDirectory: true) }
+    public var imported: URL { root.appendingPathComponent("imported", isDirectory: true) }
+    public var capture: URL { root.appendingPathComponent("capture", isDirectory: true) }
+    public var trash: URL { root.appendingPathComponent("trash", isDirectory: true) }
 
     public func rawDirectory(syncID: String) -> URL { raw.appendingPathComponent(syncID, isDirectory: true) }
+
+    /// `trash/audio/<id>/`: where Delete Audio moves a recording's M4A and `.opus`.
+    public func trashedAudioDirectory(recordingID: String) -> URL {
+        trash.appendingPathComponent("audio", isDirectory: true).appendingPathComponent(recordingID, isDirectory: true)
+    }
 
     /// `audio/YYYY/MM/` for a recording date, in the given calendar (local by default).
     public func audioDirectory(for date: Date, calendar: Calendar = .current) -> URL {

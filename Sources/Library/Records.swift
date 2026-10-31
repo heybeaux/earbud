@@ -16,6 +16,16 @@ public enum TranscriptState: String, Codable, Sendable, DatabaseValueConvertible
     case none, waiting, transcribing, done, failed
 }
 
+/// Where a recording came from.
+public enum RecordingSource: String, Codable, Sendable, CaseIterable, DatabaseValueConvertible {
+    /// Synced from the Fieldy. Every v1 recording.
+    case fieldy
+    /// An audio file the user dropped or chose with Import Audio.
+    case imported
+    /// Recorded live from a Mac microphone.
+    case microphone
+}
+
 public struct Recording: Codable, Sendable, Identifiable, Equatable, FetchableRecord, PersistableRecord {
     public static let databaseTableName = "recording"
 
@@ -47,6 +57,15 @@ public struct Recording: Codable, Sendable, Identifiable, Equatable, FetchableRe
     public var transcribedAt: Date?
     /// Transcribed and nothing was said: show "No speech detected".
     public var noSpeech: Bool
+    public var source: RecordingSource
+    /// Original file name for imports, device name for microphone recordings; nil for Fieldy.
+    public var sourceName: String?
+    /// SHA-256 (hex) of an imported file, kept after the copy is gone for duplicate checks.
+    public var contentHash: String?
+    /// Audio (M4A and `.opus`) in Recently Deleted since this time; the transcript stays.
+    public var audioDeletedAt: Date?
+    /// Deleted audio files were removed for good; the recording is transcript only.
+    public var audioPurgedAt: Date?
 
     public init(id: String = UUID().uuidString, recordedAt: Date, timeUnknown: Bool = false, durationSeconds: Double,
                 frameCount: Int, title: String? = nil, audioState: AudioState = .ok, rawPath: String,
@@ -54,7 +73,8 @@ public struct Recording: Codable, Sendable, Identifiable, Equatable, FetchableRe
                 deviceRecordingId: Int? = nil, verifiedAt: Date? = nil, rawDeletedAt: Date? = nil,
                 createdAt: Date = Date(), deletedAt: Date? = nil, transcriptState: TranscriptState = .none,
                 transcriptError: String? = nil, transcriptModel: String? = nil, transcribedAt: Date? = nil,
-                noSpeech: Bool = false) {
+                noSpeech: Bool = false, source: RecordingSource = .fieldy, sourceName: String? = nil,
+                contentHash: String? = nil, audioDeletedAt: Date? = nil, audioPurgedAt: Date? = nil) {
         self.id = id
         self.recordedAt = recordedAt
         self.timeUnknown = timeUnknown
@@ -77,7 +97,15 @@ public struct Recording: Codable, Sendable, Identifiable, Equatable, FetchableRe
         self.transcriptModel = transcriptModel
         self.transcribedAt = transcribedAt
         self.noSpeech = noSpeech
+        self.source = source
+        self.sourceName = sourceName
+        self.contentHash = contentHash
+        self.audioDeletedAt = audioDeletedAt
+        self.audioPurgedAt = audioPurgedAt
     }
+
+    /// The audio was deleted (in Recently Deleted or purged); only the transcript is left.
+    public var isTranscriptOnly: Bool { audioDeletedAt != nil || audioPurgedAt != nil }
 }
 
 public struct Segment: Codable, Sendable, Equatable, FetchableRecord, MutablePersistableRecord {
