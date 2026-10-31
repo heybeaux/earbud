@@ -1,0 +1,131 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../mockups.css"><script src="../kit.js"></script>
+<style>
+  .desk { display: block; }
+  .rd { position: absolute; left: 28px; top: 50px; width: 814px; height: 800px; }
+  .rd .toolbar .btn { margin-left: auto; }
+  .rdbody { flex: 1; overflow: hidden; padding: 18px 22px; display: flex; flex-direction: column; gap: 20px; }
+  .rdsec h3 { font-size: 13px; font-weight: 700; margin: 0 0 3px 2px; display: flex; gap: 8px; align-items: baseline; }
+  .rdsec h3 span { font-size: 12px; font-weight: 500; color: var(--label-3); }
+  .rdsec .hint { font-size: 11.5px; color: var(--label-2); margin: 0 2px 8px; }
+  .rdsec .group { background: var(--content); }
+  .rdsec .row { min-height: 54px; }
+  .rdsec .ricon.soft { background: var(--fill-2); color: var(--label-2); }
+  .rdsec .ricon.tint { background: var(--accent-tint); color: var(--accent); }
+  .rdsec .lbl small { display: flex; align-items: center; gap: 4px; }
+  .rdsec .lbl small .ic { width: 11px; height: 11px; color: var(--label-3); }
+  .left { font-size: 11.5px; color: var(--label-2); white-space: nowrap; }
+  .prefs.st { left: 858px; top: 120px; width: 556px; height: 540px; }
+  .tabs { display: flex; justify-content: center; gap: 4px; padding: 0 0 8px; border-bottom: 0.5px solid var(--sep-strong); background: rgba(240,238,235,0.9); }
+  .tabs span { width: 84px; height: 48px; border-radius: 7px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; color: var(--label-2); }
+  .tabs span .ic { width: 20px; height: 20px; }
+  .tabs span.on { background: rgba(0,0,0,0.07); color: var(--accent); }
+  .prefs.st .titlebar { border-bottom: 0; height: 40px; }
+  .usage { padding: 14px 14px 13px; }
+  .usage .tot { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+  .usage .tot b { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+  .usage .tot small { font-size: 12px; color: var(--label-2); }
+  .inline-pop { margin: 0 4px; vertical-align: 1px; }
+  .menu.pop { width: 130px; z-index: 30; }
+  .menu.pop .it { gap: 6px; padding-left: 6px; }
+  .menu.pop .it .ck { width: 14px; display: inline-grid; place-items: center; }
+  .menu.pop .it .ck .ic { width: 12px; height: 12px; }
+</style></head>
+<body><div class="desk">
+  <!-- Main window: Recently Deleted -->
+  <div class="win inactive rd">
+    <div class="tl"></div>
+    <div class="split">
+      <aside class="sidebar">
+        <span class="tb-btn"><i class="ic" data-i="sidebar"></i></span>
+        <div class="side-h">Library</div>
+        <div class="side-i"><i class="ic" data-i="waveform"></i>Recordings<span class="ct">31</span></div>
+        <div class="side-i"><i class="ic" data-i="history"></i>Sync History</div>
+        <div class="side-i sel"><i class="ic" data-i="trash"></i>Recently Deleted<span class="ct">4</span></div>
+        <div class="side-h">Device</div>
+        <div class="side-i"><i class="ic" data-i="pod"></i>My Fieldy<span class="ct"><span class="dot"></span></span></div>
+        <div class="devcard">
+          <span class="pod"><i class="ic" data-i="pod"></i></span>
+          <b>Fieldy 3A7C</b>
+          <small><span class="dot"></span>Connected · 82%</small>
+          <div class="last">Last synced today at 1:40 PM</div>
+        </div>
+      </aside>
+      <div class="main">
+        <div class="toolbar">
+          <div class="ttl"><b>Recently Deleted</b><small>Kept for 30 days, then removed for good</small></div>
+          <span class="btn">Empty Recently Deleted…</span>
+        </div>
+        <div class="rdbody">
+          <div class="rdsec">
+            <h3>Deleted audio<span>2</span></h3>
+            <p class="hint">The transcripts are still in your library, marked Transcript only. Restore the audio to play or export it again.</p>
+            <div class="group">
+              <div class="row"><span class="ricon tint"><i class="ic" data-i="waveform"></i></span><div class="lbl"><b>Call with Dana about the deck</b><small><i class="ic" data-i="pod"></i>Fieldy · 12 min 5 s · 9 MB of audio</small></div><span class="left">29 days left</span><span class="btn">Restore Audio</span></div>
+              <div class="row"><span class="ricon tint"><i class="ic" data-i="waveform"></i></span><div class="lbl"><b>Interview with Lena Okafor</b><small><i class="ic" data-i="doc"></i>REC_0042.WAV · 1 h 2 min · 31 MB of audio</small></div><span class="left">27 days left</span><span class="btn">Restore Audio</span></div>
+            </div>
+          </div>
+          <div class="rdsec">
+            <h3>Deleted recordings<span>2</span></h3>
+            <p class="hint">Audio and transcript together.</p>
+            <div class="group">
+              <div class="row"><span class="ricon soft"><i class="ic" data-i="trash"></i></span><div class="lbl"><b>8:47 AM, Friday 30 October</b><small><i class="ic" data-i="pod"></i>Fieldy · 0:12 · No speech detected</small></div><span class="left">30 days left</span><span class="btn">Restore</span></div>
+              <div class="row"><span class="ricon soft"><i class="ic" data-i="trash"></i></span><div class="lbl"><b>Mic check</b><small><i class="ic" data-i="mic"></i>Wireless PRO RX · 0:45</small></div><span class="left">12 days left</span><span class="btn">Restore</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings > Storage -->
+  <div class="win prefs st">
+    <div class="tl"><i></i><i style="background:#DCD9D5"></i><i style="background:#DCD9D5"></i></div>
+    <div class="titlebar">Storage</div>
+    <div class="tabs">
+      <span><i class="ic" data-i="gear"></i>General</span>
+      <span><i class="ic" data-i="cc"></i>Transcription</span>
+      <span><i class="ic" data-i="mic"></i>Recording</span>
+      <span class="on"><i class="ic" data-i="folder"></i>Storage</span>
+    </div>
+    <div class="form">
+      <div class="fsec">
+        <h3>Space used on this Mac</h3>
+        <div class="group">
+          <div class="usage">
+            <div class="tot"><b>1.25 GB</b><small>31 recordings</small></div>
+            <div class="meter"><i style="width:94%;background:var(--accent)"></i><i style="width:0.6%;background:#8FC9B9;min-width:4px"></i><i style="width:3.2%;background:#B9B4AD"></i></div>
+            <div class="legend2">
+              <span><i class="sw" style="background:var(--accent)"></i>Audio <b>1.21 GB</b></span>
+              <span><i class="sw" style="background:#8FC9B9"></i>Transcripts <b>4.6 MB</b></span>
+              <span><i class="sw" style="background:#B9B4AD"></i>Recently Deleted <b>40 MB</b></span>
+            </div>
+          </div>
+          <div class="row"><div class="lbl"><b>Recently Deleted</b><small>Holds 40 MB of audio for up to 30 days. Empty it to free the space now.</small></div><span class="btn">Empty…</span></div>
+        </div>
+      </div>
+      <div class="fsec">
+        <h3>Automatic cleanup</h3>
+        <div class="group">
+          <div class="row top"><span class="ricon"><i class="ic" data-i="waveform"></i></span><div class="lbl"><b>Delete audio older than<span class="popup inline-pop" id="age">90 days<span class="chev"><i class="ic" data-i="updown" data-w="2.4"></i></span></span>, keep transcripts</b><small>Only recordings with a finished transcript. The audio goes to Recently Deleted first, so you have 30 days to change your mind.</small></div><span class="toggle" style="margin-top:3px"></span></div>
+        </div>
+        <p class="foot">Choose 30, 90 or 365 days. Off unless you turn it on. Deleting audio by hand is in the recording's menu: Delete Audio, Keep Transcript.</p>
+      </div>
+    </div>
+    <div class="menu pop" id="agemenu" style="display:none">
+      <div class="it"><span class="ck"></span>30 days</div>
+      <div class="it hl"><span class="ck"><i class="ic" data-i="check" data-w="2.6"></i></span>90 days</div>
+      <div class="it"><span class="ck"></span>365 days</div>
+    </div>
+  </div>
+</div>
+<script>
+  window.addEventListener("load", () => {
+    const w = document.querySelector(".prefs.st").getBoundingClientRect();
+    const p = document.getElementById("age").getBoundingClientRect();
+    const m = document.getElementById("agemenu");
+    m.style.left = (p.left - w.left - 4) + "px";
+    m.style.top = (p.top - w.top - 29) + "px";
+  });
+</script>
+</body></html>

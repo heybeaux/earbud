@@ -35,6 +35,26 @@ How they are made: each screen is an HTML page in `src/`, styled by `mockups.css
 - **21-sync-reminder-notification.png**: "Time to sync your Fieldy" notification banner, with the reminder settings. sync-reminder: Daily reminder.
 - **22-main-window-dark.png**: screen 12 in macOS dark appearance. recordings-library: Recordings grouped by day, Recording detail (dark mode).
 
+## v1.1 screens: other sources and transcript retention
+
+These follow the OpenSpec change `openspec/changes/earbud-other-sources/` (audio-import and transcript-retention specs, and design.md).
+
+- **23-import-drop.png**: a folder dragged over the main window shows the drop target "Drop audio files or folders to import" with the accepted types; the File menu shows Import Audio… (⇧⌘I). audio-import: Import audio files, Imported files are copied and kept safe.
+- **24-import-summary.png**: import summary sheet "4 imported, 1 already in EarBud", naming the duplicate and a rejected PDF ("EarBud can't read this kind of file"); behind it, a 2 h 48 min import transcribing at 23% in its list row, the others Waiting. audio-import: Import summary, No duplicates, Import audio files (unsupported file), Long files.
+- **25-sources.png**: list and detail with source labels for Fieldy, imported files (Team sync.wav, REC_0042.WAV) and a microphone (Wireless PRO RX); the Team sync detail says "Time taken from the file". audio-import: Source shown and shared library, Recording time from the file.
+- **26-transcript-only.png**: right-click menu with Delete Audio, Keep Transcript; the same item disabled on a recording still transcribing ("Available when the transcript is ready"); the confirmation; and a "Transcript only" recording with "Audio deleted" in place of the player and Export Audio disabled with its reason. transcript-retention: Delete audio, keep transcript; Transcript entries behave like recordings; Never delete audio that has no transcript yet.
+- **27-storage.png**: Settings > Storage with audio, transcript and Recently Deleted space, and "Delete audio older than [90 days], keep transcripts" (30 / 90 / 365, off); Recently Deleted lists deleted audio apart from deleted recordings, each with Restore. transcript-retention: Optional automatic audio cleanup, Audio deletion is recoverable for 30 days.
+
+### Open questions for v1.1
+
+1. **Settings tabs (27).** v1 Settings is one page. Storage (and Recording, from design.md) need their own place, so 27 shows a tabbed Settings window: General, Transcription, Recording, Storage. The tab names and the split are ours.
+2. **Import summary layout (24).** The spec gives the headline. The count tiles, the "From the folder …" line and the rejected count as "1 file was not imported" are our wording. Imported files are not listed by name, since the spec only asks for names of skipped and rejected files.
+3. **Duplicate line (24).** 'Already in EarBud as "Interview with Lena Okafor"' names the existing recording. The spec only requires "Already in EarBud".
+4. **Drop target copy (23).** Only the headline comes from the spec. The line about copying and originals, and the list of file types, are ours.
+5. **Confirmation and Audio deleted copy (26).** The alert text ("The transcript stays in EarBud…", "This frees about 9 MB"), the restore-by date under "Audio deleted", the "Show in Recently Deleted" button and the Export Audio reason ("The audio was deleted. Restore it to export.") are ours.
+6. **Menu names (23, 26).** "Import Audio…" and "Delete Audio, Keep Transcript" come from the spec. The shortcut ⇧⌘I, "Delete Recording…", "Restore Audio" and the section names in Recently Deleted ("Deleted audio", "Deleted recordings") are ours.
+7. **Title of an imported recording (24, 25).** The mockups use the file name without its extension (for example "Team sync", "REC_0043") until the user renames it.
+
 ## Open questions for Beaux
 
 1. **Automatic recording mode (16).** The one-sentence explanation ("starts and stops recording by itself when it hears people talking") is a guess at what the device does. Please confirm.
