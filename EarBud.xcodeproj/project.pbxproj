@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		084CBDCF0426781B6E767E38 /* OnboardingModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5ABE9E6F698EE5A70124936 /* OnboardingModelTests.swift */; };
 		70DAE91564D411E5BA805A01 /* OnboardingTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3F770A18E612E3F5AC0182 /* OnboardingTypes.swift */; };
 		F32E6CA7C2080C1811DAC515 /* FixtureOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE19D2417AD9EBAFF1E9E9A2 /* FixtureOnboarding.swift */; };
 		EA74EC17F3B8B1BE6AA972BE /* OnboardingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C92CFE95259D37658C1B1F /* OnboardingModel.swift */; };
@@ -136,6 +137,7 @@
 		EA1A5131D6D463C1B738E296 /* TestRecordingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRecordingStep.swift; sourceTree = "<group>"; };
 		B2CC00A46AF1C62792D0B18D /* NotchDockStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchDockStep.swift; sourceTree = "<group>"; };
 		C98977FB0AADED13C367EE10 /* FinishedStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedStep.swift; sourceTree = "<group>"; };
+		D5ABE9E6F698EE5A70124936 /* OnboardingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -305,6 +307,7 @@
 			isa = PBXGroup;
 			children = (
 				62DE774F2F35624332303047 /* AppModelTests.swift */,
+				D5ABE9E6F698EE5A70124936 /* OnboardingModelTests.swift */,
 				B8423C975702EE180DF0C0E9 /* DeviceAndSyncTests.swift */,
 				014F3666095D80A2A67ECBC5 /* FormattingTests.swift */,
 				9747BAC93035E4496C4F4661 /* LibraryTests.swift */,
@@ -423,6 +426,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FEFC19A24E88B148C308AD03 /* AppModelTests.swift in Sources */,
+				084CBDCF0426781B6E767E38 /* OnboardingModelTests.swift in Sources */,
 				0C1854D5438170CE00686A63 /* DeviceAndSyncTests.swift in Sources */,
 				CFE2B92780F0DCA7F03766D9 /* FormattingTests.swift in Sources */,
 				755C6E40F1FF64F3E15BD053 /* LibraryTests.swift in Sources */,
