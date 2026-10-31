@@ -5,6 +5,9 @@ options:
     macOS: "14.0"
   createIntermediateGroups: true
   developmentLanguage: en
+packages:
+  EarBudKit:
+    path: .
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -22,6 +25,19 @@ targets:
     platform: macOS
     sources:
       - path: EarBud
+    dependencies:
+      - package: EarBudKit
+        product: FieldyProtocol
+      - package: EarBudKit
+        product: FieldyDevice
+      - package: EarBudKit
+        product: SyncEngine
+      - package: EarBudKit
+        product: AudioCodec
+      - package: EarBudKit
+        product: Transcriber
+      - package: EarBudKit
+        product: Library
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.heybeaux.earbud

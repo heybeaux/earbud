@@ -7,62 +7,68 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		084CBDCF0426781B6E767E38 /* OnboardingModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5ABE9E6F698EE5A70124936 /* OnboardingModelTests.swift */; };
-		70DAE91564D411E5BA805A01 /* OnboardingTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3F770A18E612E3F5AC0182 /* OnboardingTypes.swift */; };
-		F32E6CA7C2080C1811DAC515 /* FixtureOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE19D2417AD9EBAFF1E9E9A2 /* FixtureOnboarding.swift */; };
-		EA74EC17F3B8B1BE6AA972BE /* OnboardingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C92CFE95259D37658C1B1F /* OnboardingModel.swift */; };
-		9DBA5CC00A7FD56D8FA1BDBC /* OnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3087589F0AC4F3980FA5C727 /* OnboardingWindow.swift */; };
-		7A1139AA7A40E243470A6F2D /* OnboardingHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BADAC198AB4E872C5B226 /* OnboardingHost.swift */; };
-		38C76DBD37D6214C4E3EEF23 /* WelcomeStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663F5FD23D17FB2770FE1DAF /* WelcomeStep.swift */; };
-		6DD38A7B52224ECF9157ABB9 /* BluetoothSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2570D1CA67D89E7B8D95FB2C /* BluetoothSteps.swift */; };
-		150F1A6BCCA0F0744392BC9B /* FindFieldyStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABFB8B48001D48CDFA21BE /* FindFieldyStep.swift */; };
-		C6F3A81F827DBDC79D67B789 /* PairedElsewhereStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FAAD0DF6513119E4468D043 /* PairedElsewhereStep.swift */; };
-		D906142D27C019BF16D231DB /* ResetStepsStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 678AB7D77A396450EE890563 /* ResetStepsStep.swift */; };
-		6323BAC1B3E96569ABBAC051 /* ConnectedStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4E858B0A51A5668B01BF61 /* ConnectedStep.swift */; };
-		0EF012EC77D03CC2A438ADFB /* SpeechModelStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A784B57C5752340B42FBE75 /* SpeechModelStep.swift */; };
-		171A59037BF6E5231852F52A /* TestRecordingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1A5131D6D463C1B738E296 /* TestRecordingStep.swift */; };
-		14F281790CE59513A307767D /* NotchDockStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CC00A46AF1C62792D0B18D /* NotchDockStep.swift */; };
-		462290A428688D962FB928B5 /* FinishedStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98977FB0AADED13C367EE10 /* FinishedStep.swift */; };
 		06A6DA1CA61393E022957574 /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456752A84DC548E572001EBC /* Waveform.swift */; };
 		0C1854D5438170CE00686A63 /* DeviceAndSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8423C975702EE180DF0C0E9 /* DeviceAndSyncTests.swift */; };
+		1ADCD84D86F3E91FB6C7F027 /* Library in Frameworks */ = {isa = PBXBuildFile; productRef = 5743808F8D1AC95D9D6CE2B8 /* Library */; };
+		1D6AB864F3ABBF0A70759714 /* AudioCodec in Frameworks */ = {isa = PBXBuildFile; productRef = BA7D9FEB9D1F904ED54422D9 /* AudioCodec */; };
 		1FA350624626DA0CA4E5EE0A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 71B519837CDFCCC19108315A /* Assets.xcassets */; };
+		236F31EE910E6F74A80D8126 /* OnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83BBAA61A0C6872A5386D13 /* OnboardingWindow.swift */; };
+		28341004F115690966ED0EDB /* FixtureOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCE8D95965C66D08E4F5FC7 /* FixtureOnboarding.swift */; };
 		2993788CD98168BED819E528 /* LaterFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = E846D702DC3D0B6BD8FD667F /* LaterFeatures.swift */; };
 		2E7E97AA0599321B7182F0E5 /* HistoryAndTrashPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA04F1965D03B5110B60D1D /* HistoryAndTrashPanes.swift */; };
+		30B17835F7D5331B978FB826 /* PairedElsewhereStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = D305EFB20B1C337BDA511F28 /* PairedElsewhereStep.swift */; };
 		3503B0A713CE568E6D7E5B08 /* RecordingDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24C41C2762CF9F7FEB96192 /* RecordingDetail.swift */; };
+		35DF6D4D8D487466364DDA2A /* BluetoothSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DED00D8D4EBEFB6301DD18B /* BluetoothSteps.swift */; };
 		35FDA074B17061DDC08B50FD /* Glyphs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AC7C7FC017F34950EC5A4B /* Glyphs.swift */; };
 		380FFC47A864171614715ED7 /* FieldyArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DDB188A2A12B1E3B884F84A /* FieldyArtwork.swift */; };
 		3AC8E096C22798F187EE38DB /* EarBudApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E960802D35E3A23096088A /* EarBudApp.swift */; };
 		3BE88C2F7862633B712F6C4D /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1A03CDABD8A32217E37868 /* Formatting.swift */; };
+		3E080E02319779C5AE665FF9 /* FieldyProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 0DB34AE6367ACBF5085261D7 /* FieldyProtocol */; };
 		45FC226B67C6C6ACF956B94B /* PlaybackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48DD85F23F1C6D196392DA03 /* PlaybackController.swift */; };
 		47059E24752497563BB07780 /* DebugSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0A8DD06E42B772D96238C7 /* DebugSnapshot.swift */; };
 		49B88B12B6C4406B0C052C7B /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8ADB1ED57BD4F8FF5966B6 /* TestSupport.swift */; };
 		4ABCE9FA68CA5920343D7D2F /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364896D3D4D26A8B7F455FCE /* AppModel.swift */; };
+		4E0B1A06B92C1FC39B1A9183 /* OnboardingTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F73956BD47E95F1EB6588E3 /* OnboardingTypes.swift */; };
 		585068AB57E1CB3EAAFEFF6D /* EmptyLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DE8A181AA911D6372EBEB6 /* EmptyLibraryView.swift */; };
 		605A5E482F763299F69EDF5E /* FixtureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311CFBA769BF1DD17BA314DE /* FixtureDevice.swift */; };
 		62CD0913975BFC6DED7F8715 /* MenuBarMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0EA01B4230263B783868C46 /* MenuBarMenu.swift */; };
+		6381D17A2F51A56794FF7969 /* ConnectedStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364E24179E880F6B53E4CD49 /* ConnectedStep.swift */; };
 		63FD7D414BB458EC8C702066 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67037DD9B40C2A6E2D9851F5 /* Components.swift */; };
+		67E2D0E7CF5B6B36A4CFBC42 /* NotchDockStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C54FDBEC73AFA2265C9F583 /* NotchDockStep.swift */; };
 		6CC2DF17EC12EF693145E079 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = B95747EA4B28E49985AF930D /* Typography.swift */; };
+		71601A0983177DFAE0FEDC8E /* FieldyDevice in Frameworks */ = {isa = PBXBuildFile; productRef = 9CBCB55BF8DF09DFAE4F7CD6 /* FieldyDevice */; };
 		755C6E40F1FF64F3E15BD053 /* LibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9747BAC93035E4496C4F4661 /* LibraryTests.swift */; };
 		84C9977FC2798CF22C0C937C /* TranscriptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA8DE170D907F411B4630DB /* TranscriptView.swift */; };
 		878E6B3B6C50C1B2CC3FC68B /* Providers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAA3B97A4177CDFC2236047 /* Providers.swift */; };
 		882FA38B5B199031035FD97F /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC613C26B581D1532D5C5B4 /* Palette.swift */; };
 		8889C0674088024A827F4C19 /* FixtureLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7ADC84B3ECB5456035BADBA /* FixtureLibrary.swift */; };
 		9B9F217647A5730AF3C6E754 /* Highlighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272039CDEC3B53167306ADF8 /* Highlighting.swift */; };
+		A015513D80504B73E6324021 /* TestRecordingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA4019C0CA2A69EB88E579B /* TestRecordingStep.swift */; };
 		A1F1CEDD70EBCE7143BE110A /* SilentAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090C3ED689AFFDDF832A4711 /* SilentAudio.swift */; };
+		A393AFF78E056D314D99531F /* OnboardingHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A3F5AC490F2873866D1B10 /* OnboardingHost.swift */; };
+		A4376B8C94BFAF20114B9026 /* OnboardingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D51CC66CA45705221E813C63 /* OnboardingModel.swift */; };
 		B1A798821F7ED9AEB72E4394 /* ScaffoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666E4CDCA87C41409C878E35 /* ScaffoldTests.swift */; };
 		B1F7163B928F457D8E9D74B6 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE33DA04B7CA400FBABCAFE5 /* Sidebar.swift */; };
 		B3B3E6D65ACBD26C7E655414 /* DevicePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613DDCF4D661A857DA01B7F8 /* DevicePanel.swift */; };
 		B5F92D717AE0DDE8C8AFFBFD /* Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16733AF03B98140A5E6D58 /* Metrics.swift */; };
+		C374817BA4EC9967AC3B251A /* WelcomeStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4AEE0204AFB95F1374094F3 /* WelcomeStep.swift */; };
 		C4DB076D6838CFCC0EC7A21D /* RecordingList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEB04E524407C9997D8BE3A8 /* RecordingList.swift */; };
 		C5FA8C0F8A1DA960B1EDF164 /* MainWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6518B989529E6902315012 /* MainWindow.swift */; };
+		C6671E81F0A72E7D7E728D65 /* Transcriber in Frameworks */ = {isa = PBXBuildFile; productRef = F3F30C44841A202E2071E6BC /* Transcriber */; };
+		C6AAC06AD06903CAA9DBB912 /* SyncEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 38BCD087ABA2E4455ADF0C3D /* SyncEngine */; };
+		C7DACB4C28A917103C035242 /* ResetStepsStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0D770367055DDDAABD1B2 /* ResetStepsStep.swift */; };
+		C8414792E422857C17F3FF57 /* FindFieldyStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4DC19FEC2E4C56B21F865F /* FindFieldyStep.swift */; };
 		CA85855A744780DAC3FDB435 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 566881F8F1292788A61603EF /* SettingsView.swift */; };
 		CFE2B92780F0DCA7F03766D9 /* FormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014F3666095D80A2A67ECBC5 /* FormattingTests.swift */; };
 		D0032BD96C838E550A685B43 /* SyncCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93233D1CB7388708C0390751 /* SyncCard.swift */; };
 		D3223963C10BD39A15384EBD /* LibraryGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8486A3319ED0EF41684840A /* LibraryGrouping.swift */; };
+		D5D2827E3A4E980C1069D44B /* OnboardingModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8E05EFF2F6B10D37B09D2D /* OnboardingModelTests.swift */; };
 		E322C85DFCE82F2699D39255 /* FixtureSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040883FE6E51BF56A87AC238 /* FixtureSync.swift */; };
 		EFCDB703325D007F27C6BC2C /* FixtureData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D06FB9A79C27D917D7C0C853 /* FixtureData.swift */; };
+		F03C865A60BCC656A9F83153 /* FinishedStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0015A93A1E18F9B2429667 /* FinishedStep.swift */; };
 		F9D661E4324238621FE89DCB /* RecordingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC4DD22FC58B23D846D35CB /* RecordingsPane.swift */; };
 		FA2403AA989053E5B94A4DCA /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D223ED10F345DF2DA1A91E9 /* Models.swift */; };
+		FAD3439515B3810D0FEE2F53 /* SpeechModelStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCCB221B851F9358F271B31 /* SpeechModelStep.swift */; };
 		FEFC19A24E88B148C308AD03 /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62DE774F2F35624332303047 /* AppModelTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -83,14 +89,19 @@
 		090C3ED689AFFDDF832A4711 /* SilentAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SilentAudio.swift; sourceTree = "<group>"; };
 		0AA8DE170D907F411B4630DB /* TranscriptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptView.swift; sourceTree = "<group>"; };
 		0D223ED10F345DF2DA1A91E9 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		0F4DC19FEC2E4C56B21F865F /* FindFieldyStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindFieldyStep.swift; sourceTree = "<group>"; };
 		15E960802D35E3A23096088A /* EarBudApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarBudApp.swift; sourceTree = "<group>"; };
+		16D0D770367055DDDAABD1B2 /* ResetStepsStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetStepsStep.swift; sourceTree = "<group>"; };
 		19815A70FBCA41C29B2DFEF7 /* EarBud.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EarBud.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DDB188A2A12B1E3B884F84A /* FieldyArtwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldyArtwork.swift; sourceTree = "<group>"; };
+		1DED00D8D4EBEFB6301DD18B /* BluetoothSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothSteps.swift; sourceTree = "<group>"; };
 		229B461D0215622300F87893 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		22A3F5AC490F2873866D1B10 /* OnboardingHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingHost.swift; sourceTree = "<group>"; };
 		272039CDEC3B53167306ADF8 /* Highlighting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Highlighting.swift; sourceTree = "<group>"; };
 		2D16733AF03B98140A5E6D58 /* Metrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metrics.swift; sourceTree = "<group>"; };
 		311CFBA769BF1DD17BA314DE /* FixtureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureDevice.swift; sourceTree = "<group>"; };
 		364896D3D4D26A8B7F455FCE /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		364E24179E880F6B53E4CD49 /* ConnectedStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedStep.swift; sourceTree = "<group>"; };
 		456752A84DC548E572001EBC /* Waveform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Waveform.swift; sourceTree = "<group>"; };
 		48DD85F23F1C6D196392DA03 /* PlaybackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackController.swift; sourceTree = "<group>"; };
 		50DE8A181AA911D6372EBEB6 /* EmptyLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyLibraryView.swift; sourceTree = "<group>"; };
@@ -99,15 +110,22 @@
 		613DDCF4D661A857DA01B7F8 /* DevicePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePanel.swift; sourceTree = "<group>"; };
 		62DE774F2F35624332303047 /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
 		666E4CDCA87C41409C878E35 /* ScaffoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaffoldTests.swift; sourceTree = "<group>"; };
+		66BA49E953556412BA5BB5CD /* earbud-app */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "earbud-app"; path = .; sourceTree = SOURCE_ROOT; };
 		67037DD9B40C2A6E2D9851F5 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		6C54FDBEC73AFA2265C9F583 /* NotchDockStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchDockStep.swift; sourceTree = "<group>"; };
+		6CCE8D95965C66D08E4F5FC7 /* FixtureOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureOnboarding.swift; sourceTree = "<group>"; };
 		71B519837CDFCCC19108315A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7A1A03CDABD8A32217E37868 /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
+		7BA4019C0CA2A69EB88E579B /* TestRecordingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRecordingStep.swift; sourceTree = "<group>"; };
+		7F73956BD47E95F1EB6588E3 /* OnboardingTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTypes.swift; sourceTree = "<group>"; };
 		8BC613C26B581D1532D5C5B4 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
 		90D6FC23B5F97DE9923369D8 /* EarBudTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EarBudTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		93233D1CB7388708C0390751 /* SyncCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCard.swift; sourceTree = "<group>"; };
 		9747BAC93035E4496C4F4661 /* LibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryTests.swift; sourceTree = "<group>"; };
+		9A0015A93A1E18F9B2429667 /* FinishedStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedStep.swift; sourceTree = "<group>"; };
 		9A8ADB1ED57BD4F8FF5966B6 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
 		9C0E20DFD3BFE6336B42F4F2 /* EarBud.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EarBud.entitlements; sourceTree = "<group>"; };
+		9C8E05EFF2F6B10D37B09D2D /* OnboardingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModelTests.swift; sourceTree = "<group>"; };
 		9CA04F1965D03B5110B60D1D /* HistoryAndTrashPanes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryAndTrashPanes.swift; sourceTree = "<group>"; };
 		A24C41C2762CF9F7FEB96192 /* RecordingDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingDetail.swift; sourceTree = "<group>"; };
 		AAC4DD22FC58B23D846D35CB /* RecordingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingsPane.swift; sourceTree = "<group>"; };
@@ -115,42 +133,37 @@
 		AE33DA04B7CA400FBABCAFE5 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		B0EA01B4230263B783868C46 /* MenuBarMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarMenu.swift; sourceTree = "<group>"; };
 		B7ADC84B3ECB5456035BADBA /* FixtureLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureLibrary.swift; sourceTree = "<group>"; };
+		B83BBAA61A0C6872A5386D13 /* OnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindow.swift; sourceTree = "<group>"; };
 		B8423C975702EE180DF0C0E9 /* DeviceAndSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAndSyncTests.swift; sourceTree = "<group>"; };
 		B8486A3319ED0EF41684840A /* LibraryGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryGrouping.swift; sourceTree = "<group>"; };
 		B95747EA4B28E49985AF930D /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		BD0A8DD06E42B772D96238C7 /* DebugSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSnapshot.swift; sourceTree = "<group>"; };
+		CFCCB221B851F9358F271B31 /* SpeechModelStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelStep.swift; sourceTree = "<group>"; };
 		D06FB9A79C27D917D7C0C853 /* FixtureData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureData.swift; sourceTree = "<group>"; };
+		D305EFB20B1C337BDA511F28 /* PairedElsewhereStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairedElsewhereStep.swift; sourceTree = "<group>"; };
+		D51CC66CA45705221E813C63 /* OnboardingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModel.swift; sourceTree = "<group>"; };
 		DEB04E524407C9997D8BE3A8 /* RecordingList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingList.swift; sourceTree = "<group>"; };
+		E4AEE0204AFB95F1374094F3 /* WelcomeStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeStep.swift; sourceTree = "<group>"; };
 		E846D702DC3D0B6BD8FD667F /* LaterFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaterFeatures.swift; sourceTree = "<group>"; };
-		7D3F770A18E612E3F5AC0182 /* OnboardingTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTypes.swift; sourceTree = "<group>"; };
-		EE19D2417AD9EBAFF1E9E9A2 /* FixtureOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureOnboarding.swift; sourceTree = "<group>"; };
-		B7C92CFE95259D37658C1B1F /* OnboardingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModel.swift; sourceTree = "<group>"; };
-		3087589F0AC4F3980FA5C727 /* OnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindow.swift; sourceTree = "<group>"; };
-		5A3BADAC198AB4E872C5B226 /* OnboardingHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingHost.swift; sourceTree = "<group>"; };
-		663F5FD23D17FB2770FE1DAF /* WelcomeStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeStep.swift; sourceTree = "<group>"; };
-		2570D1CA67D89E7B8D95FB2C /* BluetoothSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothSteps.swift; sourceTree = "<group>"; };
-		FBABFB8B48001D48CDFA21BE /* FindFieldyStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindFieldyStep.swift; sourceTree = "<group>"; };
-		0FAAD0DF6513119E4468D043 /* PairedElsewhereStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairedElsewhereStep.swift; sourceTree = "<group>"; };
-		678AB7D77A396450EE890563 /* ResetStepsStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetStepsStep.swift; sourceTree = "<group>"; };
-		0F4E858B0A51A5668B01BF61 /* ConnectedStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedStep.swift; sourceTree = "<group>"; };
-		8A784B57C5752340B42FBE75 /* SpeechModelStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelStep.swift; sourceTree = "<group>"; };
-		EA1A5131D6D463C1B738E296 /* TestRecordingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRecordingStep.swift; sourceTree = "<group>"; };
-		B2CC00A46AF1C62792D0B18D /* NotchDockStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchDockStep.swift; sourceTree = "<group>"; };
-		C98977FB0AADED13C367EE10 /* FinishedStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedStep.swift; sourceTree = "<group>"; };
-		D5ABE9E6F698EE5A70124936 /* OnboardingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXGroup section */
-		5A42BA358488CB0E17834909 /* Onboarding */ = {
-			isa = PBXGroup;
-			children = (
-				7D3F770A18E612E3F5AC0182 /* OnboardingTypes.swift */,
-				EE19D2417AD9EBAFF1E9E9A2 /* FixtureOnboarding.swift */,
-				B7C92CFE95259D37658C1B1F /* OnboardingModel.swift */,
+/* Begin PBXFrameworksBuildPhase section */
+		C9035A9ABA1964ACB0A78839 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E080E02319779C5AE665FF9 /* FieldyProtocol in Frameworks */,
+				71601A0983177DFAE0FEDC8E /* FieldyDevice in Frameworks */,
+				C6AAC06AD06903CAA9DBB912 /* SyncEngine in Frameworks */,
+				1D6AB864F3ABBF0A70759714 /* AudioCodec in Frameworks */,
+				C6671E81F0A72E7D7E728D65 /* Transcriber in Frameworks */,
+				1ADCD84D86F3E91FB6C7F027 /* Library in Frameworks */,
 			);
-			path = Onboarding;
-			sourceTree = "<group>";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
 		2307569C96015094B9F0A637 /* Fixtures */ = {
 			isa = PBXGroup;
 			children = (
@@ -161,6 +174,16 @@
 				090C3ED689AFFDDF832A4711 /* SilentAudio.swift */,
 			);
 			path = Fixtures;
+			sourceTree = "<group>";
+		};
+		26B9A079D8E96834FF336175 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				6CCE8D95965C66D08E4F5FC7 /* FixtureOnboarding.swift */,
+				D51CC66CA45705221E813C63 /* OnboardingModel.swift */,
+				7F73956BD47E95F1EB6588E3 /* OnboardingTypes.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		4CBFB7071F97A8D55B209601 /* App */ = {
@@ -180,12 +203,20 @@
 				E0874FE1D39D0F54AB78C316 /* Design */,
 				2307569C96015094B9F0A637 /* Fixtures */,
 				A0CC5021BDC421A07CA8A979 /* Model */,
-				5A42BA358488CB0E17834909 /* Onboarding */,
+				26B9A079D8E96834FF336175 /* Onboarding */,
 				7D0201BC91343332A98C7A84 /* Playback */,
 				681A14775490595901508928 /* Resources */,
 				C202BE9123188923AFC7F91D /* Views */,
 			);
 			path = EarBud;
+			sourceTree = "<group>";
+		};
+		5A09840DC77537109DDEE5B4 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				66BA49E953556412BA5BB5CD /* earbud-app */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 		601B97EFD5EC4D5DB3B964C8 /* Device */ = {
@@ -256,8 +287,8 @@
 			children = (
 				601B97EFD5EC4D5DB3B964C8 /* Device */,
 				C9F0AD107CBE492CD4CDF97D /* Main */,
-				B1299FD24E923C87AD7CAE9A /* Onboarding */,
 				71DE922DA5D78FE6C66A5DC9 /* MenuBar */,
+				DA4656D0851CBB211FEFA0F1 /* Onboarding */,
 				668378739249C5D12C2F98A8 /* Settings */,
 			);
 			path = Views;
@@ -280,6 +311,25 @@
 			path = Main;
 			sourceTree = "<group>";
 		};
+		DA4656D0851CBB211FEFA0F1 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				1DED00D8D4EBEFB6301DD18B /* BluetoothSteps.swift */,
+				364E24179E880F6B53E4CD49 /* ConnectedStep.swift */,
+				0F4DC19FEC2E4C56B21F865F /* FindFieldyStep.swift */,
+				9A0015A93A1E18F9B2429667 /* FinishedStep.swift */,
+				6C54FDBEC73AFA2265C9F583 /* NotchDockStep.swift */,
+				22A3F5AC490F2873866D1B10 /* OnboardingHost.swift */,
+				B83BBAA61A0C6872A5386D13 /* OnboardingWindow.swift */,
+				D305EFB20B1C337BDA511F28 /* PairedElsewhereStep.swift */,
+				16D0D770367055DDDAABD1B2 /* ResetStepsStep.swift */,
+				CFCCB221B851F9358F271B31 /* SpeechModelStep.swift */,
+				7BA4019C0CA2A69EB88E579B /* TestRecordingStep.swift */,
+				E4AEE0204AFB95F1374094F3 /* WelcomeStep.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		E0874FE1D39D0F54AB78C316 /* Design */ = {
 			isa = PBXGroup;
 			children = (
@@ -299,6 +349,7 @@
 			children = (
 				59F91210DF4EA65164E52539 /* EarBud */,
 				E88646C1983A2C5F96DFF2EA /* EarBudTests */,
+				5A09840DC77537109DDEE5B4 /* Packages */,
 				856004BEF716F6C9E30831CE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -307,33 +358,14 @@
 			isa = PBXGroup;
 			children = (
 				62DE774F2F35624332303047 /* AppModelTests.swift */,
-				D5ABE9E6F698EE5A70124936 /* OnboardingModelTests.swift */,
 				B8423C975702EE180DF0C0E9 /* DeviceAndSyncTests.swift */,
 				014F3666095D80A2A67ECBC5 /* FormattingTests.swift */,
 				9747BAC93035E4496C4F4661 /* LibraryTests.swift */,
+				9C8E05EFF2F6B10D37B09D2D /* OnboardingModelTests.swift */,
 				666E4CDCA87C41409C878E35 /* ScaffoldTests.swift */,
 				9A8ADB1ED57BD4F8FF5966B6 /* TestSupport.swift */,
 			);
 			path = EarBudTests;
-			sourceTree = "<group>";
-		};
-		B1299FD24E923C87AD7CAE9A /* Onboarding */ = {
-			isa = PBXGroup;
-			children = (
-				3087589F0AC4F3980FA5C727 /* OnboardingWindow.swift */,
-				5A3BADAC198AB4E872C5B226 /* OnboardingHost.swift */,
-				663F5FD23D17FB2770FE1DAF /* WelcomeStep.swift */,
-				2570D1CA67D89E7B8D95FB2C /* BluetoothSteps.swift */,
-				FBABFB8B48001D48CDFA21BE /* FindFieldyStep.swift */,
-				0FAAD0DF6513119E4468D043 /* PairedElsewhereStep.swift */,
-				678AB7D77A396450EE890563 /* ResetStepsStep.swift */,
-				0F4E858B0A51A5668B01BF61 /* ConnectedStep.swift */,
-				8A784B57C5752340B42FBE75 /* SpeechModelStep.swift */,
-				EA1A5131D6D463C1B738E296 /* TestRecordingStep.swift */,
-				B2CC00A46AF1C62792D0B18D /* NotchDockStep.swift */,
-				C98977FB0AADED13C367EE10 /* FinishedStep.swift */,
-			);
-			path = Onboarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -363,6 +395,7 @@
 			buildPhases = (
 				74B6CBD006B4AA596BE384DE /* Sources */,
 				37CA000656375B10A1487750 /* Resources */,
+				C9035A9ABA1964ACB0A78839 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -370,6 +403,12 @@
 			);
 			name = EarBud;
 			packageProductDependencies = (
+				0DB34AE6367ACBF5085261D7 /* FieldyProtocol */,
+				9CBCB55BF8DF09DFAE4F7CD6 /* FieldyDevice */,
+				38BCD087ABA2E4455ADF0C3D /* SyncEngine */,
+				BA7D9FEB9D1F904ED54422D9 /* AudioCodec */,
+				F3F30C44841A202E2071E6BC /* Transcriber */,
+				5743808F8D1AC95D9D6CE2B8 /* Library */,
 			);
 			productName = EarBud;
 			productReference = 19815A70FBCA41C29B2DFEF7 /* EarBud.app */;
@@ -398,6 +437,9 @@
 			);
 			mainGroup = E5AEB20539AD5951D0B81578;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EFDC19AA6F32A143AC4E4542 /* XCLocalSwiftPackageReference "." */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 856004BEF716F6C9E30831CE /* Products */;
 			projectDirPath = "";
@@ -426,10 +468,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				FEFC19A24E88B148C308AD03 /* AppModelTests.swift in Sources */,
-				084CBDCF0426781B6E767E38 /* OnboardingModelTests.swift in Sources */,
 				0C1854D5438170CE00686A63 /* DeviceAndSyncTests.swift in Sources */,
 				CFE2B92780F0DCA7F03766D9 /* FormattingTests.swift in Sources */,
 				755C6E40F1FF64F3E15BD053 /* LibraryTests.swift in Sources */,
+				D5D2827E3A4E980C1069D44B /* OnboardingModelTests.swift in Sources */,
 				B1A798821F7ED9AEB72E4394 /* ScaffoldTests.swift in Sources */,
 				49B88B12B6C4406B0C052C7B /* TestSupport.swift in Sources */,
 			);
@@ -440,30 +482,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				4ABCE9FA68CA5920343D7D2F /* AppModel.swift in Sources */,
-				70DAE91564D411E5BA805A01 /* OnboardingTypes.swift in Sources */,
-				F32E6CA7C2080C1811DAC515 /* FixtureOnboarding.swift in Sources */,
-				EA74EC17F3B8B1BE6AA972BE /* OnboardingModel.swift in Sources */,
-				9DBA5CC00A7FD56D8FA1BDBC /* OnboardingWindow.swift in Sources */,
-				7A1139AA7A40E243470A6F2D /* OnboardingHost.swift in Sources */,
-				38C76DBD37D6214C4E3EEF23 /* WelcomeStep.swift in Sources */,
-				6DD38A7B52224ECF9157ABB9 /* BluetoothSteps.swift in Sources */,
-				150F1A6BCCA0F0744392BC9B /* FindFieldyStep.swift in Sources */,
-				C6F3A81F827DBDC79D67B789 /* PairedElsewhereStep.swift in Sources */,
-				D906142D27C019BF16D231DB /* ResetStepsStep.swift in Sources */,
-				6323BAC1B3E96569ABBAC051 /* ConnectedStep.swift in Sources */,
-				0EF012EC77D03CC2A438ADFB /* SpeechModelStep.swift in Sources */,
-				171A59037BF6E5231852F52A /* TestRecordingStep.swift in Sources */,
-				14F281790CE59513A307767D /* NotchDockStep.swift in Sources */,
-				462290A428688D962FB928B5 /* FinishedStep.swift in Sources */,
+				35DF6D4D8D487466364DDA2A /* BluetoothSteps.swift in Sources */,
 				63FD7D414BB458EC8C702066 /* Components.swift in Sources */,
+				6381D17A2F51A56794FF7969 /* ConnectedStep.swift in Sources */,
 				47059E24752497563BB07780 /* DebugSnapshot.swift in Sources */,
 				B3B3E6D65ACBD26C7E655414 /* DevicePanel.swift in Sources */,
 				3AC8E096C22798F187EE38DB /* EarBudApp.swift in Sources */,
 				585068AB57E1CB3EAAFEFF6D /* EmptyLibraryView.swift in Sources */,
 				380FFC47A864171614715ED7 /* FieldyArtwork.swift in Sources */,
+				C8414792E422857C17F3FF57 /* FindFieldyStep.swift in Sources */,
+				F03C865A60BCC656A9F83153 /* FinishedStep.swift in Sources */,
 				EFCDB703325D007F27C6BC2C /* FixtureData.swift in Sources */,
 				605A5E482F763299F69EDF5E /* FixtureDevice.swift in Sources */,
 				8889C0674088024A827F4C19 /* FixtureLibrary.swift in Sources */,
+				28341004F115690966ED0EDB /* FixtureOnboarding.swift in Sources */,
 				E322C85DFCE82F2699D39255 /* FixtureSync.swift in Sources */,
 				3BE88C2F7862633B712F6C4D /* Formatting.swift in Sources */,
 				35FDA074B17061DDC08B50FD /* Glyphs.swift in Sources */,
@@ -475,19 +507,29 @@
 				62CD0913975BFC6DED7F8715 /* MenuBarMenu.swift in Sources */,
 				B5F92D717AE0DDE8C8AFFBFD /* Metrics.swift in Sources */,
 				FA2403AA989053E5B94A4DCA /* Models.swift in Sources */,
+				67E2D0E7CF5B6B36A4CFBC42 /* NotchDockStep.swift in Sources */,
+				A393AFF78E056D314D99531F /* OnboardingHost.swift in Sources */,
+				A4376B8C94BFAF20114B9026 /* OnboardingModel.swift in Sources */,
+				4E0B1A06B92C1FC39B1A9183 /* OnboardingTypes.swift in Sources */,
+				236F31EE910E6F74A80D8126 /* OnboardingWindow.swift in Sources */,
+				30B17835F7D5331B978FB826 /* PairedElsewhereStep.swift in Sources */,
 				882FA38B5B199031035FD97F /* Palette.swift in Sources */,
 				45FC226B67C6C6ACF956B94B /* PlaybackController.swift in Sources */,
 				878E6B3B6C50C1B2CC3FC68B /* Providers.swift in Sources */,
 				3503B0A713CE568E6D7E5B08 /* RecordingDetail.swift in Sources */,
 				C4DB076D6838CFCC0EC7A21D /* RecordingList.swift in Sources */,
 				F9D661E4324238621FE89DCB /* RecordingsPane.swift in Sources */,
+				C7DACB4C28A917103C035242 /* ResetStepsStep.swift in Sources */,
 				CA85855A744780DAC3FDB435 /* SettingsView.swift in Sources */,
 				B1F7163B928F457D8E9D74B6 /* Sidebar.swift in Sources */,
 				A1F1CEDD70EBCE7143BE110A /* SilentAudio.swift in Sources */,
+				FAD3439515B3810D0FEE2F53 /* SpeechModelStep.swift in Sources */,
 				D0032BD96C838E550A685B43 /* SyncCard.swift in Sources */,
+				A015513D80504B73E6324021 /* TestRecordingStep.swift in Sources */,
 				84C9977FC2798CF22C0C937C /* TranscriptView.swift in Sources */,
 				6CC2DF17EC12EF693145E079 /* Typography.swift in Sources */,
 				06A6DA1CA61393E022957574 /* Waveform.swift in Sources */,
+				C374817BA4EC9967AC3B251A /* WelcomeStep.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -745,6 +787,40 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		EFDC19AA6F32A143AC4E4542 /* XCLocalSwiftPackageReference "." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = .;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0DB34AE6367ACBF5085261D7 /* FieldyProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FieldyProtocol;
+		};
+		38BCD087ABA2E4455ADF0C3D /* SyncEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SyncEngine;
+		};
+		5743808F8D1AC95D9D6CE2B8 /* Library */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Library;
+		};
+		9CBCB55BF8DF09DFAE4F7CD6 /* FieldyDevice */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FieldyDevice;
+		};
+		BA7D9FEB9D1F904ED54422D9 /* AudioCodec */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AudioCodec;
+		};
+		F3F30C44841A202E2071E6BC /* Transcriber */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Transcriber;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8E929EFC82775A2F1013E3B1 /* Project object */;
 }
