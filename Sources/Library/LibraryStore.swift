@@ -6,13 +6,22 @@ public final class LibraryStore: Sendable {
     public let paths: LibraryPaths
     public let db: DatabasePool
 
-    public init(paths: LibraryPaths) throws {
+    public convenience init(paths: LibraryPaths) throws {
+        try self.init(paths: paths, migratingUpTo: nil)
+    }
+
+    /// `migratingUpTo` stops at an older schema; tests use it to build a v1 library.
+    init(paths: LibraryPaths, migratingUpTo target: String?) throws {
         self.paths = paths
         try paths.createDirectories()
         var config = Configuration()
         config.foreignKeysEnabled = true
         db = try DatabasePool(path: paths.database.path, configuration: config)
-        try Self.migrator.migrate(db)
+        if let target {
+            try Self.migrator.migrate(db, upTo: target)
+        } else {
+            try Self.migrator.migrate(db)
+        }
     }
 
     static var migrator: DatabaseMigrator {
@@ -82,6 +91,22 @@ public final class LibraryStore: Sendable {
                 t.column("value", .text).notNull()
             }
         }
+        // v1.1: imported and microphone recordings. Every v1 row came from the Fieldy.
+        m.registerMigration("v2") { db in
+            try db.alter(table: "recording") { t in
+                t.add(column: "source", .text).notNull().defaults(to: RecordingSource.fieldy.rawValue)
+                t.add(column: "sourceName", .text)
+                t.add(column: "contentHash", .text)
+            }
+            try db.create(index: "recording_on_contentHash", on: "recording", columns: ["contentHash"])
+        }
+        // v1.1: transcripts outlive audio.
+        m.registerMigration("v3") { db in
+            try db.alter(table: "recording") { t in
+                t.add(column: "audioDeletedAt", .datetime)
+                t.add(column: "audioPurgedAt", .datetime)
+            }
+        }
         return m
     }
 
@@ -101,6 +126,13 @@ public final class LibraryStore: Sendable {
 
     public func recording(rawPath: String) throws -> Recording? {
         try db.read { try Recording.filter(Column("rawPath") == rawPath).fetchOne($0) }
+    }
+
+    /// Duplicate check for imports. Includes recordings in Recently Deleted.
+    public func recording(contentHash: String) throws -> Recording? {
+        try db.read {
+            try Recording.filter(Column("contentHash") == contentHash).order(Column("createdAt")).fetchOne($0)
+        }
     }
 
     /// Raw paths already imported, for crash recovery.
@@ -138,18 +170,143 @@ public final class LibraryStore: Sendable {
         try db.read { try Recording.filter(Column("deletedAt") != nil).order(Column("deletedAt").desc).fetchAll($0) }
     }
 
-    /// Removes rows deleted before `cutoff` and returns them so the caller can delete their files.
+    /// Full delete: removes recordings deleted before `cutoff` with their
+    /// transcripts and every file they own (audio, `.opus`, raw or capture
+    /// file, deleted audio). Returns the removed rows.
+    @discardableResult
     public func purgeTrash(deletedBefore cutoff: Date) throws -> [Recording] {
-        try db.write { db in
+        let rows = try db.write { db in
             let rows = try Recording.filter(Column("deletedAt") != nil && Column("deletedAt") < cutoff).fetchAll(db)
             for r in rows { _ = try r.delete(db) }
             return rows
         }
+        // After the commit: a leftover raw file would otherwise be imported again by crash recovery.
+        for r in rows { removeFiles(of: r) }
+        return rows
+    }
+
+    /// Empty Recently Deleted: every deleted recording and all deleted audio go now.
+    public func emptyRecentlyDeleted(at date: Date = Date()) throws {
+        try purgeTrash(deletedBefore: .distantFuture)
+        try purgeAudio(deletedBefore: .distantFuture, at: date)
+    }
+
+    private func removeFiles(of r: Recording) {
+        let fm = FileManager.default
+        var urls = [r.audioPath, r.opusPath].compactMap { $0 }.map(paths.absolute)
+        if r.rawDeletedAt == nil { urls.append(paths.absolute(r.rawPath)) }
+        urls.append(paths.trashedAudioDirectory(recordingID: r.id))
+        for url in urls where fm.fileExists(atPath: url.path) { try? fm.removeItem(at: url) }
+    }
+
+    // MARK: Delete audio, keep transcript
+
+    /// Moves the audio (M4A and `.opus`) of each recording to `trash/audio/<id>/`
+    /// and sets `audioDeletedAt`. The row, segments and search are untouched.
+    /// Throws before moving anything unless every recording has a finished
+    /// transcript. Recordings whose audio is already deleted are skipped.
+    public func deleteAudio(recordingIds: [String], at date: Date = Date()) throws {
+        let rows = try db.read { db in
+            try recordingIds.map { id in
+                guard let r = try Recording.fetchOne(db, key: id) else { throw AudioRetentionError.recordingNotFound(id) }
+                guard r.transcriptState == .done else { throw AudioRetentionError.transcriptNotReady(id) }
+                return r
+            }
+        }
+        let fm = FileManager.default
+        for r in rows where !r.isTranscriptOnly {
+            let dir = paths.trashedAudioDirectory(recordingID: r.id)
+            var moved: [(from: URL, to: URL)] = []
+            do {
+                for rel in [r.audioPath, r.opusPath].compactMap({ $0 }) {
+                    let from = paths.absolute(rel)
+                    guard fm.fileExists(atPath: from.path) else { continue }
+                    try fm.createDirectory(at: dir, withIntermediateDirectories: true)
+                    let to = dir.appendingPathComponent(from.lastPathComponent)
+                    if fm.fileExists(atPath: to.path) { try fm.removeItem(at: to) }
+                    try fm.moveItem(at: from, to: to)
+                    moved.append((from, to))
+                }
+                try db.write { db in
+                    try db.execute(sql: "UPDATE recording SET audioDeletedAt = ? WHERE id = ?", arguments: [date, r.id])
+                    // A queued "Transcribe again" would find no audio.
+                    try db.execute(sql: "DELETE FROM transcriptionJob WHERE recordingId = ?", arguments: [r.id])
+                }
+            } catch {
+                for m in moved.reversed() { try? fm.moveItem(at: m.to, to: m.from) }
+                throw error
+            }
+        }
+    }
+
+    /// Puts deleted audio back where it was and clears `audioDeletedAt`.
+    public func restoreAudio(recordingId: String) throws {
+        guard let r = try recording(id: recordingId) else { throw AudioRetentionError.recordingNotFound(recordingId) }
+        if r.audioPurgedAt != nil { throw AudioRetentionError.audioPurged(recordingId) }
+        guard r.audioDeletedAt != nil else { throw AudioRetentionError.audioNotDeleted(recordingId) }
+        let fm = FileManager.default
+        let dir = paths.trashedAudioDirectory(recordingID: r.id)
+        var moved: [(from: URL, to: URL)] = []
+        do {
+            for rel in [r.audioPath, r.opusPath].compactMap({ $0 }) {
+                let to = paths.absolute(rel)
+                let from = dir.appendingPathComponent(to.lastPathComponent)
+                guard fm.fileExists(atPath: from.path) else { continue }
+                try fm.createDirectory(at: to.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try fm.moveItem(at: from, to: to)
+                moved.append((from, to))
+            }
+            try db.write { try $0.execute(sql: "UPDATE recording SET audioDeletedAt = NULL WHERE id = ?", arguments: [r.id]) }
+        } catch {
+            for m in moved.reversed() { try? fm.moveItem(at: m.to, to: m.from) }
+            throw error
+        }
+        try? fm.removeItem(at: dir)
+    }
+
+    /// Recently Deleted, audio section: recordings whose audio is deleted but
+    /// not yet purged, most recent first. Recordings that are themselves in
+    /// Recently Deleted are listed by `trash()` only.
+    public func deletedAudio() throws -> [Recording] {
+        try db.read {
+            try Recording
+                .filter(Column("audioDeletedAt") != nil && Column("audioPurgedAt") == nil && Column("deletedAt") == nil)
+                .order(Column("audioDeletedAt").desc)
+                .fetchAll($0)
+        }
+    }
+
+    /// Removes deleted audio older than `cutoff` for good and sets
+    /// `audioPurgedAt`. The rows and their transcripts stay. Returns the rows.
+    @discardableResult
+    public func purgeAudio(deletedBefore cutoff: Date, at date: Date = Date()) throws -> [Recording] {
+        let rows = try db.read {
+            try Recording
+                .filter(Column("audioDeletedAt") != nil && Column("audioDeletedAt") < cutoff && Column("audioPurgedAt") == nil)
+                .fetchAll($0)
+        }
+        let fm = FileManager.default
+        var purged: [Recording] = []
+        for var r in rows {
+            let dir = paths.trashedAudioDirectory(recordingID: r.id)
+            if fm.fileExists(atPath: dir.path) { try fm.removeItem(at: dir) }
+            r.audioPurgedAt = date
+            r.audioPath = nil
+            r.opusPath = nil
+            try db.write { db in
+                try db.execute(sql: "UPDATE recording SET audioPurgedAt = ?, audioPath = NULL, opusPath = NULL WHERE id = ?",
+                               arguments: [date, r.id])
+            }
+            purged.append(r)
+        }
+        return purged
     }
 
     // MARK: Raw cleanup
 
     /// Verified recordings whose raw bytes are older than `cutoff` and still on disk.
+    /// Any source: Fieldy raw bytes, an import copy left by an interrupted import,
+    /// a microphone capture file.
     public func rawCleanupCandidates(verifiedBefore cutoff: Date) throws -> [Recording] {
         try db.read {
             try Recording
@@ -208,8 +365,13 @@ public final class LibraryStore: Sendable {
     // MARK: Transcription queue
 
     /// Queues a recording. If it already has a transcript, the old one stays until the new one succeeds.
+    /// Throws `AudioRetentionError.audioDeleted` for a transcript-only recording.
     public func enqueueTranscription(recordingId: String, model: String, at date: Date = Date()) throws {
         try db.write { db in
+            let audioGone = try Bool.fetchOne(db, sql: """
+                SELECT audioDeletedAt IS NOT NULL OR audioPurgedAt IS NOT NULL FROM recording WHERE id = ?
+                """, arguments: [recordingId]) ?? false
+            if audioGone { throw AudioRetentionError.audioDeleted(recordingId) }
             try TranscriptionJob(recordingId: recordingId, model: model, enqueuedAt: date).upsert(db)
             try db.execute(sql: """
                 UPDATE recording SET transcriptState = 'waiting', transcriptError = NULL
@@ -349,6 +511,29 @@ public final class LibraryStore: Sendable {
 
     public func setSetting<T: Encodable>(_ key: String, json value: T) throws {
         try setSetting(key, String(decoding: try JSONEncoder().encode(value), as: UTF8.self))
+    }
+}
+
+/// Why a Delete Audio / Restore Audio / queue request was refused.
+public enum AudioRetentionError: Error, Sendable, Equatable, CustomStringConvertible {
+    case recordingNotFound(String)
+    /// Waiting, transcribing, failed or never transcribed: audio is the only copy of the words.
+    case transcriptNotReady(String)
+    /// Restore asked for audio that is not in Recently Deleted.
+    case audioNotDeleted(String)
+    /// The deleted audio was already removed for good.
+    case audioPurged(String)
+    /// Transcript only: there is no audio to transcribe.
+    case audioDeleted(String)
+
+    public var description: String {
+        switch self {
+        case .recordingNotFound(let id): "recording \(id) not found"
+        case .transcriptNotReady: "Available when the transcript is ready"
+        case .audioNotDeleted(let id): "audio of \(id) is not in Recently Deleted"
+        case .audioPurged(let id): "audio of \(id) was permanently deleted"
+        case .audioDeleted(let id): "audio of \(id) was deleted"
+        }
     }
 }
 

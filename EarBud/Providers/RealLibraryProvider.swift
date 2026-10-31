@@ -85,12 +85,14 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
     }
 
     func audioURL(for recordingID: String) async throws -> URL? {
-        guard let rec = try store.recording(id: recordingID), let path = rec.audioPath else { return nil }
+        // Transcript only: the files are in trash/audio/ or gone.
+        guard let rec = try store.recording(id: recordingID), !rec.isTranscriptOnly, let path = rec.audioPath else { return nil }
         return store.paths.absolute(path)
     }
 
     func fileURL(for recordingID: String) async throws -> URL? {
         guard let rec = try store.recording(id: recordingID) else { return nil }
+        if rec.isTranscriptOnly { return nil }
         if let audioPath = rec.audioPath { return store.paths.absolute(audioPath) }
         return store.paths.absolute(rec.rawPath)
     }
