@@ -1,15 +1,17 @@
 import SwiftUI
 
 /// What the dock window shows and how it's shaped. The controller owns it; the view only reads.
-/// A display without a notch (the floating capsule, later) can reuse the same view with a zero
-/// `notchSize.width` gap and a rounded top.
+/// On a display without a notch the same view draws the floating capsule, with a zero-width
+/// `notchSize` gap and rounded corners all round.
 @MainActor
 @Observable
 final class NotchDockState {
+    enum Style: Equatable { case notch, capsule }
+
+    var style: Style = .notch
     var layout: NotchGeometry.Layout = .resting
     /// The camera housing the top row leaves room for.
     var notchSize = CGSize(width: 185, height: 32)
-    var topRadius: CGFloat = 0
     var lastResult: (outcome: SyncOutcome, at: Date)?
 
     var isExpanded: Bool {
@@ -48,9 +50,10 @@ struct NotchDockView: View {
     }
 
     private var shape: UnevenRoundedRectangle {
-        let bottom = NotchGeometry.bottomRadius(for: dock.layout)
-        return UnevenRoundedRectangle(topLeadingRadius: dock.topRadius, bottomLeadingRadius: bottom,
-                                      bottomTrailingRadius: bottom, topTrailingRadius: dock.topRadius, style: .continuous)
+        let top = dock.style == .capsule ? CapsuleGeometry.cornerRadius(for: dock.layout) : 0
+        let bottom = dock.style == .capsule ? top : NotchGeometry.bottomRadius(for: dock.layout)
+        return UnevenRoundedRectangle(topLeadingRadius: top, bottomLeadingRadius: bottom,
+                                      bottomTrailingRadius: bottom, topTrailingRadius: top, style: .continuous)
     }
 
     /// The timer needs every second; "23m" only needs the odd refresh.
@@ -61,7 +64,11 @@ struct NotchDockView: View {
     @ViewBuilder
     private func content(activity: NotchActivity, now: Date) -> some View {
         VStack(spacing: 0) {
-            topRow(activity)
+            if dock.style == .capsule && !dock.isExpanded {
+                capsuleRow(activity)
+            } else {
+                topRow(activity)
+            }
             if dock.isExpanded {
                 NotchQuickPanel(panel: NotchPresenter.panel(device: model.deviceState, sync: model.sync, newest: model.recordings.first,
                                                             isChangingRecording: model.isChangingRecording, now: now,
@@ -122,6 +129,42 @@ struct NotchDockView: View {
                 .font(.system(size: 13, weight: .semibold).monospacedDigit())
                 .foregroundStyle(.white)
         }
+    }
+
+    // MARK: Floating capsule
+
+    /// The collapsed capsule (mockup 20): everything on one line, since there's no notch to
+    /// sit beside.
+    private func capsuleRow(_ activity: NotchActivity) -> some View {
+        HStack(spacing: 8) {
+            switch activity {
+            case .resting(_, let since):
+                leading(activity)
+                Text(model.deviceState?.name ?? "Fieldy")
+                    .font(.system(size: 12.5, weight: .semibold))
+                    .foregroundStyle(.white)
+                Rectangle().fill(.white.opacity(0.25)).frame(width: 1, height: 12)
+                Text(NotchPresenter.capsuleSince(since))
+                    .font(.system(size: 12.5).monospacedDigit())
+                    .foregroundStyle(.white.opacity(0.7))
+            case .syncing(let label, let fraction):
+                leading(activity)
+                Text("Syncing").font(.system(size: 12.5, weight: .semibold)).foregroundStyle(.white)
+                ProgressBar(value: fraction, height: 4, track: .white.opacity(0.14), tint: Palette.accentHi)
+                trailing(activity)
+                    .opacity(label.isEmpty ? 0 : 1)
+            case .syncResult:
+                below(activity)
+            case .recording:
+                leading(activity)
+                Text("Recording").font(.system(size: 12.5, weight: .semibold)).foregroundStyle(.white)
+                trailing(activity)
+            }
+        }
+        .lineLimit(1)
+        .padding(.horizontal, 14)
+        .frame(maxWidth: .infinity)
+        .frame(height: CapsuleGeometry.height)
     }
 
     // MARK: Under the notch

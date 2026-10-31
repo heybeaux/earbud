@@ -25,6 +25,7 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.showInMenuBar) private var showInMenuBar = true
     @AppStorage(SettingsKey.showInNotch) private var showInNotch = false
     @AppStorage(SettingsKey.notchDisplay) private var notchDisplay = ""
+    @State private var screens = NSScreen.screens.map(\.dockCandidate)
     @State private var openAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginItemError: String?
 
@@ -43,7 +44,10 @@ struct SettingsView: View {
         .background(Palette.settingsBackground)
         .navigationTitle("EarBud Settings")
         .task { await model.start() }
-        .onAppear { if notchDisplay.isEmpty { notchDisplay = NSScreen.screens.first?.localizedName ?? "" } }
+        .onAppear { if notchDisplay.isEmpty { notchDisplay = NotchScreenPicker.defaultName(screens) ?? "" } }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
+            screens = NSScreen.screens.map(\.dockCandidate)
+        }
     }
 
     // MARK: Sections
@@ -99,7 +103,7 @@ struct SettingsView: View {
 
     private var placement: some View {
         FormSection(title: "Where EarBud shows up",
-                    footer: "On a screen without a notch, EarBud shows a small floating capsule at the top centre instead.") {
+                    footer: "On a screen without a notch, EarBud floats a small capsule at the top centre instead. If that display is unplugged, it moves back to your Mac's built-in display.") {
             FormGroup(fill: Palette.content) {
                 FormRow(title: "Show in menu bar", detail: "Sync and see your Fieldy's status from the top of the screen.") {
                     RowIcon(background: Palette.accent) {
@@ -119,8 +123,8 @@ struct SettingsView: View {
                 FormDivider()
                 FormRow(title: "Show it on", indent: 28) {
                     Picker("Show it on", selection: $notchDisplay) {
-                        ForEach(NSScreen.screens.map(\.localizedName), id: \.self) { name in
-                            Text(name).tag(name)
+                        ForEach(NotchScreenPicker.choices(screens, saved: notchDisplay), id: \.self) { name in
+                            Text(screens.contains { $0.name == name } ? name : "\(name) (not connected)").tag(name)
                         }
                     }
                     .labelsHidden()

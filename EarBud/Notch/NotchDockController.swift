@@ -5,8 +5,9 @@ import SwiftUI
 
 private let log = Logger(subsystem: "dev.heybeaux.earbud", category: "notch")
 
-/// Shows EarBud around the camera notch (mockup 19). Turned on and off by "Show EarBud in the
-/// notch" in Settings and the onboarding step; the menu-bar icon is unaffected either way.
+/// Shows EarBud around the camera notch (mockup 19), or as a floating capsule on a display
+/// without one (mockup 20). Turned on and off by "Show EarBud in the notch" in Settings and the
+/// onboarding step; the menu-bar icon is unaffected either way.
 @MainActor
 final class NotchDockController {
     static let shared = NotchDockController()
@@ -85,24 +86,39 @@ final class NotchDockController {
         dock.layout = .resting
     }
 
-    /// Picks the display, finds its notch, and puts the panel there. Without a notched display
-    /// the dock stays hidden; the menu bar keeps working.
+    /// Picks the display and puts the panel around its notch, or as a floating capsule at the
+    /// top centre if it has none. Runs again whenever displays change, so an unplugged display
+    /// hands the dock to the built-in one, and it moves back when the display returns. With
+    /// no display to use, the dock stays hidden and the menu bar keeps working.
     private func placeOnScreen() {
         guard let panel else { return }
         let screens = NSScreen.screens
-        let candidates = screens.map { NotchScreenPicker.Candidate(name: $0.localizedName, isBuiltIn: $0.isBuiltIn, hasNotch: $0.notchRect != nil) }
-        guard let index = NotchScreenPicker.pick(candidates, preferred: displayName), let notch = screens[index].notchRect else {
-            log.info("No display with a notch; the notch dock stays hidden")
+        guard let placement = NotchScreenPicker.pick(screens.map(\.dockCandidate), preferred: displayName) else {
+            log.info("No display for the notch dock; menu bar only")
             screen = nil
-            self.notch = nil
+            notch = nil
             panel.orderOut(nil)
             return
         }
-        screen = screens[index]
-        self.notch = notch
-        dock.notchSize = notch.size
-        isHiddenForFullScreen = screens[index].hasFullScreenApp
+        let screen = screens[placement.index]
+        self.screen = screen
+        if case .notch = placement, let notch = screen.notchRect {
+            self.notch = notch
+            dock.style = .notch
+            dock.notchSize = notch.size
+        } else {
+            notch = nil
+            dock.style = .capsule
+            dock.notchSize = CGSize(width: 0, height: CapsuleGeometry.height)
+        }
+        isHiddenForFullScreen = screen.hasFullScreenApp
         refresh(animated: false)
+    }
+
+    /// Where the panel goes for `layout` on the current display.
+    private func frame(for layout: NotchGeometry.Layout, on screen: NSScreen) -> CGRect {
+        if let notch { return NotchGeometry.frame(for: layout, notch: notch, screenFrame: screen.frame) }
+        return CapsuleGeometry.frame(for: layout, screenFrame: screen.frame, visibleFrame: screen.visibleFrame)
     }
 
     // MARK: State
@@ -142,11 +158,11 @@ final class NotchDockController {
             : NotchPresenter.activity(device: model.deviceState, sync: model.sync, lastResult: dock.lastResult,
                                       now: now, formatting: model.formatting).layout
         dock.layout = layout
-        guard let screen, let notch, !isHiddenForFullScreen else {
+        guard let screen, !isHiddenForFullScreen else {
             panel.orderOut(nil)
             return
         }
-        let frame = NotchGeometry.frame(for: layout, notch: notch, screenFrame: screen.frame)
+        let frame = frame(for: layout, on: screen)
         if animated, panel.isVisible, panel.frame != frame {
             NSAnimationContext.runAnimationGroup { context in
                 context.duration = 0.18

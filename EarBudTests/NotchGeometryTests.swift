@@ -82,21 +82,39 @@ final class NotchGeometryTests: XCTestCase {
 
     // MARK: Screen choice
 
-    func testPrefersTheChosenDisplayWhenItHasANotch() {
+    func testPrefersTheChosenDisplay() {
         let screens = [
             NotchScreenPicker.Candidate(name: "Studio Display", isBuiltIn: false, hasNotch: false),
             NotchScreenPicker.Candidate(name: "Built-in Retina Display", isBuiltIn: true, hasNotch: true),
             NotchScreenPicker.Candidate(name: "Sidecar", isBuiltIn: false, hasNotch: true),
         ]
-        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: "Sidecar"), 2)
-        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: nil), 1)
-        // A display without a notch falls back to the built-in one until the capsule exists.
-        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: "Studio Display"), 1)
-        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: "Unplugged"), 1)
+        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: "Sidecar"), .notch(2))
+        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: nil), .notch(1))
+        // A display without a notch gets the floating capsule.
+        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: "Studio Display"), .capsule(0))
     }
 
-    func testNoDisplayWithANotch() {
+    func testUnpluggedDisplayFallsBackToTheBuiltInDisplay() {
+        let laptop = NotchScreenPicker.Candidate(name: "Built-in Retina Display", isBuiltIn: true, hasNotch: true)
+        let monitor = NotchScreenPicker.Candidate(name: "LG UltraFine", isBuiltIn: false, hasNotch: false)
+        XCTAssertEqual(NotchScreenPicker.pick([monitor, laptop], preferred: "LG UltraFine"), .capsule(0))
+        XCTAssertEqual(NotchScreenPicker.pick([laptop], preferred: "LG UltraFine"), .notch(0))
+        // And moves back when it's plugged in again.
+        XCTAssertEqual(NotchScreenPicker.pick([laptop, monitor], preferred: "LG UltraFine"), .capsule(1))
+    }
+
+    func testBuiltInDisplayWithoutANotchGetsTheCapsule() {
+        let screens = [
+            NotchScreenPicker.Candidate(name: "Studio Display", isBuiltIn: false, hasNotch: false),
+            NotchScreenPicker.Candidate(name: "Color LCD", isBuiltIn: true, hasNotch: false),
+        ]
+        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: nil), .capsule(1))
+        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: "Unplugged"), .capsule(1))
+    }
+
+    func testMenuBarOnlyWhenTheChosenDisplayIsGoneAndThereIsNoBuiltInDisplay() {
         let screens = [NotchScreenPicker.Candidate(name: "Studio Display", isBuiltIn: false, hasNotch: false)]
+        XCTAssertNil(NotchScreenPicker.pick(screens, preferred: "LG UltraFine"))
         XCTAssertNil(NotchScreenPicker.pick(screens, preferred: nil))
         XCTAssertNil(NotchScreenPicker.pick([], preferred: nil))
     }
@@ -106,7 +124,55 @@ final class NotchGeometryTests: XCTestCase {
             NotchScreenPicker.Candidate(name: "A", isBuiltIn: false, hasNotch: false),
             NotchScreenPicker.Candidate(name: "B", isBuiltIn: false, hasNotch: true),
         ]
-        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: nil), 1)
+        XCTAssertEqual(NotchScreenPicker.pick(screens, preferred: nil), .notch(1))
+    }
+
+    func testDisplayPickerDefaultsToTheBuiltInDisplay() {
+        let laptop = NotchScreenPicker.Candidate(name: "Built-in Retina Display", isBuiltIn: true, hasNotch: true)
+        let monitor = NotchScreenPicker.Candidate(name: "LG UltraFine", isBuiltIn: false, hasNotch: false)
+        XCTAssertEqual(NotchScreenPicker.defaultName([monitor, laptop]), "Built-in Retina Display")
+        XCTAssertEqual(NotchScreenPicker.defaultName([monitor]), "LG UltraFine")
+        XCTAssertNil(NotchScreenPicker.defaultName([]))
+    }
+
+    func testDisplayPickerKeepsAnUnpluggedChoice() {
+        let laptop = NotchScreenPicker.Candidate(name: "Built-in Retina Display", isBuiltIn: true, hasNotch: true)
+        XCTAssertEqual(NotchScreenPicker.choices([laptop, laptop], saved: "LG UltraFine"), ["Built-in Retina Display", "LG UltraFine"])
+        XCTAssertEqual(NotchScreenPicker.choices([laptop], saved: "Built-in Retina Display"), ["Built-in Retina Display"])
+        XCTAssertEqual(NotchScreenPicker.choices([laptop], saved: ""), ["Built-in Retina Display"])
+    }
+
+    // MARK: Floating capsule
+
+    func testCapsuleHangsBelowTheMenuBarAtTheTopCentre() {
+        let monitor = CGRect(x: 1512, y: 0, width: 2560, height: 1440)
+        let visible = CGRect(x: 1512, y: 0, width: 2560, height: 1415) // 25 pt menu bar
+        let frame = CapsuleGeometry.frame(for: .resting, screenFrame: monitor, visibleFrame: visible)
+        XCTAssertEqual(frame.midX, monitor.midX)
+        XCTAssertEqual(frame.maxY, 1415 - CapsuleGeometry.gap)
+        XCTAssertEqual(frame.height, CapsuleGeometry.height)
+    }
+
+    func testCapsuleSitsAtTheTopOnADisplayWithoutAMenuBar() {
+        let monitor = CGRect(x: 0, y: 0, width: 1920, height: 1080)
+        let frame = CapsuleGeometry.frame(for: .syncing, screenFrame: monitor, visibleFrame: monitor)
+        XCTAssertEqual(frame.maxY, 1080 - CapsuleGeometry.gap)
+    }
+
+    func testCapsuleGrowsDownIntoTheQuickPanel() {
+        let monitor = CGRect(x: 0, y: 0, width: 1920, height: 1080)
+        let visible = CGRect(x: 0, y: 0, width: 1920, height: 1055)
+        let resting = CapsuleGeometry.frame(for: .resting, screenFrame: monitor, visibleFrame: visible)
+        let expanded = CapsuleGeometry.frame(for: .expanded(hasTranscript: true), screenFrame: monitor, visibleFrame: visible)
+        XCTAssertEqual(expanded.maxY, resting.maxY)
+        XCTAssertGreaterThan(expanded.width, resting.width)
+        XCTAssertGreaterThan(expanded.height, CapsuleGeometry.frame(for: .expanded(hasTranscript: false), screenFrame: monitor, visibleFrame: visible).height)
+    }
+
+    func testCapsuleIsAPillUntilExpanded() {
+        XCTAssertEqual(CapsuleGeometry.cornerRadius(for: .resting), CapsuleGeometry.height / 2)
+        XCTAssertEqual(CapsuleGeometry.cornerRadius(for: .recording), CapsuleGeometry.height / 2)
+        XCTAssertEqual(CapsuleGeometry.cornerRadius(for: .expanded(hasTranscript: false)), NotchGeometry.expandedBottomRadius)
     }
 
     // MARK: Full screen

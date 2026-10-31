@@ -44,6 +44,12 @@ final class NotchPresenterTests: XCTestCase {
         XCTAssertEqual(NotchPresenter.sinceSync(now.addingTimeInterval(-3 * 86_400), now: now), "3d")
     }
 
+    func testCapsuleSpellsOutTimeSinceSync() {
+        XCTAssertEqual(NotchPresenter.capsuleSince("23m"), "Synced 23m ago")
+        XCTAssertEqual(NotchPresenter.capsuleSince("now"), "Synced just now")
+        XCTAssertEqual(NotchPresenter.capsuleSince("–"), "Not synced yet")
+    }
+
     // MARK: Quick panel
 
     func testPanelMatchesTheMockup() {

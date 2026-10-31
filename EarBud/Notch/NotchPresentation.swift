@@ -91,6 +91,15 @@ enum NotchPresenter {
         return "\(Int(seconds / 86_400))d"
     }
 
+    /// The capsule's longer form of `sinceSync`: "Synced 23m ago", "Synced just now", "Not synced yet".
+    static func capsuleSince(_ since: String) -> String {
+        switch since {
+        case "–": "Not synced yet"
+        case "now": "Synced just now"
+        default: "Synced \(since) ago"
+        }
+    }
+
     /// "2 of 3" while copying; empty while connecting or checking.
     static func syncLabel(_ progress: SyncProgressSnapshot) -> String {
         guard progress.fileCount > 0, progress.fileIndex > 0 else { return "" }

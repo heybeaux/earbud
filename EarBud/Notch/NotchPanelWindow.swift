@@ -72,6 +72,11 @@ extension NSScreen {
         displayID.map { CGDisplayIsBuiltin($0) != 0 } ?? false
     }
 
+    /// This display as the dock's display picker sees it.
+    var dockCandidate: NotchScreenPicker.Candidate {
+        NotchScreenPicker.Candidate(name: localizedName, isBuiltIn: isBuiltIn, hasNotch: notchRect != nil)
+    }
+
     /// The camera housing in global screen coordinates, or `nil` if this display has none.
     var notchRect: CGRect? {
         NotchGeometry.notchRect(screenFrame: frame, safeAreaTop: safeAreaInsets.top,

@@ -71,7 +71,49 @@ enum NotchGeometry {
     }
 }
 
-/// Which display gets the dock.
+/// The floating capsule shown instead on a display without a notch (mockup 20): a black pill
+/// just below the menu bar at the top centre, which grows into the same quick panel.
+enum CapsuleGeometry {
+    /// Height of the collapsed pill; also the top row of the expanded panel.
+    static let height: CGFloat = 32
+    /// Space between the menu bar (or the top of the screen) and the capsule.
+    static let gap: CGFloat = 8
+    static let restingWidth: CGFloat = 240
+    static let recordingWidth: CGFloat = 200
+    static let syncingWidth: CGFloat = 270
+    static let messageWidth: CGFloat = 240
+    static let expandedWidth: CGFloat = 420
+
+    static func size(for layout: NotchGeometry.Layout) -> CGSize {
+        switch layout {
+        case .resting: CGSize(width: restingWidth, height: height)
+        case .recording: CGSize(width: recordingWidth, height: height)
+        case .syncing: CGSize(width: syncingWidth, height: height)
+        case .message: CGSize(width: messageWidth, height: height)
+        case .expanded(let hasTranscript):
+            CGSize(width: expandedWidth,
+                   height: height + NotchGeometry.expandedBodyHeight + (hasTranscript ? NotchGeometry.expandedTranscriptHeight : 0))
+        }
+    }
+
+    /// Centred on the display, hanging `gap` below the menu bar. `visibleFrame` is the screen's
+    /// visible frame, whose top is the bottom of the menu bar (or the top of the screen when
+    /// that display has no menu bar).
+    static func frame(for layout: NotchGeometry.Layout, screenFrame: CGRect, visibleFrame: CGRect) -> CGRect {
+        let size = size(for: layout)
+        let width = min(size.width, screenFrame.width)
+        let top = min(visibleFrame.maxY, screenFrame.maxY) - gap
+        return CGRect(x: screenFrame.midX - width / 2, y: top - size.height, width: width, height: size.height).integral
+    }
+
+    /// Corner radius on all four corners: a full pill when collapsed, a rounded panel when expanded.
+    static func cornerRadius(for layout: NotchGeometry.Layout) -> CGFloat {
+        if case .expanded = layout { return NotchGeometry.expandedBottomRadius }
+        return height / 2
+    }
+}
+
+/// Which display gets the dock, and whether it's drawn around a notch or as a floating capsule.
 enum NotchScreenPicker {
     struct Candidate: Equatable {
         var name: String
@@ -79,14 +121,40 @@ enum NotchScreenPicker {
         var hasNotch: Bool
     }
 
-    /// The display named in Settings if it has a notch, else the built-in notched display,
-    /// else any notched display. `nil` when no display has a notch (the floating capsule
-    /// for those comes later).
-    static func pick(_ screens: [Candidate], preferred: String?) -> Int? {
-        if let preferred, let index = screens.firstIndex(where: { $0.name == preferred && $0.hasNotch }) {
-            return index
+    enum Placement: Equatable {
+        case notch(Int)
+        case capsule(Int)
+
+        var index: Int {
+            switch self {
+            case .notch(let index), .capsule(let index): index
+            }
         }
-        return screens.firstIndex { $0.isBuiltIn && $0.hasNotch } ?? screens.firstIndex(where: \.hasNotch)
+    }
+
+    /// The display named in Settings while it's connected; otherwise the built-in display;
+    /// otherwise any display with a notch. `nil` means menu bar only. Displays with a notch get
+    /// the notch dock, others the floating capsule.
+    static func pick(_ screens: [Candidate], preferred: String?) -> Placement? {
+        let index = preferred.flatMap { name in screens.firstIndex { $0.name == name } }
+            ?? screens.firstIndex(where: \.isBuiltIn)
+            ?? screens.firstIndex(where: \.hasNotch)
+        guard let index else { return nil }
+        return screens[index].hasNotch ? .notch(index) : .capsule(index)
+    }
+
+    /// What "Show it on" starts as: the built-in display, else the first one.
+    static func defaultName(_ screens: [Candidate]) -> String? {
+        (screens.first(where: \.isBuiltIn) ?? screens.first)?.name
+    }
+
+    /// The choices for "Show it on": every connected display, plus the saved one if it's
+    /// unplugged, so the picker keeps showing it and the dock moves back when it returns.
+    static func choices(_ screens: [Candidate], saved: String) -> [String] {
+        var names: [String] = []
+        for screen in screens where !names.contains(screen.name) { names.append(screen.name) }
+        if !saved.isEmpty, !names.contains(saved) { names.append(saved) }
+        return names
     }
 }
 
