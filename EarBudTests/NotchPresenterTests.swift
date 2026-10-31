@@ -87,6 +87,79 @@ final class NotchPresenterTests: XCTestCase {
                        "Transcribing…")
     }
 
+    // MARK: Live activity
+
+    func progress(_ phase: SyncProgressSnapshot.Phase, file: Int, of count: Int, received: Int = 600, expected: Int = 1000) -> SyncProgressSnapshot {
+        SyncProgressSnapshot(phase: phase, fileIndex: file, fileCount: count, bytesReceived: received, bytesExpected: expected,
+                             currentRecordingStart: nil, currentFileFraction: 0.5)
+    }
+
+    func testSyncShowsFileCountAndProgress() {
+        let activity = NotchPresenter.activity(device: device(), sync: .running(progress(.copying, file: 2, of: 3)), lastResult: nil,
+                                               now: now, formatting: f)
+        XCTAssertEqual(activity, .syncing(label: "2 of 3", fraction: 0.6))
+        XCTAssertEqual(activity.layout, .syncing)
+    }
+
+    func testSyncBeforeCopyingHasNoFileCount() {
+        let connecting = progress(.connecting, file: 0, of: 0, received: 0, expected: 0)
+        XCTAssertEqual(NotchPresenter.activity(device: device(), sync: .running(connecting), lastResult: nil, now: now, formatting: f),
+                       .syncing(label: "", fraction: 0))
+        XCTAssertEqual(NotchPresenter.syncLabel(progress(.copying, file: 4, of: 3)), "3 of 3")
+    }
+
+    func testResultShowsForFiveSecondsThenRests() {
+        let finished = now.addingTimeInterval(-2)
+        let result = (outcome: SyncOutcome.copied(count: 3), at: finished)
+        let synced = device(lastSynced: finished)
+        let showing = NotchPresenter.activity(device: synced, sync: .finished(.copied(count: 3), at: finished), lastResult: result,
+                                              now: now, formatting: f)
+        XCTAssertEqual(showing, .syncResult(NotchSyncResult(message: "3 new recordings", tone: .success), dot: .connected, sinceSync: "now"))
+        XCTAssertEqual(showing.layout, .message)
+
+        // AppModel clears its own notice sooner; the dock keeps the result for the full five seconds.
+        let afterModelCleared = NotchPresenter.activity(device: synced, sync: .idle, lastResult: result,
+                                                        now: finished.addingTimeInterval(4.9), formatting: f)
+        XCTAssertEqual(afterModelCleared.layout, .message)
+
+        let later = NotchPresenter.activity(device: synced, sync: .idle, lastResult: result, now: finished.addingTimeInterval(5), formatting: f)
+        XCTAssertEqual(later, .resting(dot: .connected, sinceSync: "now"))
+    }
+
+    func testResultMessages() {
+        XCTAssertEqual(NotchPresenter.result(.copied(count: 1), formatting: f), NotchSyncResult(message: "1 new recording", tone: .success))
+        XCTAssertEqual(NotchPresenter.result(.nothingNew, formatting: f), NotchSyncResult(message: "Nothing new", tone: .neutral))
+        XCTAssertEqual(NotchPresenter.result(.interrupted(saved: 2), formatting: f),
+                       NotchSyncResult(message: "Interrupted · 2 recordings saved", tone: .warning))
+        XCTAssertEqual(NotchPresenter.result(.failed(message: "Bluetooth is off"), formatting: f).tone, .failure)
+    }
+
+    func testRecordingShowsRunningTimer() {
+        let recordingDevice = device(recordingStartedAt: now.addingTimeInterval(-222))
+        let activity = NotchPresenter.activity(device: recordingDevice, sync: .idle, lastResult: nil, now: now, formatting: f)
+        XCTAssertEqual(activity, .recording(elapsed: "03:42"))
+        XCTAssertEqual(activity.layout, .recording)
+        // Recording outranks a sync running at the same time.
+        XCTAssertEqual(NotchPresenter.activity(device: recordingDevice, sync: .running(progress(.copying, file: 1, of: 2)), lastResult: nil,
+                                               now: now.addingTimeInterval(1), formatting: f),
+                       .recording(elapsed: "03:43"))
+    }
+
+    func testPanelShowsSyncProgressAndStopWhileRecording() {
+        let syncing = NotchPresenter.panel(device: device(), sync: .running(progress(.copying, file: 1, of: 2)), newest: nil,
+                                           isChangingRecording: false, now: now, formatting: f)
+        XCTAssertEqual(syncing.syncTitle, "Syncing… 60%")
+        XCTAssertFalse(syncing.canSync)
+        XCTAssertEqual(NotchPresenter.syncTitle(.running(progress(.checking, file: 0, of: 0))), "Syncing…")
+
+        let recording = NotchPresenter.panel(device: device(recordingStartedAt: now.addingTimeInterval(-65)), sync: .idle, newest: nil,
+                                             isChangingRecording: false, now: now, formatting: f)
+        XCTAssertEqual(recording.recordTitle, "Stop recording")
+        XCTAssertTrue(recording.isRecording)
+        XCTAssertEqual(recording.status, "Recording · 01:05")
+        XCTAssertEqual(recording.dot, .recording)
+    }
+
     // MARK: Hover
 
     func testHoverExpandsAfterHalfASecond() {

@@ -60,9 +60,9 @@
 
 ## 9. Notch dock
 
-- [ ] 9.1 Notch geometry and panel window (non-activating, click-through outside shape, hides for full screen)
-- [ ] 9.2 Resting indicators, hover/click expansion, quick panel (Sync now, Record, newest transcript)
-- [ ] 9.3 Live activity: sync progress and result, recording timer
+- [x] 9.1 Notch geometry and panel window (non-activating, click-through outside shape, hides for full screen)
+- [x] 9.2 Resting indicators, hover/click expansion, quick panel (Sync now, Record, newest transcript)
+- [x] 9.3 Live activity: sync progress and result, recording timer
 - [ ] 9.4 Floating capsule for non-notch displays, display picker, display-disconnect fallback
 - [ ] 9.5 Onboarding step with preview (notched Macs only) and Settings toggle
 
