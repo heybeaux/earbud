@@ -10,12 +10,13 @@ let package = Package(
     products: [
         .library(
             name: "EarBudKit",
-            targets: ["FieldyProtocol", "FieldyDevice", "SyncEngine", "AudioCodec", "Transcriber", "Library"]
+            targets: ["FieldyProtocol", "FieldyDevice", "SyncEngine", "AudioCodec", "AudioIngest", "Transcriber", "Library"]
         ),
         .library(name: "FieldyProtocol", targets: ["FieldyProtocol"]),
         .library(name: "FieldyDevice", targets: ["FieldyDevice"]),
         .library(name: "SyncEngine", targets: ["SyncEngine"]),
         .library(name: "AudioCodec", targets: ["AudioCodec"]),
+        .library(name: "AudioIngest", targets: ["AudioIngest"]),
         .library(name: "Transcriber", targets: ["Transcriber"]),
         .library(name: "Library", targets: ["Library"]),
         .executable(name: "earbud-cli", targets: ["earbud-cli"]),
@@ -45,6 +46,9 @@ let package = Package(
             name: "AudioCodec",
             dependencies: ["FieldyProtocol", "COpusShim", .product(name: "Copus", package: "swift-opus")]
         ),
+
+        // Imported files -> playback M4A + 16 kHz recognizer audio; content hash; recording time.
+        .target(name: "AudioIngest"),
 
         // GRDB storage: recordings, segments, sync history, queue, settings, FTS5.
         .target(
@@ -84,6 +88,7 @@ let package = Package(
             dependencies: ["AudioCodec", .product(name: "Copus", package: "swift-opus")],
             resources: [.copy("Fixtures")]
         ),
+        .testTarget(name: "AudioIngestTests", dependencies: ["AudioIngest"]),
         .testTarget(name: "LibraryTests", dependencies: ["Library"]),
         .testTarget(
             name: "SyncEngineTests",
