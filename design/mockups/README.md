@@ -70,3 +70,5 @@ These follow the OpenSpec change `openspec/changes/earbud-other-sources/` (audio
 ## Approval
 
 Beaux approved these mockups on 2026-10-30 (14:11 PDT), including the choices listed above. The app build follows them. The app icon concept is not chosen yet; the build uses concept A for now.
+
+Beaux approved the v1.1 mockups (23-27) on 2026-10-30 (21:18 PDT), including the seven v1.1 choices listed above. The v1.1 UI (tasks 1.2, 2.4, 3.2-3.4) follows them.

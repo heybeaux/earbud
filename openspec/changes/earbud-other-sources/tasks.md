@@ -10,7 +10,7 @@
 - [ ] 2.2 Copy-first import with SHA-256 duplicate check (including trash), deletion of the full-size copy once the M4A is verified, and cleanup of partial copies on launch
 - [x] 2.3 Recording time: Broadcast WAV `bext`, M4A/MP3 creation metadata, file date fallback with "Time taken from the file"
 - [ ] 2.4 Drag and drop onto the window and Dock icon, File > Import Audio…, recursive folders, import summary sheet
-- [ ] 2.5 Mockups for the drop target, import summary, and source labels; Beaux approves before 2.4 UI code
+- [x] 2.5 Mockups for the drop target, import summary, and source labels; Beaux approves before 2.4 UI code
 - [ ] 2.6 Acceptance: import a real RØDE Wireless PRO onboard recording exported from RØDE Central, plus a Voice Memos M4A and a 3-hour file; check time, playback, transcript, search, duplicate skip
 
 ## 3. Keep the transcript, delete the audio (v1.1)
@@ -19,7 +19,7 @@
 - [ ] 3.2 Delete Audio, Keep Transcript for one or many recordings (detail view, context menu, Edit menu), disabled until the transcript is done; "Transcript only" state in the list and detail; audio export and playback disabled with a reason
 - [ ] 3.3 Recently Deleted lists deleted audio separately from deleted recordings, with Restore
 - [ ] 3.4 Settings > Storage: audio and transcript sizes, optional "Delete audio older than 30/90/365 days, keep transcripts" (off by default)
-- [ ] 3.5 Mockups for the Transcript only state, the delete-audio confirmation, and Settings > Storage; Beaux approves before 3.2 UI code
+- [x] 3.5 Mockups for the Transcript only state, the delete-audio confirmation, and Settings > Storage; Beaux approves before 3.2 UI code
 
 ## 4. Record from a Mac microphone (v1.2)
 
