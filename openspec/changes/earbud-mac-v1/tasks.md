@@ -68,7 +68,7 @@
 
 ## 10. Release
 
-- [ ] 10.1 DMG build script: sign (Developer ID), hardened runtime, notarize, staple
+- [x] 10.1 DMG build script: sign (Developer ID), hardened runtime, notarize, staple
 - [ ] 10.2 Verify signed DMG on a clean macOS user account
 - [ ] 10.3 Fresh-install walkthrough by someone new to EarBud, Fieldy starting paired to a phone; fix every confusing step
 - [ ] 10.4 GitHub release with notes, link from `fieldy-local` README
