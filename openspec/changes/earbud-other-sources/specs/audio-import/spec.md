@@ -16,12 +16,18 @@ depth, mono or stereo. Folders SHALL be searched recursively for those types.
 
 ### Requirement: Imported files are copied and kept safe
 EarBud SHALL copy each imported file into its library before processing it and
-SHALL never modify, move, or delete the user's original. A failure partway
-through an import SHALL leave no half-imported recording in the list.
+SHALL never modify, move, or delete the user's original. Once the compressed
+playback copy is written and verified, EarBud SHALL delete its full-size copy
+and keep only the compressed audio. A failure partway through an import SHALL
+leave no half-imported recording in the list.
 
 #### Scenario: Original deleted later
 - **WHEN** the user imports a file, then deletes the original from Downloads
 - **THEN** the recording still plays, and its transcript and export still work
+
+#### Scenario: Only the compressed copy is kept
+- **WHEN** the user imports a 1-hour 32-bit float WAV (about 690 MB)
+- **THEN** after the import finishes, the library holds a compressed copy of about 30 MB and no full-size copy
 
 #### Scenario: Quit during import
 - **WHEN** EarBud quits while copying a large file

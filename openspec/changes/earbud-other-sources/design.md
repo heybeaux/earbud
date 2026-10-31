@@ -38,24 +38,29 @@ Facts that shape this design:
 ### One library, a `source` per recording
 Add columns to `recording`: `source` (`fieldy`, `imported`, `microphone`),
 `sourceName` (original file name, or the microphone name such as
-"Wireless PRO RX"), `originalPath` (library-relative copy of an imported
-file), and `contentHash` (SHA-256 of an imported file). Migration `v2` sets
+"Wireless PRO RX"), and `contentHash` (SHA-256 of an imported file). Migration `v2` sets
 `source = 'fieldy'` on existing rows. Fieldy-only fields (`syncId`,
 `deviceFileId`, `frameCount`, `opusPath`) stay nullable or zero for other
-sources. `rawPath` stays NOT NULL: for imports it points at the original copy,
-for microphone recordings at the capture file. The raw-cleanup job runs only
-for `source = 'fieldy'`.
+sources. `rawPath` stays NOT NULL: for imports it points at the full-size copy,
+for microphone recordings at the capture file. When that file is deleted
+(imports: right after verification; captures: after 7 days), `rawDeletedAt`
+is set, exactly as for Fieldy raw files.
 Alternative: a separate table per source. Rejected because search, list,
 export, and trash would all need unions.
 
-### Import copies the file
-EarBud copies each imported file into `imported/<id>.<ext>` before anything
-else, then works only from the copy. Moving, renaming, or deleting the
-original never breaks the library, and the user's original stays untouched.
-The cost is disk space (a 32-bit float hour from a RØDE transmitter is about
-690 MB). Alternative: reference the file in place with a security bookmark.
-Rejected because external drives and cleaned-up Downloads folders would leave
-dead recordings. Open question 1 asks whether to keep the copy forever.
+### Import copies the file, then keeps only the compressed audio
+EarBud copies each imported file into `imported/<id>.<ext>.part` before
+anything else, then works only from the copy. Once the playback M4A is written
+and verified (readable, length within 0.25 s of the source), the copy is
+deleted. The library keeps only the M4A, so a 32-bit float hour from a RØDE
+transmitter (about 690 MB) costs about 30 MB. The user's original is never
+touched, and moving or deleting it later never breaks the library. Duplicate
+detection still works after the copy is gone, because the hash is stored.
+Trade-off: audio export is from the M4A, not a lossless file; the user still
+has their original.
+Alternative: reference the file in place with a security bookmark. Rejected
+because external drives and cleaned-up Downloads folders would leave dead
+recordings. (Decided by Beaux, 2026-10-30.)
 
 ### `AudioIngest`: decode with AVFoundation, write in chunks
 A new EarBudKit module. It opens the copy with `AVAudioFile` (WAV, AIFF, CAF,
@@ -85,6 +90,24 @@ Before copying, EarBud hashes the file. If a live or trashed recording has the
 same `contentHash`, the file is skipped and the import summary says
 "Already in EarBud". Hashing runs off the main thread and takes a few seconds even
 for a 1 GB file.
+
+### Transcripts outlive audio
+Today a recording row owns its audio files and its `segment` rows (cascade
+delete). The row becomes the durable entry: date, title, source, length, and
+transcript. Audio becomes an attachment the user can remove. New columns:
+`audioDeletedAt` (audio in Recently Deleted since) and `audioPurgedAt` (files
+gone). Delete Audio moves the M4A (and `.opus`, if any) into
+`trash/audio/<id>/` and sets `audioDeletedAt`; restore moves them back;
+the 30-day purge, or Empty Recently Deleted, removes the files and sets
+`audioPurgedAt`. The row and its segments are untouched, so search and text
+export keep working. Full Delete is unchanged and still removes everything.
+The action is offered only when `transcriptState` is `done`, so EarBud can
+never be left with neither audio nor words. Automatic cleanup (off by default)
+runs at launch and once a day, and only picks transcribed recordings past the
+chosen age. Fieldy raw files keep their own 7-day rule.
+Alternative: a separate transcript table independent of recordings. Rejected
+as unnecessary; the row already holds everything a transcript needs, and one
+table keeps search and the list simple. (Requested by Beaux, 2026-10-30.)
 
 ### Microphone recording: AVAudioEngine to a CAF capture file
 `MicRecorder` (app target) installs a tap on the input node of the chosen
@@ -121,8 +144,9 @@ System Settings and opens the Privacy & Security pane.
 
 ## Risks / Trade-offs
 
-- [Disk use from copied 32-bit float files] → Show the library size in
-  Settings; open question 1.
+- [Imported copies need space while processing] → The copy exists only
+  until its M4A is verified; Settings > Storage shows audio and transcript
+  sizes.
 - [The `bext` time is in the recorder's local time with no time zone] →
   Interpret it as the Mac's current time zone; document this.
 - [Long transcriptions keep the Mac busy] → Run at utility priority, one file
@@ -130,10 +154,11 @@ System Settings and opens the Privacy & Security pane.
 - [Untested with a real RØDE Wireless PRO] → Acceptance includes a real
   import and a real live recording with Beaux's unit.
 
-## Open Questions
+## Decisions by Beaux (2026-10-30)
 
-1. Keep the imported original forever (default here), or delete it after the
-   M4A is verified and keep only the M4A? Keeping it costs disk; deleting it
-   loses the lossless file.
-2. Should drag and drop of a whole folder import every audio file inside it?
-   This design says yes, recursively, with one summary at the end.
+1. Keep only the compressed copy once it is checked; the imported original
+   copy is deleted after verification.
+2. Dropping a folder imports every audio file inside it, including subfolders,
+   with one summary at the end.
+3. Transcripts are independent of audio: the user can delete audio to save
+   space and keep the transcript.

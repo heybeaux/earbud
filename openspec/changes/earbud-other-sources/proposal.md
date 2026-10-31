@@ -9,15 +9,21 @@ wrist is fine for notes, but a lapel microphone gives far better transcripts.
 
 ## What Changes
 
-Two additions, built and released in this order. Each one is useful alone.
+Three additions, built and released in this order. Each one is useful alone.
 
-1. **Import audio files (v1.1).** The user can drag audio files into EarBud,
-   or choose **File > Import Audio…**. EarBud copies each file into its
-   library, transcribes it on the Mac, and lists it with the Fieldy
-   recordings. This covers RØDE Wireless PRO onboard recordings (exported with
-   RØDE Central), Voice Memos, handheld recorders, and any WAV, AIFF, CAF,
-   M4A, MP3, or FLAC file.
-2. **Record from any Mac microphone (v1.2).** A new **Record with** setting
+1. **Import audio files (v1.1).** The user can drag audio files or a whole
+   folder into EarBud, or choose **File > Import Audio…**. EarBud copies each
+   file, keeps a compressed copy once it is checked, transcribes it on the
+   Mac, and lists it with the Fieldy recordings. The user's original file is
+   never touched. This covers RØDE Wireless PRO onboard recordings (exported
+   with RØDE Central), Voice Memos, handheld recorders, and any WAV, AIFF,
+   CAF, M4A, MP3, or FLAC file.
+2. **Keep the transcript, delete the audio (v1.1).** The user can delete a
+   recording's audio to save disk space and keep its transcript, for one
+   recording, a selection, or automatically after an age they choose (off by
+   default). Audio deletion can be undone for 30 days. Works for every
+   source, Fieldy included.
+3. **Record from any Mac microphone (v1.2).** A new **Record with** setting
    chooses what the Record button uses: the Fieldy (default, as in v1) or any
    microphone the Mac sees, such as the RØDE Wireless PRO receiver plugged in
    over USB-C. EarBud records to disk as it goes, so a crash or quit loses
@@ -36,6 +42,8 @@ unchanged), and any cloud service.
 ### New Capabilities
 - `audio-import`: importing audio files into the library, duplicate
   detection, recording time from file metadata, transcription of long files.
+- `transcript-retention`: deleting audio while keeping the transcript,
+  manually or by age, with 30-day recovery.
 - `mic-recording`: the Record with setting, microphone choice and permission,
   durable recording to disk, device unplug handling, and controls in the main
   window, menu bar, and notch dock.
@@ -48,8 +56,9 @@ unchanged), and any cloud service.
 
 ## Impact
 
-- `Library`: new columns `source`, `sourceName`, `originalPath`,
-  `contentHash`, and a migration. Existing recordings become source `fieldy`.
+- `Library`: new columns `source`, `sourceName`, `contentHash`,
+  `audioDeletedAt`, `audioPurgedAt`, and a migration. Existing recordings
+  become source `fieldy`.
 - New `AudioIngest` module in EarBudKit: decode any AVFoundation-readable file
   to M4A plus 16 kHz mono for transcription, in chunks.
 - New `MicRecorder` in the app target (AVAudioEngine; macOS only).
