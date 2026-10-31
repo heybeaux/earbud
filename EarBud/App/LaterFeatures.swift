@@ -6,22 +6,6 @@ import os
 
 private let log = Logger(subsystem: "dev.heybeaux.earbud", category: "later")
 
-/// The notch dock and floating capsule (mockups 19, 20).
-@MainActor
-final class NotchDockController {
-    static let shared = NotchDockController()
-
-    private(set) var isEnabled = false
-    private(set) var displayName: String?
-
-    /// Called when "Show EarBud in the notch" or "Show it on" changes in Settings.
-    func update(enabled: Bool, displayName: String?) {
-        isEnabled = enabled
-        self.displayName = displayName
-        log.info("Notch dock not built yet (enabled: \(enabled))")
-    }
-}
-
 /// The daily sync reminder notification (mockup 21).
 @MainActor
 final class SyncReminderScheduler {

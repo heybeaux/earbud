@@ -117,7 +117,7 @@ private struct MenuBarLabel: View {
 private struct LaterFeaturesHost: ViewModifier {
     @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
-    @AppStorage(SettingsKey.showInNotch) private var showInNotch = true
+    @AppStorage(SettingsKey.showInNotch) private var showInNotch = false
     @AppStorage(SettingsKey.notchDisplay) private var notchDisplay = ""
     @AppStorage(SettingsKey.reminderEnabled) private var reminderEnabled = true
     @AppStorage(SettingsKey.reminderDays) private var reminderDays = 1
@@ -138,6 +138,10 @@ private struct LaterFeaturesHost: ViewModifier {
     }
 
     private func update() {
+        NotchDockController.shared.attach(model: model) {
+            NSApp.activate()
+            openWindow(id: EarBudApp.mainWindowID)
+        }
         NotchDockController.shared.update(enabled: showInNotch, displayName: notchDisplay.isEmpty ? nil : notchDisplay)
         SyncReminderScheduler.shared.reschedule(enabled: reminderEnabled, afterDays: reminderDays, atMinutes: reminderTime,
                                                 lastSynced: model.deviceState?.lastSynced)
