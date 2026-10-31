@@ -45,10 +45,10 @@
 ## 7. Onboarding
 
 - [ ] 7.1 Visual design proposal (icon, palette, onboarding illustrations) for Beaux's approval
-- [ ] 7.2 Welcome, Bluetooth permission (granted and denied paths)
-- [ ] 7.3 Find device, paired-elsewhere warning and confirmation, reset steps with "It didn't work" help
-- [ ] 7.4 Pair, clock, model download step, test recording to transcript
-- [ ] 7.5 Optional launch at login
+- [x] 7.2 Welcome, Bluetooth permission (granted and denied paths)
+- [x] 7.3 Find device, paired-elsewhere warning and confirmation, reset steps with "It didn't work" help
+- [x] 7.4 Pair, clock, model download step, test recording to transcript
+- [x] 7.5 Optional launch at login
 
 ## 8. Device panel, menu bar, reminders
 
