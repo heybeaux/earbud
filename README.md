@@ -4,28 +4,29 @@ A Mac app for the Fieldy 3 wristband recorder. EarBud copies your recordings
 from the Fieldy to your Mac over Bluetooth and turns them into text on your Mac.
 No phone app, no account, no cloud.
 
-> **Status: in development, not yet released.** EarBud already sets up, syncs,
-> and transcribes a real Fieldy 3 end to end. There is no signed download yet.
-> Work in progress is on the
-> [`feat/app-ui`](https://github.com/heybeaux/earbud/tree/feat/app-ui) branch.
-> The v1 specification is the OpenSpec change in
-> [`openspec/changes/earbud-mac-v1/`](openspec/changes/earbud-mac-v1/).
+## Download
 
-## What works today
+Download the signed and notarized DMG from
+[Releases](https://github.com/heybeaux/earbud/releases/latest). Open it, drag
+EarBud to Applications, and follow the setup. It shows you each step, with
+pictures.
+
+Requires macOS 14 or later on an Apple silicon Mac.
+
+## Features
 
 - Guided setup: reset, pair, and set the clock on your Fieldy, with pictures.
 - One-click sync. Each recording is saved to disk the moment it arrives, so an
   interrupted sync loses nothing.
-- On-device transcription with Whisper (WhisperKit), English only in v1.
-- A library of recordings by day, with playback and transcripts.
+- On-device transcription with Whisper (WhisperKit). Audio is never uploaded.
+  English only for now.
+- A library of recordings by day, with playback, search, and transcripts.
+- Import audio from other recorders (Voice Memos, RØDE Central exports, and
+  more): drag files or folders onto the window or the Dock icon, or use
+  File > Import Audio….
 - A daily sync reminder and menu-bar status.
-- An optional dock around the MacBook camera notch.
-
-Still to come before the first release: a floating capsule for Macs without a
-notch, a signed and notarized download, and a fresh-install test by someone
-new to EarBud.
-
-Requires macOS 14 or later on an Apple silicon Mac.
+- An optional dock around the MacBook camera notch, or a floating capsule on
+  Macs without a notch.
 
 ## The Fieldy hardware
 
@@ -83,6 +84,20 @@ EarBud contains no Field Labs code.
 The Bluetooth protocol work lives in
 [heybeaux/fieldy-local](https://github.com/heybeaux/fieldy-local), including
 command-line tools that already sync and transcribe.
+
+## Contributing
+
+Contributions are welcome, from first-time bug reports to pull requests.
+
+- **Found a bug or a confusing step?** [Open an issue](https://github.com/heybeaux/earbud/issues).
+  Include your macOS version and what you expected to happen.
+- **Want to help?** Good places to start: transcription in more languages,
+  an iPhone version, and support for other Fieldy hardware revisions.
+- **Building from source:** install [XcodeGen](https://github.com/yonaskolb/XcodeGen),
+  run `xcodegen generate`, then open `EarBud.xcodeproj` in Xcode. The Bluetooth
+  and sync code is in the `EarBudKit` Swift package (`swift test` runs its tests).
+- Specs for planned work live in [`openspec/`](openspec/). For a larger
+  change, open an issue first so we can agree on the approach.
 
 ## Legal
 
