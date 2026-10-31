@@ -91,6 +91,7 @@ public struct AudioImporter: Sendable {
         try FileManager.default.createDirectory(at: paths.imported, withIntermediateDirectories: true)
         let partURL = paths.imported.appendingPathComponent("\(id).\(ext).part")
         let copyURL = paths.imported.appendingPathComponent("\(id).\(ext)")
+        var leftovers = [partURL, copyURL]
 
         do {
             try FileManager.default.copyItem(at: source, to: partURL)
@@ -101,6 +102,7 @@ public struct AudioImporter: Sendable {
             try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
             let playbackURL = dir.appendingPathComponent("\(id).m4a")
             let recognizerURL = dir.appendingPathComponent("\(id).f32")
+            leftovers += [playbackURL, recognizerURL]
 
             let now = now()
             let result: IngestResult
@@ -142,7 +144,7 @@ public struct AudioImporter: Sendable {
             }
             return rec
         } catch {
-            for url in [partURL, copyURL] where FileManager.default.fileExists(atPath: url.path) {
+            for url in leftovers where FileManager.default.fileExists(atPath: url.path) {
                 try? FileManager.default.removeItem(at: url)
             }
             throw error
