@@ -38,6 +38,8 @@ targets:
         product: Transcriber
       - package: EarBudKit
         product: Library
+      - package: EarBudKit
+        product: AudioImport
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.heybeaux.earbud

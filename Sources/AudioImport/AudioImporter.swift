@@ -185,8 +185,9 @@ public struct AudioImporter: Sendable {
     }
 
     /// `url` itself if it is a file; every non-hidden file under it,
-    /// recursively, if it is a folder.
-    static func collectFiles(_ url: URL) -> [URL] {
+    /// recursively, if it is a folder. Public so the app can count the files
+    /// up front and show progress while it imports them one at a time.
+    public static func collectFiles(_ url: URL) -> [URL] {
         let fm = FileManager.default
         var isDir: ObjCBool = false
         guard fm.fileExists(atPath: url.path, isDirectory: &isDir) else { return [] }

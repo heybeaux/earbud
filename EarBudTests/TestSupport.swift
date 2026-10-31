@@ -33,6 +33,7 @@ struct Fixtures {
     let device: FixtureDevice
     let sync: FixtureSync
     let speech: FixtureSpeechModels
+    let importer: FixtureImport
     /// The library through its protocol, as the app sees it.
     var store: any LibraryProviding { library }
 
@@ -43,11 +44,12 @@ struct Fixtures {
         device = FixtureDevice(reference: TestClock.reference, calendar: TestClock.calendar, now: now, pace: .zero)
         sync = FixtureSync(library: library, device: device, now: now, pace: .zero)
         speech = FixtureSpeechModels(pace: .zero)
+        importer = FixtureImport(library: library, now: now, pace: .zero)
     }
 
     @MainActor
     func model() -> AppModel {
-        AppModel(library: library, device: device, sync: sync, speech: speech, formatting: TestClock.formatting,
+        AppModel(library: library, device: device, sync: sync, speech: speech, importer: importer, formatting: TestClock.formatting,
                  now: { TestClock.reference }, noticeDuration: .zero)
     }
 }

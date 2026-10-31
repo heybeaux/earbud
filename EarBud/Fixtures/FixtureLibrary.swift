@@ -224,6 +224,39 @@ actor FixtureLibrary: LibraryProviding {
         broadcast(.recordings)
     }
 
+    /// Adds an imported file as Waiting. Like the real importer, it only queues the transcript:
+    /// nothing runs until `transcribeWaiting()` is called.
+    func addImported(id: String, fileName: String, recordedAt: Date, script: FixtureData.WaitingScript) {
+        let segments = FixtureData.segments(script.lines, duration: script.duration)
+        let item = RecordingItem(
+            id: id, recordedAt: recordedAt, duration: script.duration,
+            title: (fileName as NSString).deletingPathExtension, audio: .ok,
+            transcript: .waiting(position: queue.count + 1), preview: nil, copiedAt: now(), transcribedAt: nil,
+            deletedAt: nil, waveformSeed: script.seed, source: .imported(name: fileName),
+            audioBytes: Int(script.duration) * FixtureData.bytesPerSecond * 8)
+        entries[id] = Entry(item: item, segments: [], script: segments)
+        if !queue.contains(id) { queue.append(id) }
+        updateQueuePositions()
+        broadcast(.recordings)
+    }
+
+    /// The title of a recording (including Recently Deleted) imported from a file with this name.
+    /// Stands in for the real importer's content-hash duplicate check.
+    func importedTitle(fileName: String) -> String? {
+        entries.values.map(\.item).first { $0.source == .imported(name: fileName) }.map { $0.title ?? fileName }
+    }
+
+    /// Starts the simulated transcriber if anything is waiting, and returns when the queue is empty.
+    func transcribeWaiting() async {
+        if worker == nil, !queue.isEmpty {
+            worker = Task { await self.runQueue() }
+        }
+        await waitForTranscriptions()
+    }
+
+    /// Recordings waiting for the transcriber, for tests.
+    var waitingCount: Int { queue.count }
+
     /// Resolves when the transcription queue is empty. For tests.
     func waitForTranscriptions() async {
         while let running = worker {

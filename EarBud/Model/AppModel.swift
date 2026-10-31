@@ -70,6 +70,7 @@ final class AppModel {
     let device: any DeviceProviding
     let syncProvider: any SyncProviding
     let speech: any SpeechModelProviding
+    let importer: any ImportProviding
     let player = PlaybackController()
     let formatting: Formatting
     @ObservationIgnored let now: () -> Date
@@ -110,6 +111,15 @@ final class AppModel {
     private(set) var deletedAudio: [RecordingItem] = []
     private(set) var storage: StorageSnapshot?
 
+    /// Import progress, then the summary (mockup 24). `nil` when no import sheet is showing.
+    private(set) var importSheet: ImportSheet?
+    private(set) var isImporting = false
+    /// The latest "transcribe what's waiting" run started after an import; tests await it.
+    @ObservationIgnored private(set) var transcribeTask: Task<Void, Never>?
+    /// Files or folders dropped while an import runs; that import picks them up.
+    @ObservationIgnored private var pendingImports: [URL] = []
+    @ObservationIgnored private var importTask: Task<Void, Never>?
+
     @ObservationIgnored private var isStarting = false
     @ObservationIgnored private var changesTask: Task<Void, Never>?
     @ObservationIgnored private var searchTask: Task<Void, Never>?
@@ -117,11 +127,13 @@ final class AppModel {
     @ObservationIgnored private var cleanupTask: Task<Void, Never>?
 
     init(library: any LibraryProviding, device: any DeviceProviding, sync: any SyncProviding, speech: any SpeechModelProviding,
+         importer: any ImportProviding,
          formatting: Formatting = .standard, now: @escaping () -> Date = Date.init, noticeDuration: Duration = .seconds(3)) {
         self.library = library
         self.device = device
         self.syncProvider = sync
         self.speech = speech
+        self.importer = importer
         self.formatting = formatting
         self.now = now
         self.noticeDuration = noticeDuration
@@ -131,7 +143,8 @@ final class AppModel {
     static func fixture() -> AppModel {
         let library = FixtureLibrary()
         let device = FixtureDevice()
-        return AppModel(library: library, device: device, sync: FixtureSync(library: library, device: device), speech: FixtureSpeechModels())
+        return AppModel(library: library, device: device, sync: FixtureSync(library: library, device: device), speech: FixtureSpeechModels(),
+                        importer: FixtureImport(library: library))
     }
 
     /// The app wired to the real EarBudKit engine: `Library.LibraryStore` on disk,
@@ -147,7 +160,8 @@ final class AppModel {
         let deviceProvider = RealDeviceProvider.makeRemembering(store: store)
         let sync = RealSyncProvider(device: deviceProvider.device, store: store)
         let speech = RealSpeechModelProvider(paths: .default)
-        return AppModel(library: libraryProvider, device: deviceProvider, sync: sync, speech: speech)
+        let importer = RealImportProvider(store: store)
+        return AppModel(library: libraryProvider, device: deviceProvider, sync: sync, speech: speech, importer: importer)
     }
 
     /// Whether this launch should use the fixture providers (debug/tests only).
@@ -160,6 +174,7 @@ final class AppModel {
     func start() async {
         guard !isLoaded, !isStarting else { return }
         isStarting = true
+        Task { [importer] in await importer.cleanupAfterLaunch() }
         let stream = await library.changes()
         changesTask = Task { [weak self] in
             for await change in stream {
@@ -363,6 +378,66 @@ final class AppModel {
             try? await Task.sleep(for: noticeDuration * 1.5)
             if case .finished(_, let at) = sync, at == finishedAt { sync = .idle }
         }
+    }
+
+    // MARK: Import
+
+    /// Imports files and folders dropped on the window or Dock icon, or chosen with File > Import Audio….
+    /// Shows progress, then one summary. Anything dropped while an import runs joins it.
+    @discardableResult
+    func importAudio(_ urls: [URL]) -> Task<Void, Never>? {
+        let urls = urls.filter(\.isFileURL)
+        guard !urls.isEmpty else { return importTask }
+        pendingImports += urls
+        if let importTask { return importTask }
+        isImporting = true
+        importSheet = .importing(ImportProgress(completed: 0, total: 0))
+        let task = Task { await runImport() }
+        importTask = task
+        return task
+    }
+
+    /// Closes the summary sheet. The progress sheet stays until the import ends.
+    func dismissImportSummary() {
+        if case .finished = importSheet { importSheet = nil }
+    }
+
+    private func runImport() async {
+        var report = ImportReport()
+        var origin = ImportOrigin()
+        var files: [URL] = []
+        var completed = 0
+        while true {
+            if !pendingImports.isEmpty {
+                let batch = pendingImports
+                pendingImports = []
+                origin.add(batch)
+                files += await importer.files(in: batch)
+                continue
+            }
+            guard completed < files.count else { break }
+            let file = files[completed]
+            importSheet = .importing(ImportProgress(completed: completed, total: files.count, currentFileName: file.lastPathComponent))
+            let result = await importer.importFile(file)
+            report.merge(result)
+            completed += 1
+            if !result.importedIDs.isEmpty {
+                await reloadLibrary()
+                // Queued as Waiting by the importer; start the transcriber now, not at the next launch.
+                startTranscribingWaiting()
+            }
+        }
+        importTask = nil
+        isImporting = false
+        importSheet = .finished(ImportSummaryContent(report: report, origin: origin))
+        if let first = report.importedIDs.first, !isSearching {
+            sidebar = .recordings
+            await select(first)
+        }
+    }
+
+    private func startTranscribingWaiting() {
+        transcribeTask = Task { [library] in await library.transcribeWaiting() }
     }
 
     func retryTranscription(_ id: String) {

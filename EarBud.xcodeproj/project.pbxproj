@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		06A6DA1CA61393E022957574 /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456752A84DC548E572001EBC /* Waveform.swift */; };
+		07FACDEFD45652E0C7705260 /* ImportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778A3E60A9EA5AC53429DD81 /* ImportViews.swift */; };
 		093F80CE34BF2AFD14A66A4D /* NotchPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9F587D162A1B9ACC211DE6 /* NotchPresenterTests.swift */; };
 		0C1854D5438170CE00686A63 /* DeviceAndSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8423C975702EE180DF0C0E9 /* DeviceAndSyncTests.swift */; };
+		19D53F2138ED8DE3C394091A /* FixtureImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CB1E1EC84696DF45214315 /* FixtureImport.swift */; };
 		1ADCD84D86F3E91FB6C7F027 /* Library in Frameworks */ = {isa = PBXBuildFile; productRef = 5743808F8D1AC95D9D6CE2B8 /* Library */; };
 		1D6AB864F3ABBF0A70759714 /* AudioCodec in Frameworks */ = {isa = PBXBuildFile; productRef = BA7D9FEB9D1F904ED54422D9 /* AudioCodec */; };
 		1FA350624626DA0CA4E5EE0A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 71B519837CDFCCC19108315A /* Assets.xcassets */; };
@@ -42,6 +44,7 @@
 		71601A0983177DFAE0FEDC8E /* FieldyDevice in Frameworks */ = {isa = PBXBuildFile; productRef = 9CBCB55BF8DF09DFAE4F7CD6 /* FieldyDevice */; };
 		755C6E40F1FF64F3E15BD053 /* LibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9747BAC93035E4496C4F4661 /* LibraryTests.swift */; };
 		75BCADB1CC6C1BC3A3BD1170 /* RealDeviceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9584E9130364C09AE69C54E4 /* RealDeviceProvider.swift */; };
+		82470A20B1789630DC1B4EA7 /* ImportRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63CE811521D08741B26081F /* ImportRouting.swift */; };
 		84C9977FC2798CF22C0C937C /* TranscriptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA8DE170D907F411B4630DB /* TranscriptView.swift */; };
 		878E6B3B6C50C1B2CC3FC68B /* Providers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAA3B97A4177CDFC2236047 /* Providers.swift */; };
 		882FA38B5B199031035FD97F /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC613C26B581D1532D5C5B4 /* Palette.swift */; };
@@ -49,12 +52,14 @@
 		8C8C5DF95EA0695C72F684AB /* RealSpeechModelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1012A60798D8E8E03F865386 /* RealSpeechModelProvider.swift */; };
 		90C93CDAF39F8550326035DB /* NotchPanelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0A01FBDABF5C43A7BE1B4E /* NotchPanelWindow.swift */; };
 		9B9F217647A5730AF3C6E754 /* Highlighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272039CDEC3B53167306ADF8 /* Highlighting.swift */; };
+		9E893CD84B96F203CA6457D3 /* AudioImport in Frameworks */ = {isa = PBXBuildFile; productRef = B2504E5CFA01AB36269E92BE /* AudioImport */; };
 		9FEFB77E38240569AA811E22 /* NotchDockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8007424A719955E03500FF0B /* NotchDockController.swift */; };
 		A015513D80504B73E6324021 /* TestRecordingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA4019C0CA2A69EB88E579B /* TestRecordingStep.swift */; };
 		A1F1CEDD70EBCE7143BE110A /* SilentAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090C3ED689AFFDDF832A4711 /* SilentAudio.swift */; };
 		A393AFF78E056D314D99531F /* OnboardingHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A3F5AC490F2873866D1B10 /* OnboardingHost.swift */; };
 		A4376B8C94BFAF20114B9026 /* OnboardingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D51CC66CA45705221E813C63 /* OnboardingModel.swift */; };
 		A631288EE0E99923D093B755 /* NotchGeometryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70595C75B1915F7D458B52E8 /* NotchGeometryTests.swift */; };
+		A90D063EAF6C1353F3BB4A32 /* RealImportProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CF685FDE2935EB3A94547 /* RealImportProvider.swift */; };
 		AF80E7D5D5BB928BE33666A4 /* NotchDockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243AC90078AED1A62944CE6B /* NotchDockView.swift */; };
 		B1A798821F7ED9AEB72E4394 /* ScaffoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666E4CDCA87C41409C878E35 /* ScaffoldTests.swift */; };
 		B1F7163B928F457D8E9D74B6 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE33DA04B7CA400FBABCAFE5 /* Sidebar.swift */; };
@@ -74,7 +79,9 @@
 		D0032BD96C838E550A685B43 /* SyncCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93233D1CB7388708C0390751 /* SyncCard.swift */; };
 		D3223963C10BD39A15384EBD /* LibraryGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8486A3319ED0EF41684840A /* LibraryGrouping.swift */; };
 		D5D2827E3A4E980C1069D44B /* OnboardingModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8E05EFF2F6B10D37B09D2D /* OnboardingModelTests.swift */; };
+		D788825581971BD0805B754E /* ImportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CDCD28852DF638B0ABB60E7 /* ImportTests.swift */; };
 		E322C85DFCE82F2699D39255 /* FixtureSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040883FE6E51BF56A87AC238 /* FixtureSync.swift */; };
+		E51A15B40BFF5C23E0E8EE1E /* Importing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3DC994CC012FD4018387AD5 /* Importing.swift */; };
 		E69E5454DC4A43187C9B432D /* NotchPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA3BBBA4983A15028CC0EE5B /* NotchPresentation.swift */; };
 		E8B67633080543A54E938DE1 /* RealOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046277B2DF73F94F2F7D6181 /* RealOnboarding.swift */; };
 		EFCDB703325D007F27C6BC2C /* FixtureData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D06FB9A79C27D917D7C0C853 /* FixtureData.swift */; };
@@ -133,19 +140,21 @@
 		62DE774F2F35624332303047 /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
 		65F74E62B04841D4706F51A5 /* RealLibraryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealLibraryProvider.swift; sourceTree = "<group>"; };
 		666E4CDCA87C41409C878E35 /* ScaffoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaffoldTests.swift; sourceTree = "<group>"; };
-		66BA49E953556412BA5BB5CD /* earbud-app */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "earbud-app"; path = .; sourceTree = SOURCE_ROOT; };
 		67037DD9B40C2A6E2D9851F5 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		6C54FDBEC73AFA2265C9F583 /* NotchDockStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchDockStep.swift; sourceTree = "<group>"; };
 		6CCE8D95965C66D08E4F5FC7 /* FixtureOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureOnboarding.swift; sourceTree = "<group>"; };
 		6F32E3FEE9AFA0BF79B020CC /* TranscriptRetentionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptRetentionTests.swift; sourceTree = "<group>"; };
 		70595C75B1915F7D458B52E8 /* NotchGeometryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchGeometryTests.swift; sourceTree = "<group>"; };
 		71B519837CDFCCC19108315A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		75CB1E1EC84696DF45214315 /* FixtureImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureImport.swift; sourceTree = "<group>"; };
+		778A3E60A9EA5AC53429DD81 /* ImportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViews.swift; sourceTree = "<group>"; };
 		7A1A03CDABD8A32217E37868 /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		7BA4019C0CA2A69EB88E579B /* TestRecordingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRecordingStep.swift; sourceTree = "<group>"; };
 		7BEAD46C41ADF4F96B33AD24 /* SyncReminderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncReminderTests.swift; sourceTree = "<group>"; };
 		7F73956BD47E95F1EB6588E3 /* OnboardingTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTypes.swift; sourceTree = "<group>"; };
 		8007424A719955E03500FF0B /* NotchDockController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchDockController.swift; sourceTree = "<group>"; };
 		8BC613C26B581D1532D5C5B4 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
+		8CDCD28852DF638B0ABB60E7 /* ImportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportTests.swift; sourceTree = "<group>"; };
 		90D6FC23B5F97DE9923369D8 /* EarBudTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EarBudTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		93233D1CB7388708C0390751 /* SyncCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCard.swift; sourceTree = "<group>"; };
 		9584E9130364C09AE69C54E4 /* RealDeviceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealDeviceProvider.swift; sourceTree = "<group>"; };
@@ -156,10 +165,12 @@
 		9C8E05EFF2F6B10D37B09D2D /* OnboardingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModelTests.swift; sourceTree = "<group>"; };
 		9CA04F1965D03B5110B60D1D /* HistoryAndTrashPanes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryAndTrashPanes.swift; sourceTree = "<group>"; };
 		A24C41C2762CF9F7FEB96192 /* RecordingDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingDetail.swift; sourceTree = "<group>"; };
+		A3DC994CC012FD4018387AD5 /* Importing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Importing.swift; sourceTree = "<group>"; };
 		AAC4DD22FC58B23D846D35CB /* RecordingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingsPane.swift; sourceTree = "<group>"; };
 		AD6518B989529E6902315012 /* MainWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindow.swift; sourceTree = "<group>"; };
 		AE33DA04B7CA400FBABCAFE5 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		B0EA01B4230263B783868C46 /* MenuBarMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarMenu.swift; sourceTree = "<group>"; };
+		B769BD5EEEB46EDA709ADFC0 /* earbud-import */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "earbud-import"; path = .; sourceTree = SOURCE_ROOT; };
 		B7ADC84B3ECB5456035BADBA /* FixtureLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureLibrary.swift; sourceTree = "<group>"; };
 		B83BBAA61A0C6872A5386D13 /* OnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindow.swift; sourceTree = "<group>"; };
 		B8423C975702EE180DF0C0E9 /* DeviceAndSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAndSyncTests.swift; sourceTree = "<group>"; };
@@ -172,7 +183,9 @@
 		D305EFB20B1C337BDA511F28 /* PairedElsewhereStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairedElsewhereStep.swift; sourceTree = "<group>"; };
 		D51CC66CA45705221E813C63 /* OnboardingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModel.swift; sourceTree = "<group>"; };
 		DEB04E524407C9997D8BE3A8 /* RecordingList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingList.swift; sourceTree = "<group>"; };
+		E16CF685FDE2935EB3A94547 /* RealImportProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealImportProvider.swift; sourceTree = "<group>"; };
 		E4AEE0204AFB95F1374094F3 /* WelcomeStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeStep.swift; sourceTree = "<group>"; };
+		E63CE811521D08741B26081F /* ImportRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportRouting.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +199,7 @@
 				1D6AB864F3ABBF0A70759714 /* AudioCodec in Frameworks */,
 				C6671E81F0A72E7D7E728D65 /* Transcriber in Frameworks */,
 				1ADCD84D86F3E91FB6C7F027 /* Library in Frameworks */,
+				9E893CD84B96F203CA6457D3 /* AudioImport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,6 +211,7 @@
 			children = (
 				D06FB9A79C27D917D7C0C853 /* FixtureData.swift */,
 				311CFBA769BF1DD17BA314DE /* FixtureDevice.swift */,
+				75CB1E1EC84696DF45214315 /* FixtureImport.swift */,
 				B7ADC84B3ECB5456035BADBA /* FixtureLibrary.swift */,
 				040883FE6E51BF56A87AC238 /* FixtureSync.swift */,
 				090C3ED689AFFDDF832A4711 /* SilentAudio.swift */,
@@ -219,6 +234,7 @@
 			children = (
 				BD0A8DD06E42B772D96238C7 /* DebugSnapshot.swift */,
 				15E960802D35E3A23096088A /* EarBudApp.swift */,
+				E63CE811521D08741B26081F /* ImportRouting.swift */,
 				2293DAB97D0ECC87D119F8AE /* SyncReminder.swift */,
 			);
 			path = App;
@@ -256,7 +272,7 @@
 		5A09840DC77537109DDEE5B4 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				66BA49E953556412BA5BB5CD /* earbud-app */,
+				B769BD5EEEB46EDA709ADFC0 /* earbud-import */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -317,6 +333,7 @@
 			children = (
 				364896D3D4D26A8B7F455FCE /* AppModel.swift */,
 				7A1A03CDABD8A32217E37868 /* Formatting.swift */,
+				A3DC994CC012FD4018387AD5 /* Importing.swift */,
 				B8486A3319ED0EF41684840A /* LibraryGrouping.swift */,
 				0D223ED10F345DF2DA1A91E9 /* Models.swift */,
 				5EAA3B97A4177CDFC2236047 /* Providers.swift */,
@@ -328,6 +345,7 @@
 			isa = PBXGroup;
 			children = (
 				9584E9130364C09AE69C54E4 /* RealDeviceProvider.swift */,
+				E16CF685FDE2935EB3A94547 /* RealImportProvider.swift */,
 				65F74E62B04841D4706F51A5 /* RealLibraryProvider.swift */,
 				046277B2DF73F94F2F7D6181 /* RealOnboarding.swift */,
 				1012A60798D8E8E03F865386 /* RealSpeechModelProvider.swift */,
@@ -354,6 +372,7 @@
 				50DE8A181AA911D6372EBEB6 /* EmptyLibraryView.swift */,
 				272039CDEC3B53167306ADF8 /* Highlighting.swift */,
 				9CA04F1965D03B5110B60D1D /* HistoryAndTrashPanes.swift */,
+				778A3E60A9EA5AC53429DD81 /* ImportViews.swift */,
 				AD6518B989529E6902315012 /* MainWindow.swift */,
 				A24C41C2762CF9F7FEB96192 /* RecordingDetail.swift */,
 				DEB04E524407C9997D8BE3A8 /* RecordingList.swift */,
@@ -414,6 +433,7 @@
 				62DE774F2F35624332303047 /* AppModelTests.swift */,
 				B8423C975702EE180DF0C0E9 /* DeviceAndSyncTests.swift */,
 				014F3666095D80A2A67ECBC5 /* FormattingTests.swift */,
+				8CDCD28852DF638B0ABB60E7 /* ImportTests.swift */,
 				9747BAC93035E4496C4F4661 /* LibraryTests.swift */,
 				70595C75B1915F7D458B52E8 /* NotchGeometryTests.swift */,
 				0E9F587D162A1B9ACC211DE6 /* NotchPresenterTests.swift */,
@@ -467,6 +487,7 @@
 				BA7D9FEB9D1F904ED54422D9 /* AudioCodec */,
 				F3F30C44841A202E2071E6BC /* Transcriber */,
 				5743808F8D1AC95D9D6CE2B8 /* Library */,
+				B2504E5CFA01AB36269E92BE /* AudioImport */,
 			);
 			productName = EarBud;
 			productReference = 19815A70FBCA41C29B2DFEF7 /* EarBud.app */;
@@ -528,6 +549,7 @@
 				FEFC19A24E88B148C308AD03 /* AppModelTests.swift in Sources */,
 				0C1854D5438170CE00686A63 /* DeviceAndSyncTests.swift in Sources */,
 				CFE2B92780F0DCA7F03766D9 /* FormattingTests.swift in Sources */,
+				D788825581971BD0805B754E /* ImportTests.swift in Sources */,
 				755C6E40F1FF64F3E15BD053 /* LibraryTests.swift in Sources */,
 				A631288EE0E99923D093B755 /* NotchGeometryTests.swift in Sources */,
 				093F80CE34BF2AFD14A66A4D /* NotchPresenterTests.swift in Sources */,
@@ -556,6 +578,7 @@
 				F03C865A60BCC656A9F83153 /* FinishedStep.swift in Sources */,
 				EFCDB703325D007F27C6BC2C /* FixtureData.swift in Sources */,
 				605A5E482F763299F69EDF5E /* FixtureDevice.swift in Sources */,
+				19D53F2138ED8DE3C394091A /* FixtureImport.swift in Sources */,
 				8889C0674088024A827F4C19 /* FixtureLibrary.swift in Sources */,
 				28341004F115690966ED0EDB /* FixtureOnboarding.swift in Sources */,
 				E322C85DFCE82F2699D39255 /* FixtureSync.swift in Sources */,
@@ -563,6 +586,9 @@
 				35FDA074B17061DDC08B50FD /* Glyphs.swift in Sources */,
 				9B9F217647A5730AF3C6E754 /* Highlighting.swift in Sources */,
 				2E7E97AA0599321B7182F0E5 /* HistoryAndTrashPanes.swift in Sources */,
+				82470A20B1789630DC1B4EA7 /* ImportRouting.swift in Sources */,
+				07FACDEFD45652E0C7705260 /* ImportViews.swift in Sources */,
+				E51A15B40BFF5C23E0E8EE1E /* Importing.swift in Sources */,
 				D3223963C10BD39A15384EBD /* LibraryGrouping.swift in Sources */,
 				C5FA8C0F8A1DA960B1EDF164 /* MainWindow.swift in Sources */,
 				62CD0913975BFC6DED7F8715 /* MenuBarMenu.swift in Sources */,
@@ -583,6 +609,7 @@
 				45FC226B67C6C6ACF956B94B /* PlaybackController.swift in Sources */,
 				878E6B3B6C50C1B2CC3FC68B /* Providers.swift in Sources */,
 				75BCADB1CC6C1BC3A3BD1170 /* RealDeviceProvider.swift in Sources */,
+				A90D063EAF6C1353F3BB4A32 /* RealImportProvider.swift in Sources */,
 				2DEF9BFDCE8F268FEABA5E7E /* RealLibraryProvider.swift in Sources */,
 				E8B67633080543A54E938DE1 /* RealOnboarding.swift in Sources */,
 				8C8C5DF95EA0695C72F684AB /* RealSpeechModelProvider.swift in Sources */,
@@ -883,6 +910,10 @@
 		9CBCB55BF8DF09DFAE4F7CD6 /* FieldyDevice */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FieldyDevice;
+		};
+		B2504E5CFA01AB36269E92BE /* AudioImport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AudioImport;
 		};
 		BA7D9FEB9D1F904ED54422D9 /* AudioCodec */ = {
 			isa = XCSwiftPackageProductDependency;

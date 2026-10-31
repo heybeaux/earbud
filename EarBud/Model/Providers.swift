@@ -94,6 +94,21 @@ protocol SyncProviding: Sendable {
     func startSync() async -> AsyncStream<SyncEvent>
 }
 
+/// Importing audio files and folders (EarBudKit `AudioImport.AudioImporter`).
+/// The app asks for the file list first, then imports one file at a time so it can show progress.
+protocol ImportProviding: Sendable {
+    /// Every file `importFile` should be given: files as they are, folders searched recursively
+    /// (hidden files and folders skipped).
+    func files(in urls: [URL]) async -> [URL]
+    /// Copies one file into the library, skips it as a duplicate, or rejects it with a reason.
+    /// New recordings are queued for transcription; `LibraryProviding.transcribeWaiting()` runs them.
+    func importFile(_ url: URL) async -> ImportReport
+    /// Removes partial copies left by a quit during an earlier import. Call once at launch;
+    /// `importFile` waits for it.
+    @discardableResult
+    func cleanupAfterLaunch() async -> Int
+}
+
 /// On-device speech models.
 protocol SpeechModelProviding: Sendable {
     func models() async -> [SpeechModel]
