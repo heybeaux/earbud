@@ -9,9 +9,13 @@ struct OnboardingHost: View {
 
     init(appModel: AppModel) {
         self.appModel = appModel
-        let library = appModel.library as? FixtureLibrary
         let hasNotch = NSScreen.main?.safeAreaInsets.top ?? 0 > 0
-        let provider = FixtureOnboarding(hasNotch: hasNotch, library: library)
+        let provider: any OnboardingProviding
+        if let realDevice = appModel.device as? RealDeviceProvider, let realLibrary = appModel.library as? RealLibraryProvider {
+            provider = RealOnboarding(device: realDevice.device, store: realLibrary.store, library: realLibrary, hasNotch: hasNotch)
+        } else {
+            provider = FixtureOnboarding(hasNotch: hasNotch, library: appModel.library as? FixtureLibrary)
+        }
         _model = State(initialValue: OnboardingModel(provider: provider, speech: appModel.speech))
     }
 

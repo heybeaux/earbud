@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import Library
 import Observation
 
 enum SidebarItem: Hashable, Sendable {
@@ -117,6 +118,27 @@ final class AppModel {
         let library = FixtureLibrary()
         let device = FixtureDevice()
         return AppModel(library: library, device: device, sync: FixtureSync(library: library, device: device), speech: FixtureSpeechModels())
+    }
+
+    /// The app wired to the real EarBudKit engine: `Library.LibraryStore` on disk,
+    /// `FieldyDevice` over CoreBluetooth, `SyncEngine`, and WhisperKit via `Transcriber`.
+    /// Used for normal/release launches; `-EarBudFixtures` or unit tests use `fixture()` instead.
+    static func real() -> AppModel {
+        // `LibraryStore.init` only throws if `~/Library/Application Support/EarBud` can't be
+        // created or its SQLite file can't be opened/migrated; both are effectively fatal for
+        // an app whose entire model is that store, so this is a deliberate `try!`.
+        let store = try! Library.LibraryStore(paths: .default)
+        let libraryProvider = RealLibraryProvider(store: store)
+        libraryProvider.resumeTranscriptionQueue()
+        let deviceProvider = RealDeviceProvider.makeRemembering(store: store)
+        let sync = RealSyncProvider(device: deviceProvider.device, store: store)
+        let speech = RealSpeechModelProvider(paths: .default)
+        return AppModel(library: libraryProvider, device: deviceProvider, sync: sync, speech: speech)
+    }
+
+    /// Whether this launch should use the fixture providers (debug/tests only).
+    static var usesFixtures: Bool {
+        CommandLine.arguments.contains("-EarBudFixtures")
     }
 
     // MARK: Loading

@@ -31,7 +31,7 @@ struct EarBudApp: App {
     @AppStorage(SettingsKey.showInMenuBar) private var showInMenuBar = true
 
     init() {
-        let model = AppModel.fixture()
+        let model = AppModel.usesFixtures ? AppModel.fixture() : AppModel.real()
         _model = State(initialValue: model)
         #if DEBUG
         DebugSnapshot.runIfRequested(model: model)
