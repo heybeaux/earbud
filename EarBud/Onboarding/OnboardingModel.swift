@@ -110,8 +110,9 @@ final class OnboardingModel {
     }
 
     /// Called by the view once `foundFieldy` is non-nil, to move to the right next step.
+    /// Guarded so firing from both `onAppear` and `onChange` can't advance twice.
     func handleFoundFieldy() {
-        guard let found = foundFieldy else { return }
+        guard step == .findFieldy, let found = foundFieldy else { return }
         if found.isPairedElsewhere {
             advance(to: .pairedElsewhere)
         } else {

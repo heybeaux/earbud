@@ -37,6 +37,7 @@ struct FindFieldyStep: View {
             Spacer(minLength: 4)
         }
         .task { try? await Task.sleep(for: .seconds(30)); showTips = true }
+        .onAppear { if model.foundFieldy != nil { model.handleFoundFieldy() } }
         .onChange(of: model.foundFieldy) { _, found in
             if found != nil { model.handleFoundFieldy() }
         }
