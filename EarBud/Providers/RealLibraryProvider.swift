@@ -119,7 +119,7 @@ final class RealLibraryProvider: LibraryProviding, Sendable {
     /// List rows show the opening of the transcript, so done recordings need their segments.
     private func mapWithPreview(_ rec: Recording) throws -> RecordingItem {
         if rec.transcriptState == .transcribing, let fraction = progress.get(rec.id) {
-            var item = Self.map(rec)
+            var item = Self.map(rec, preview: nil)
             item.transcript = .transcribing(progress: fraction, secondsLeft: nil)
             return item
         }
